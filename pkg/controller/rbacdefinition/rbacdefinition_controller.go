@@ -19,11 +19,6 @@ import (
 
 var log = logf.Log.WithName("controller_rbacdefinition")
 
-/**
-* USER ACTION REQUIRED: This is a scaffold file intended for the user to modify with their own Controller
-* business logic.  Delete these comments after modifying this file.*
- */
-
 // Add creates a new RbacDefinition Controller and adds it to the Manager. The Manager will set fields on the Controller
 // and Start it when the Manager is Started.
 func Add(mgr manager.Manager) error {
@@ -32,7 +27,7 @@ func Add(mgr manager.Manager) error {
 
 // newReconciler returns a new reconcile.Reconciler
 func newReconciler(mgr manager.Manager) reconcile.Reconciler {
-	return &ReconcileRbacDefinition{client: mgr.GetClient(), scheme: mgr.GetScheme()}
+	return &ReconcileRbacDefinition{K8sClient: mgr.GetClient(), UsedScheme: mgr.GetScheme()}
 }
 
 // add adds a new Controller to mgr with r as the reconcile.Reconciler
@@ -81,12 +76,12 @@ var _ reconcile.Reconciler = &ReconcileRbacDefinition{}
 // The Controller will requeue the Request to be processed again if the returned error is non-nil or
 // Result.Requeue is true, otherwise upon completion it will remove the work from the queue.
 func (r *ReconcileRbacDefinition) Reconcile(request reconcile.Request) (reconcile.Result, error) {
-	r.reqLogger = log.WithValues("Request.Namespace", request.Namespace, "Request.Name", request.Name)
-	r.reqLogger.Info("Reconciling RbacDefinition")
+	r.ReqLogger = log.WithValues("Request.Namespace", request.Namespace, "Request.Name", request.Name)
+	r.ReqLogger.Info("Reconciling RbacDefinition")
 
 	// Fetch the RbacDefinition instance
 	instance := &accessmanagerv1beta1.RbacDefinition{}
-	err := r.client.Get(context.TODO(), request.NamespacedName, instance)
+	err := r.K8sClient.Get(context.TODO(), request.NamespacedName, instance)
 	if err != nil {
 		if errors.IsNotFound(err) {
 			// Request object not found, could have been deleted after reconcile request.
@@ -98,5 +93,5 @@ func (r *ReconcileRbacDefinition) Reconcile(request reconcile.Request) (reconcil
 		return reconcile.Result{}, err
 	}
 
-	return r.reconcile(instance)
+	return doReconcilation(instance, r)
 }
