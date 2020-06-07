@@ -1,4 +1,4 @@
-package rbacdefinition_test
+package reconciler_test
 
 import (
 	"testing"

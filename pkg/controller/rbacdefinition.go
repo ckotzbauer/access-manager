@@ -1,12 +1,17 @@
-package rbacdefinition
+package controller
 
 import (
 	"context"
 
 	accessmanagerv1beta1 "access-manager/pkg/apis/accessmanager/v1beta1"
+	"access-manager/pkg/reconciler"
 
+	"github.com/go-logr/logr"
 	"k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
@@ -17,15 +22,15 @@ import (
 
 var log = logf.Log.WithName("controller_rbacdefinition")
 
-// Add creates a new RbacDefinition Controller and adds it to the Manager. The Manager will set fields on the Controller
+// AddRbacDefinition creates a new RbacDefinition Controller and adds it to the Manager. The Manager will set fields on the Controller
 // and Start it when the Manager is Started.
-func Add(mgr manager.Manager) error {
-	return add(mgr, newReconciler(mgr))
+func AddRbacDefinition(mgr manager.Manager) error {
+	return add(mgr, newRbacDefinitionReconciler(mgr))
 }
 
 // newReconciler returns a new reconcile.Reconciler
-func newReconciler(mgr manager.Manager) reconcile.Reconciler {
-	return &ReconcileRbacDefinition{Client: *kubernetes.NewForConfigOrDie(mgr.GetConfig()), ControllerClient: mgr.GetClient(), Scheme: mgr.GetScheme()}
+func newRbacDefinitionReconciler(mgr manager.Manager) reconcile.Reconciler {
+	return &ReconcileRbacDefinition{Client: mgr.GetClient(), Scheme: mgr.GetScheme(), Config: mgr.GetConfig()}
 }
 
 // add adds a new Controller to mgr with r as the reconcile.Reconciler
@@ -45,6 +50,14 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 	return nil
 }
 
+// ReconcileRbacDefinition is a wrapper for needed runtime-objects
+type ReconcileRbacDefinition struct {
+	Client client.Client
+	Config *rest.Config
+	Scheme *runtime.Scheme
+	Logger logr.Logger
+}
+
 // blank assignment to verify that ReconcileRbacDefinition implements reconcile.Reconciler
 var _ reconcile.Reconciler = &ReconcileRbacDefinition{}
 
@@ -61,7 +74,7 @@ func (r *ReconcileRbacDefinition) Reconcile(request reconcile.Request) (reconcil
 
 	// Fetch the RbacDefinition instance
 	instance := &accessmanagerv1beta1.RbacDefinition{}
-	err := r.ControllerClient.Get(context.TODO(), request.NamespacedName, instance)
+	err := r.Client.Get(context.TODO(), request.NamespacedName, instance)
 	if err != nil {
 		if errors.IsNotFound(err) {
 			// Request object not found, could have been deleted after reconcile request.
@@ -74,5 +87,6 @@ func (r *ReconcileRbacDefinition) Reconcile(request reconcile.Request) (reconcil
 		return reconcile.Result{}, err
 	}
 
-	return doReconcilation(instance, r)
+	rec := reconciler.Reconciler{Client: *kubernetes.NewForConfigOrDie(r.Config), Logger: r.Logger, Scheme: r.Scheme}
+	return rec.ReconcileRbacDefinition(instance)
 }

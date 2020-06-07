@@ -1,8 +1,9 @@
-package rbacdefinition_test
+package reconciler_test
 
 import (
 	accessmanagerv1beta1 "access-manager/pkg/apis/accessmanager/v1beta1"
-	"access-manager/pkg/controller/rbacdefinition"
+	"access-manager/pkg/reconciler"
+	"access-manager/pkg/util"
 	"context"
 	"fmt"
 	"sync/atomic"
@@ -54,7 +55,7 @@ var _ = Describe("Reconciliation", func() {
 	var count uint64 = 0
 	var scheme *runtime.Scheme
 	var logger logr.Logger
-	var def *rbacdefinition.ReconcileRbacDefinition
+	var rec *reconciler.Reconciler
 	ctx := context.TODO()
 
 	BeforeEach(func(done Done) {
@@ -99,7 +100,7 @@ var _ = Describe("Reconciliation", func() {
 
 		scheme = kscheme.Scheme
 		logger = log.Log.WithName("testLogger")
-		def = &rbacdefinition.ReconcileRbacDefinition{Client: *clientset, Scheme: scheme, Logger: logger}
+		rec = &reconciler.Reconciler{Client: *clientset, Scheme: scheme, Logger: logger}
 		createNamespaces(ctx, namespace1, namespace2, namespace3)
 		createClusterRoleBinding(ctx, &clusterRoleBinding)
 		createRoleBinding(ctx, &roleBinding)
@@ -114,7 +115,7 @@ var _ = Describe("Reconciliation", func() {
 		It("should not match any namespace", func(done Done) {
 			spec := &accessmanagerv1beta1.NamespacedSpec{NamespaceSelector: metav1.LabelSelector{MatchLabels: map[string]string{"no": "match"}}}
 
-			found, err := rbacdefinition.GetRelevantNamespaces(*spec, def)
+			found, err := rec.GetRelevantNamespaces(*spec)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(found).To(BeEmpty())
 			close(done)
@@ -125,9 +126,9 @@ var _ = Describe("Reconciliation", func() {
 				NamespaceSelector: metav1.LabelSelector{MatchLabels: map[string]string{"team": fmt.Sprintf("one-%v", count)}},
 			}
 
-			found, err := rbacdefinition.GetRelevantNamespaces(*spec, def)
+			found, err := rec.GetRelevantNamespaces(*spec)
 			Expect(err).NotTo(HaveOccurred())
-			Expect(rbacdefinition.MapNamespaces(found, rbacdefinition.MapNamespaceName)).To(BeEquivalentTo([]string{namespace1.Name}))
+			Expect(util.MapNamespaces(found)).To(BeEquivalentTo([]string{namespace1.Name}))
 			close(done)
 		})
 
@@ -136,9 +137,9 @@ var _ = Describe("Reconciliation", func() {
 				NamespaceSelector: metav1.LabelSelector{MatchLabels: map[string]string{"ci": fmt.Sprintf("true-%v", count)}},
 			}
 
-			found, err := rbacdefinition.GetRelevantNamespaces(*spec, def)
+			found, err := rec.GetRelevantNamespaces(*spec)
 			Expect(err).NotTo(HaveOccurred())
-			Expect(rbacdefinition.MapNamespaces(found, rbacdefinition.MapNamespaceName)).To(BeEquivalentTo([]string{namespace3.Name, namespace2.Name}))
+			Expect(util.MapNamespaces(found)).To(BeEquivalentTo([]string{namespace3.Name, namespace2.Name}))
 			close(done)
 		})
 	})
@@ -151,7 +152,7 @@ var _ = Describe("Reconciliation", func() {
 				},
 			}
 
-			clusterRoles := rbacdefinition.BuildAllClusterRoleBindings(cr)
+			clusterRoles := rec.BuildAllClusterRoleBindings(cr)
 			Expect(clusterRoles).To(BeEmpty())
 			close(done)
 		})
@@ -203,7 +204,7 @@ var _ = Describe("Reconciliation", func() {
 				},
 			}
 
-			clusterRoles := rbacdefinition.BuildAllClusterRoleBindings(cr)
+			clusterRoles := rec.BuildAllClusterRoleBindings(cr)
 			Expect(clusterRoles).To(BeEquivalentTo(expectedBindings))
 			close(done)
 		})
@@ -217,7 +218,7 @@ var _ = Describe("Reconciliation", func() {
 				},
 			}
 
-			roles, err := rbacdefinition.BuildAllRoleBindings(cr, def)
+			roles, err := rec.BuildAllRoleBindings(cr)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(roles).To(BeEmpty())
 			close(done)
@@ -234,7 +235,7 @@ var _ = Describe("Reconciliation", func() {
 				},
 			}
 
-			roles, err := rbacdefinition.BuildAllRoleBindings(cr, def)
+			roles, err := rec.BuildAllRoleBindings(cr)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(roles).To(BeEmpty())
 			close(done)
@@ -288,7 +289,7 @@ var _ = Describe("Reconciliation", func() {
 				},
 			}
 
-			clusterRoles, err := rbacdefinition.BuildAllRoleBindings(cr, def)
+			clusterRoles, err := rec.BuildAllRoleBindings(cr)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(clusterRoles).To(BeEquivalentTo(expectedBindings))
 			close(done)
@@ -361,7 +362,7 @@ var _ = Describe("Reconciliation", func() {
 				},
 			}
 
-			clusterRoles, err := rbacdefinition.BuildAllRoleBindings(cr, def)
+			clusterRoles, err := rec.BuildAllRoleBindings(cr)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(clusterRoles).To(BeEquivalentTo(expectedBindings))
 			close(done)
@@ -379,7 +380,7 @@ var _ = Describe("Reconciliation", func() {
 				Subjects: []rbacv1.Subject{{APIGroup: "", Kind: "ServiceAccount", Name: "default", Namespace: "default"}},
 			}
 
-			_, err := rbacdefinition.CreateOrRecreateClusterRoleBinding(crb, def)
+			_, err := rec.CreateOrRecreateClusterRoleBinding(crb)
 			Expect(err).NotTo(HaveOccurred())
 
 			_, err = clientset.RbacV1().ClusterRoleBindings().Get(ctx, crb.Name, metav1.GetOptions{})
@@ -397,7 +398,7 @@ var _ = Describe("Reconciliation", func() {
 				Subjects: []rbacv1.Subject{{APIGroup: "", Kind: "ServiceAccount", Name: "ci", Namespace: "default"}},
 			}
 
-			_, err := rbacdefinition.CreateOrRecreateClusterRoleBinding(crb, def)
+			_, err := rec.CreateOrRecreateClusterRoleBinding(crb)
 			Expect(err).NotTo(HaveOccurred())
 
 			updated, err := clientset.RbacV1().ClusterRoleBindings().Get(ctx, crb.Name, metav1.GetOptions{})
@@ -419,7 +420,7 @@ var _ = Describe("Reconciliation", func() {
 				Subjects: []rbacv1.Subject{{APIGroup: "", Kind: "ServiceAccount", Name: "default", Namespace: "default"}},
 			}
 
-			_, err := rbacdefinition.CreateOrRecreateRoleBinding(rb, def)
+			_, err := rec.CreateOrRecreateRoleBinding(rb)
 			Expect(err).NotTo(HaveOccurred())
 
 			_, err = clientset.RbacV1().RoleBindings("default").Get(ctx, rb.Name, metav1.GetOptions{})
@@ -437,7 +438,7 @@ var _ = Describe("Reconciliation", func() {
 				Subjects: []rbacv1.Subject{{APIGroup: "", Kind: "ServiceAccount", Name: "ci", Namespace: "default"}},
 			}
 
-			_, err := rbacdefinition.CreateOrRecreateRoleBinding(rb, def)
+			_, err := rec.CreateOrRecreateRoleBinding(rb)
 			Expect(err).NotTo(HaveOccurred())
 
 			updated, err := clientset.RbacV1().RoleBindings("default").Get(ctx, rb.Name, metav1.GetOptions{})
