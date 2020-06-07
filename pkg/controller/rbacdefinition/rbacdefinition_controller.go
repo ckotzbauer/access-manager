@@ -9,6 +9,7 @@ import (
 	rbacv1 "k8s.io/api/rbac/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/client-go/kubernetes"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
@@ -27,7 +28,7 @@ func Add(mgr manager.Manager) error {
 
 // newReconciler returns a new reconcile.Reconciler
 func newReconciler(mgr manager.Manager) reconcile.Reconciler {
-	return &ReconcileRbacDefinition{K8sClient: mgr.GetClient(), UsedScheme: mgr.GetScheme()}
+	return &ReconcileRbacDefinition{Client: *kubernetes.NewForConfigOrDie(mgr.GetConfig()), Scheme: mgr.GetScheme()}
 }
 
 // add adds a new Controller to mgr with r as the reconcile.Reconciler
@@ -76,12 +77,12 @@ var _ reconcile.Reconciler = &ReconcileRbacDefinition{}
 // The Controller will requeue the Request to be processed again if the returned error is non-nil or
 // Result.Requeue is true, otherwise upon completion it will remove the work from the queue.
 func (r *ReconcileRbacDefinition) Reconcile(request reconcile.Request) (reconcile.Result, error) {
-	r.ReqLogger = log.WithValues("Request.Namespace", request.Namespace, "Request.Name", request.Name)
-	r.ReqLogger.Info("Reconciling RbacDefinition")
+	r.Logger = log.WithValues("Request.Namespace", request.Namespace, "Request.Name", request.Name)
+	r.Logger.Info("Reconciling RbacDefinition")
 
 	// Fetch the RbacDefinition instance
 	instance := &accessmanagerv1beta1.RbacDefinition{}
-	err := r.K8sClient.Get(context.TODO(), request.NamespacedName, instance)
+	err := r.Client.RESTClient().Get().Resource("rbacdefinitions").Do(context.TODO()).Into(instance)
 	if err != nil {
 		if errors.IsNotFound(err) {
 			// Request object not found, could have been deleted after reconcile request.
@@ -93,5 +94,5 @@ func (r *ReconcileRbacDefinition) Reconcile(request reconcile.Request) (reconcil
 		return reconcile.Result{}, err
 	}
 
-	return doReconcilation(instance, r)
+	return doReconcilation(instance, *r)
 }

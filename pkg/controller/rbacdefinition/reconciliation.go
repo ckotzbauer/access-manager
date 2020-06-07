@@ -2,11 +2,9 @@ package rbacdefinition
 
 import (
 	"context"
+	err "errors"
 
 	"k8s.io/apimachinery/pkg/api/errors"
-	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/apimachinery/pkg/types"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
@@ -17,7 +15,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func doReconcilation(instance *accessmanagerv1beta1.RbacDefinition, def ReconcileDefinition) (reconcile.Result, error) {
+func doReconcilation(instance *accessmanagerv1beta1.RbacDefinition, def ReconcileRbacDefinition) (reconcile.Result, error) {
 	// Define all (Cluster)RoleBindings objects
 	roleBindings, err := BuildAllRoleBindings(instance, def)
 	clusterRoleBindings := BuildAllClusterRoleBindings(instance)
@@ -28,22 +26,22 @@ func doReconcilation(instance *accessmanagerv1beta1.RbacDefinition, def Reconcil
 
 	for _, rb := range roleBindings {
 		// Set RbacDefinition instance as the owner and controller
-		if err := controllerutil.SetControllerReference(instance, &rb, def.Scheme()); err != nil {
+		if err := controllerutil.SetControllerReference(instance, &rb, def.Scheme); err != nil {
 			return reconcile.Result{}, err
 		}
 
-		if err = CreateOrRecreateRoleBinding(rb, def); err != nil {
+		if _, err = CreateOrRecreateRoleBinding(rb, def); err != nil {
 			return reconcile.Result{}, err
 		}
 	}
 
 	for _, crb := range clusterRoleBindings {
 		// Set RbacDefinition instance as the owner and controller
-		if err := controllerutil.SetControllerReference(instance, &crb, def.Scheme()); err != nil {
+		if err := controllerutil.SetControllerReference(instance, &crb, def.Scheme); err != nil {
 			return reconcile.Result{}, err
 		}
 
-		if err = CreateOrRecreateClusterRoleBinding(crb, def); err != nil {
+		if _, err = CreateOrRecreateClusterRoleBinding(crb, def); err != nil {
 			return reconcile.Result{}, err
 		}
 	}
@@ -52,43 +50,41 @@ func doReconcilation(instance *accessmanagerv1beta1.RbacDefinition, def Reconcil
 }
 
 // CreateOrRecreateRoleBinding creates a new or recreates a existing RoleBinding
-func CreateOrRecreateRoleBinding(rb rbacv1.RoleBinding, def ReconcileDefinition) error {
-	found := &rbacv1.RoleBinding{}
-	err := def.Client().Get(context.TODO(), types.NamespacedName{Name: rb.Name, Namespace: rb.Namespace}, found)
+func CreateOrRecreateRoleBinding(rb rbacv1.RoleBinding, def ReconcileRbacDefinition) (*rbacv1.RoleBinding, error) {
+	_, err := def.Client.RbacV1().RoleBindings(rb.Namespace).Get(context.TODO(), rb.Name, metav1.GetOptions{})
 	if err == nil {
-		def.Logger().Info("Deleting RoleBinding", "RoleBinding.Namespace", rb.Namespace, "RoleBinding.Name", rb.Name)
-		err = def.Client().Delete(context.TODO(), &rb)
+		def.Logger.Info("Deleting RoleBinding", "RoleBinding.Namespace", rb.Namespace, "RoleBinding.Name", rb.Name)
+		err = def.Client.RbacV1().RoleBindings(rb.Namespace).Delete(context.TODO(), rb.Name, metav1.DeleteOptions{})
 		if err != nil {
-			return err
+			return nil, err
 		}
 	} else if err != nil && !errors.IsNotFound(err) {
-		return err
+		return nil, err
 	}
 
-	def.Logger().Info("Creating new RoleBinding", "RoleBinding.Namespace", rb.Namespace, "RoleBinding.Name", rb.Name)
-	return def.Client().Create(context.TODO(), &rb)
+	def.Logger.Info("Creating new RoleBinding", "RoleBinding.Namespace", rb.Namespace, "RoleBinding.Name", rb.Name)
+	return def.Client.RbacV1().RoleBindings(rb.Namespace).Create(context.TODO(), &rb, metav1.CreateOptions{})
 }
 
 // CreateOrRecreateClusterRoleBinding creates a new or recreates a existing ClusterRoleBinding
-func CreateOrRecreateClusterRoleBinding(crb rbacv1.ClusterRoleBinding, def ReconcileDefinition) error {
-	found := &rbacv1.ClusterRoleBinding{}
-	err := def.Client().Get(context.TODO(), types.NamespacedName{Name: crb.Name}, found)
+func CreateOrRecreateClusterRoleBinding(crb rbacv1.ClusterRoleBinding, def ReconcileRbacDefinition) (*rbacv1.ClusterRoleBinding, error) {
+	_, err := def.Client.RbacV1().ClusterRoleBindings().Get(context.TODO(), crb.Name, metav1.GetOptions{})
 	if err == nil {
-		def.Logger().Info("Deleting ClusterRoleBinding", "ClusterRoleBinding.Name", crb.Name)
-		err = def.Client().Delete(context.TODO(), found)
+		def.Logger.Info("Deleting ClusterRoleBinding", "ClusterRoleBinding.Name", crb.Name)
+		err = def.Client.RbacV1().ClusterRoleBindings().Delete(context.TODO(), crb.Name, metav1.DeleteOptions{})
 		if err != nil {
-			return err
+			return nil, err
 		}
 	} else if err != nil && !errors.IsNotFound(err) {
-		return err
+		return nil, err
 	}
 
-	def.Logger().Info("Creating new ClusterRoleBinding", "ClusterRoleBinding.Name", crb.Name)
-	return def.Client().Create(context.TODO(), &crb)
+	def.Logger.Info("Creating new ClusterRoleBinding", "ClusterRoleBinding.Name", crb.Name)
+	return def.Client.RbacV1().ClusterRoleBindings().Create(context.TODO(), &crb, metav1.CreateOptions{})
 }
 
 // BuildAllRoleBindings returns an array of RoleBindings for the given RbacDefinition
-func BuildAllRoleBindings(cr *accessmanagerv1beta1.RbacDefinition, def ReconcileDefinition) ([]rbacv1.RoleBinding, error) {
+func BuildAllRoleBindings(cr *accessmanagerv1beta1.RbacDefinition, def ReconcileRbacDefinition) ([]rbacv1.RoleBinding, error) {
 	var bindingObjects []rbacv1.RoleBinding = []rbacv1.RoleBinding{}
 
 	for _, nsSpec := range cr.Spec.Namespaced {
@@ -142,15 +138,29 @@ func BuildAllClusterRoleBindings(cr *accessmanagerv1beta1.RbacDefinition) []rbac
 }
 
 // GetRelevantNamespaces returns a filtered list of namespaces matching the NamespacedSpec
-func GetRelevantNamespaces(spec accessmanagerv1beta1.NamespacedSpec, def ReconcileDefinition) ([]corev1.Namespace, error) {
-	namespaces := &corev1.NamespaceList{}
-	options := &client.ListOptions{
-		LabelSelector: labels.SelectorFromValidatedSet(map[string]string(spec.NamespaceSelector.MatchLabels)),
-	}
+func GetRelevantNamespaces(spec accessmanagerv1beta1.NamespacedSpec, def ReconcileRbacDefinition) ([]corev1.Namespace, error) {
+	if spec.NamespaceSelector.MatchLabels != nil || len(spec.NamespaceSelector.MatchExpressions) > 0 {
+		selector, err := metav1.LabelSelectorAsSelector(&spec.NamespaceSelector)
+		if err != nil {
+			return nil, err
+		}
 
-	if err := def.Client().List(context.TODO(), namespaces, options); err != nil {
-		return nil, err
-	}
+		listOptions := metav1.ListOptions{LabelSelector: selector.String()}
+		namespaces, err := def.Client.CoreV1().Namespaces().List(context.TODO(), listOptions)
+		if err != nil {
+			return nil, err
+		}
 
-	return namespaces.Items, nil
+		return namespaces.Items, nil
+
+	} else if spec.Namespace.Name != "" {
+		namespace, err := def.Client.CoreV1().Namespaces().Get(context.TODO(), spec.Namespace.Name, metav1.GetOptions{})
+		if err != nil {
+			return nil, err
+		}
+
+		return []corev1.Namespace{*namespace}, nil
+	} else {
+		return nil, err.New("Invalid role binding, namespace or namespace selector required")
+	}
 }

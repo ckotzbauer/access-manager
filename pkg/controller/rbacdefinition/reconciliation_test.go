@@ -16,7 +16,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	kscheme "k8s.io/client-go/kubernetes/scheme"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 )
 
@@ -67,7 +66,7 @@ var _ = Describe("Reconciliation", func() {
 	var count uint64 = 0
 	var scheme *runtime.Scheme
 	var logger logr.Logger
-	var def rbacdefinition.ReconcileDefinition
+	var def rbacdefinition.ReconcileRbacDefinition
 	ctx := context.TODO()
 
 	BeforeEach(func(done Done) {
@@ -110,11 +109,8 @@ var _ = Describe("Reconciliation", func() {
 			Subjects: []rbacv1.Subject{{APIGroup: "", Kind: "ServiceAccount", Name: "default", Namespace: "default"}},
 		}
 
-		cl, err := client.New(cfg, client.Options{})
-		Expect(err).NotTo(HaveOccurred())
-		Expect(cl).NotTo(BeNil())
 		scheme = kscheme.Scheme
-		def = &rbacdefinition.ReconcileRbacDefinition{K8sClient: cl, UsedScheme: scheme, ReqLogger: logger}
+		def = rbacdefinition.ReconcileRbacDefinition{Client: *clientset, Scheme: scheme, Logger: logger}
 		logger = log.Log.WithName("testLogger")
 		createNamespaces(ctx, namespace1, namespace2, namespace3)
 		createClusterRoleBinding(ctx, &clusterRoleBinding)
@@ -395,7 +391,7 @@ var _ = Describe("Reconciliation", func() {
 				Subjects: []rbacv1.Subject{{APIGroup: "", Kind: "ServiceAccount", Name: "default", Namespace: "default"}},
 			}
 
-			err := rbacdefinition.CreateOrRecreateClusterRoleBinding(crb, def)
+			_, err := rbacdefinition.CreateOrRecreateClusterRoleBinding(crb, def)
 			Expect(err).NotTo(HaveOccurred())
 
 			_, err = clientset.RbacV1().ClusterRoleBindings().Get(ctx, crb.Name, metav1.GetOptions{})
@@ -413,7 +409,7 @@ var _ = Describe("Reconciliation", func() {
 				Subjects: []rbacv1.Subject{{APIGroup: "", Kind: "ServiceAccount", Name: "ci", Namespace: "default"}},
 			}
 
-			err := rbacdefinition.CreateOrRecreateClusterRoleBinding(crb, def)
+			_, err := rbacdefinition.CreateOrRecreateClusterRoleBinding(crb, def)
 			Expect(err).NotTo(HaveOccurred())
 
 			updated, err := clientset.RbacV1().ClusterRoleBindings().Get(ctx, crb.Name, metav1.GetOptions{})
@@ -435,7 +431,7 @@ var _ = Describe("Reconciliation", func() {
 				Subjects: []rbacv1.Subject{{APIGroup: "", Kind: "ServiceAccount", Name: "default", Namespace: "default"}},
 			}
 
-			err := rbacdefinition.CreateOrRecreateRoleBinding(rb, def)
+			_, err := rbacdefinition.CreateOrRecreateRoleBinding(rb, def)
 			Expect(err).NotTo(HaveOccurred())
 
 			_, err = clientset.RbacV1().RoleBindings("default").Get(ctx, rb.Name, metav1.GetOptions{})
@@ -453,7 +449,7 @@ var _ = Describe("Reconciliation", func() {
 				Subjects: []rbacv1.Subject{{APIGroup: "", Kind: "ServiceAccount", Name: "ci", Namespace: "default"}},
 			}
 
-			err := rbacdefinition.CreateOrRecreateRoleBinding(rb, def)
+			_, err := rbacdefinition.CreateOrRecreateRoleBinding(rb, def)
 			Expect(err).NotTo(HaveOccurred())
 
 			updated, err := clientset.RbacV1().RoleBindings("default").Get(ctx, rb.Name, metav1.GetOptions{})
