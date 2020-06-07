@@ -15,7 +15,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func doReconcilation(instance *accessmanagerv1beta1.RbacDefinition, def ReconcileRbacDefinition) (reconcile.Result, error) {
+func doReconcilation(instance *accessmanagerv1beta1.RbacDefinition, def *ReconcileRbacDefinition) (reconcile.Result, error) {
 	// Define all (Cluster)RoleBindings objects
 	roleBindings, err := BuildAllRoleBindings(instance, def)
 	clusterRoleBindings := BuildAllClusterRoleBindings(instance)
@@ -27,10 +27,12 @@ func doReconcilation(instance *accessmanagerv1beta1.RbacDefinition, def Reconcil
 	for _, rb := range roleBindings {
 		// Set RbacDefinition instance as the owner and controller
 		if err := controllerutil.SetControllerReference(instance, &rb, def.Scheme); err != nil {
+			def.Logger.WithValues("RoleBinding", rb.Namespace+"/"+rb.Name).Error(err, "Failed to set controllerReference.")
 			return reconcile.Result{}, err
 		}
 
 		if _, err = CreateOrRecreateRoleBinding(rb, def); err != nil {
+			def.Logger.WithValues("RoleBinding", rb.Namespace+"/"+rb.Name).Error(err, "Failed to reconcile RoleBinding.")
 			return reconcile.Result{}, err
 		}
 	}
@@ -38,10 +40,12 @@ func doReconcilation(instance *accessmanagerv1beta1.RbacDefinition, def Reconcil
 	for _, crb := range clusterRoleBindings {
 		// Set RbacDefinition instance as the owner and controller
 		if err := controllerutil.SetControllerReference(instance, &crb, def.Scheme); err != nil {
+			def.Logger.WithValues("ClusterRoleBinding", crb.Name).Error(err, "Failed to set controllerReference.")
 			return reconcile.Result{}, err
 		}
 
 		if _, err = CreateOrRecreateClusterRoleBinding(crb, def); err != nil {
+			def.Logger.WithValues("ClusterRoleBinding", crb.Name).Error(err, "Failed to reconcile ClusterRoleBinding.")
 			return reconcile.Result{}, err
 		}
 	}
@@ -50,7 +54,7 @@ func doReconcilation(instance *accessmanagerv1beta1.RbacDefinition, def Reconcil
 }
 
 // CreateOrRecreateRoleBinding creates a new or recreates a existing RoleBinding
-func CreateOrRecreateRoleBinding(rb rbacv1.RoleBinding, def ReconcileRbacDefinition) (*rbacv1.RoleBinding, error) {
+func CreateOrRecreateRoleBinding(rb rbacv1.RoleBinding, def *ReconcileRbacDefinition) (*rbacv1.RoleBinding, error) {
 	_, err := def.Client.RbacV1().RoleBindings(rb.Namespace).Get(context.TODO(), rb.Name, metav1.GetOptions{})
 	if err == nil {
 		def.Logger.Info("Deleting RoleBinding", "RoleBinding.Namespace", rb.Namespace, "RoleBinding.Name", rb.Name)
@@ -67,7 +71,7 @@ func CreateOrRecreateRoleBinding(rb rbacv1.RoleBinding, def ReconcileRbacDefinit
 }
 
 // CreateOrRecreateClusterRoleBinding creates a new or recreates a existing ClusterRoleBinding
-func CreateOrRecreateClusterRoleBinding(crb rbacv1.ClusterRoleBinding, def ReconcileRbacDefinition) (*rbacv1.ClusterRoleBinding, error) {
+func CreateOrRecreateClusterRoleBinding(crb rbacv1.ClusterRoleBinding, def *ReconcileRbacDefinition) (*rbacv1.ClusterRoleBinding, error) {
 	_, err := def.Client.RbacV1().ClusterRoleBindings().Get(context.TODO(), crb.Name, metav1.GetOptions{})
 	if err == nil {
 		def.Logger.Info("Deleting ClusterRoleBinding", "ClusterRoleBinding.Name", crb.Name)
@@ -84,7 +88,7 @@ func CreateOrRecreateClusterRoleBinding(crb rbacv1.ClusterRoleBinding, def Recon
 }
 
 // BuildAllRoleBindings returns an array of RoleBindings for the given RbacDefinition
-func BuildAllRoleBindings(cr *accessmanagerv1beta1.RbacDefinition, def ReconcileRbacDefinition) ([]rbacv1.RoleBinding, error) {
+func BuildAllRoleBindings(cr *accessmanagerv1beta1.RbacDefinition, def *ReconcileRbacDefinition) ([]rbacv1.RoleBinding, error) {
 	var bindingObjects []rbacv1.RoleBinding = []rbacv1.RoleBinding{}
 
 	for _, nsSpec := range cr.Spec.Namespaced {
@@ -138,29 +142,35 @@ func BuildAllClusterRoleBindings(cr *accessmanagerv1beta1.RbacDefinition) []rbac
 }
 
 // GetRelevantNamespaces returns a filtered list of namespaces matching the NamespacedSpec
-func GetRelevantNamespaces(spec accessmanagerv1beta1.NamespacedSpec, def ReconcileRbacDefinition) ([]corev1.Namespace, error) {
+func GetRelevantNamespaces(spec accessmanagerv1beta1.NamespacedSpec, def *ReconcileRbacDefinition) ([]corev1.Namespace, error) {
 	if spec.NamespaceSelector.MatchLabels != nil || len(spec.NamespaceSelector.MatchExpressions) > 0 {
 		selector, err := metav1.LabelSelectorAsSelector(&spec.NamespaceSelector)
 		if err != nil {
+			def.Logger.Error(err, "Could not parse LabelSelector or MatchExpression.")
 			return nil, err
 		}
 
 		listOptions := metav1.ListOptions{LabelSelector: selector.String()}
 		namespaces, err := def.Client.CoreV1().Namespaces().List(context.TODO(), listOptions)
 		if err != nil {
+			def.Logger.Error(err, "Could not list namespaces.")
 			return nil, err
 		}
 
+		def.Logger.WithValues("Namespaces", MapNamespaces(namespaces.Items, MapNamespaceName)).Info("Found matching Namespaces.")
 		return namespaces.Items, nil
 
 	} else if spec.Namespace.Name != "" {
 		namespace, err := def.Client.CoreV1().Namespaces().Get(context.TODO(), spec.Namespace.Name, metav1.GetOptions{})
 		if err != nil {
+			def.Logger.WithValues("NsName", spec.Namespace.Name).Error(err, "Could not found Namespace with name.")
 			return nil, err
 		}
 
+		def.Logger.Info("Found namespaces with name name", "name", namespace.Name)
 		return []corev1.Namespace{*namespace}, nil
 	} else {
+		def.Logger.Error(nil, "Invalid role binding, namespace or namespace selector required")
 		return nil, err.New("Invalid role binding, namespace or namespace selector required")
 	}
 }

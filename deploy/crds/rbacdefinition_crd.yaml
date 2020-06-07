@@ -48,6 +48,12 @@ spec:
                       properties:
                         matchLabels:
                           type: object
+                          x-kubernetes-preserve-unknown-fields: true
+                        matchExpressions:
+                          type: array
+                          items:
+                            type: object
+                            x-kubernetes-preserve-unknown-fields: true
                     bindings:
                       type: array
                       items:

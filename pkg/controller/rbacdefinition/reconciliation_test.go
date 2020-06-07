@@ -45,18 +45,6 @@ func createRoleBinding(ctx context.Context, rb *rbacv1.RoleBinding) {
 	}
 }
 
-func Map(vs []corev1.Namespace, f func(corev1.Namespace) string) []string {
-	vsm := make([]string, len(vs))
-	for i, v := range vs {
-		vsm[i] = f(v)
-	}
-	return vsm
-}
-
-func MapNamespaceName(ns corev1.Namespace) string {
-	return ns.Name
-}
-
 var _ = Describe("Reconciliation", func() {
 	var namespace1 *corev1.Namespace
 	var namespace2 *corev1.Namespace
@@ -66,7 +54,7 @@ var _ = Describe("Reconciliation", func() {
 	var count uint64 = 0
 	var scheme *runtime.Scheme
 	var logger logr.Logger
-	var def rbacdefinition.ReconcileRbacDefinition
+	var def *rbacdefinition.ReconcileRbacDefinition
 	ctx := context.TODO()
 
 	BeforeEach(func(done Done) {
@@ -110,8 +98,8 @@ var _ = Describe("Reconciliation", func() {
 		}
 
 		scheme = kscheme.Scheme
-		def = rbacdefinition.ReconcileRbacDefinition{Client: *clientset, Scheme: scheme, Logger: logger}
 		logger = log.Log.WithName("testLogger")
+		def = &rbacdefinition.ReconcileRbacDefinition{Client: *clientset, Scheme: scheme, Logger: logger}
 		createNamespaces(ctx, namespace1, namespace2, namespace3)
 		createClusterRoleBinding(ctx, &clusterRoleBinding)
 		createRoleBinding(ctx, &roleBinding)
@@ -139,7 +127,7 @@ var _ = Describe("Reconciliation", func() {
 
 			found, err := rbacdefinition.GetRelevantNamespaces(*spec, def)
 			Expect(err).NotTo(HaveOccurred())
-			Expect(Map(found, MapNamespaceName)).To(BeEquivalentTo([]string{namespace1.Name}))
+			Expect(rbacdefinition.MapNamespaces(found, rbacdefinition.MapNamespaceName)).To(BeEquivalentTo([]string{namespace1.Name}))
 			close(done)
 		})
 
@@ -150,7 +138,7 @@ var _ = Describe("Reconciliation", func() {
 
 			found, err := rbacdefinition.GetRelevantNamespaces(*spec, def)
 			Expect(err).NotTo(HaveOccurred())
-			Expect(Map(found, MapNamespaceName)).To(BeEquivalentTo([]string{namespace3.Name, namespace2.Name}))
+			Expect(rbacdefinition.MapNamespaces(found, rbacdefinition.MapNamespaceName)).To(BeEquivalentTo([]string{namespace3.Name, namespace2.Name}))
 			close(done)
 		})
 	})
