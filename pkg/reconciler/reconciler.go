@@ -8,6 +8,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/kubernetes"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
@@ -19,10 +20,37 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+// Reconciler runtime-object
 type Reconciler struct {
-	Client kubernetes.Clientset
-	Scheme *runtime.Scheme
-	Logger logr.Logger
+	Client           kubernetes.Clientset
+	ControllerClient client.Client
+	Scheme           *runtime.Scheme
+	Logger           logr.Logger
+}
+
+// ReconcileNamespace applies all desired changes of the Namespace
+func (r *Reconciler) ReconcileNamespace(instance *corev1.Namespace) (reconcile.Result, error) {
+	list := &accessmanagerv1beta1.RbacDefinitionList{}
+	err := r.ControllerClient.List(context.TODO(), list)
+
+	if err != nil {
+		r.Logger.Error(err, "Unexpected error occurred!")
+		return reconcile.Result{}, err
+	}
+
+	for _, def := range list.Items {
+		if err = r.DeleteOwnedRoleBindings(instance.Name, def); err != nil {
+			return reconcile.Result{}, err
+		}
+
+		_, err = r.ReconcileRbacDefinition(&def)
+
+		if err != nil {
+			return reconcile.Result{}, err
+		}
+	}
+
+	return reconcile.Result{}, nil
 }
 
 // ReconcileRbacDefinition applies all desired changes of the RbacDefinition
@@ -184,4 +212,28 @@ func (r *Reconciler) GetRelevantNamespaces(spec accessmanagerv1beta1.NamespacedS
 		r.Logger.Error(nil, "Invalid role binding, namespace or namespace selector required")
 		return nil, err.New("Invalid role binding, namespace or namespace selector required")
 	}
+}
+
+// DeleteOwnedRoleBindings deletes all RoleBindings in namespace owned by the RbacDefinition
+func (r *Reconciler) DeleteOwnedRoleBindings(namespace string, def accessmanagerv1beta1.RbacDefinition) error {
+	list, err := r.Client.RbacV1().RoleBindings(namespace).List(context.TODO(), metav1.ListOptions{})
+
+	if err != nil {
+		return err
+	}
+
+	for _, rb := range list.Items {
+		for _, ref := range rb.OwnerReferences {
+			if *ref.Controller && ref.Kind == "RbacDefinition" && ref.Name == def.Name {
+				r.Logger.Info("Deleting owned RoleBinding", "RoleBinding.Namespace", rb.Namespace, "RoleBinding.Name", rb.Name)
+				err = r.Client.RbacV1().RoleBindings(namespace).Delete(context.TODO(), rb.Name, metav1.DeleteOptions{})
+
+				if err != nil {
+					return err
+				}
+			}
+		}
+	}
+
+	return nil
 }

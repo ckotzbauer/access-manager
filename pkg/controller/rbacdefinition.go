@@ -20,12 +20,12 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/source"
 )
 
-var log = logf.Log.WithName("controller_rbacdefinition")
+var logRbacDefinition = logf.Log.WithName("controller_rbacdefinition")
 
 // AddRbacDefinition creates a new RbacDefinition Controller and adds it to the Manager. The Manager will set fields on the Controller
 // and Start it when the Manager is Started.
 func AddRbacDefinition(mgr manager.Manager) error {
-	return add(mgr, newRbacDefinitionReconciler(mgr))
+	return addRbacDefinition(mgr, newRbacDefinitionReconciler(mgr))
 }
 
 // newReconciler returns a new reconcile.Reconciler
@@ -34,7 +34,7 @@ func newRbacDefinitionReconciler(mgr manager.Manager) reconcile.Reconciler {
 }
 
 // add adds a new Controller to mgr with r as the reconcile.Reconciler
-func add(mgr manager.Manager, r reconcile.Reconciler) error {
+func addRbacDefinition(mgr manager.Manager, r reconcile.Reconciler) error {
 	// Create a new controller
 	c, err := controller.New("rbacdefinition-controller", mgr, controller.Options{Reconciler: r})
 	if err != nil {
@@ -69,7 +69,7 @@ var _ reconcile.Reconciler = &ReconcileRbacDefinition{}
 // The Controller will requeue the Request to be processed again if the returned error is non-nil or
 // Result.Requeue is true, otherwise upon completion it will remove the work from the queue.
 func (r *ReconcileRbacDefinition) Reconcile(request reconcile.Request) (reconcile.Result, error) {
-	r.Logger = log.WithValues("Request.Name", request.Name)
+	r.Logger = logRbacDefinition.WithValues("Request.Name", request.Name)
 	r.Logger.Info("Reconciling RbacDefinition")
 
 	// Fetch the RbacDefinition instance

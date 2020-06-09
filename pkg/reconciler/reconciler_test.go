@@ -46,12 +46,11 @@ func createRoleBinding(ctx context.Context, rb *rbacv1.RoleBinding) {
 	}
 }
 
-var _ = Describe("Reconciliation", func() {
+var _ = Describe("Reconciler", func() {
 	var namespace1 *corev1.Namespace
 	var namespace2 *corev1.Namespace
 	var namespace3 *corev1.Namespace
-	//var clusterRoleBinding *rbacv1.ClusterRoleBinding
-	//var roleBinding *rbacv1.RoleBinding
+	var roleBinding *rbacv1.RoleBinding
 	var count uint64 = 0
 	var scheme *runtime.Scheme
 	var logger logr.Logger
@@ -89,7 +88,7 @@ var _ = Describe("Reconciliation", func() {
 			},
 			Subjects: []rbacv1.Subject{{APIGroup: "", Kind: "ServiceAccount", Name: "default", Namespace: "default"}},
 		}
-		roleBinding := rbacv1.RoleBinding{
+		roleBinding = &rbacv1.RoleBinding{
 			ObjectMeta: metav1.ObjectMeta{Name: fmt.Sprintf("existing-rb-%v", count)},
 			RoleRef: rbacv1.RoleRef{
 				Name: "test-role",
@@ -103,7 +102,7 @@ var _ = Describe("Reconciliation", func() {
 		rec = &reconciler.Reconciler{Client: *clientset, Scheme: scheme, Logger: logger}
 		createNamespaces(ctx, namespace1, namespace2, namespace3)
 		createClusterRoleBinding(ctx, &clusterRoleBinding)
-		createRoleBinding(ctx, &roleBinding)
+		createRoleBinding(ctx, roleBinding)
 		close(done)
 	})
 
@@ -445,6 +444,58 @@ var _ = Describe("Reconciliation", func() {
 			Expect(updated.RoleRef.Name == "new-role").To(BeTrue())
 			Expect(updated.Subjects[0].Name == "ci").To(BeTrue())
 			Expect(err).NotTo(HaveOccurred())
+			close(done)
+		})
+	})
+
+	Describe("DeleteOwnedRoleBindings", func() {
+		It("should create a new RoleBinding", func(done Done) {
+			flag := true
+
+			ownedRb := rbacv1.RoleBinding{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      fmt.Sprintf("owned-rb-%v", count),
+					Namespace: "default",
+					OwnerReferences: []metav1.OwnerReference{
+						{
+							APIVersion: "access-manager.io/v1beta1",
+							Controller: &flag,
+							Kind:       "RbacDefinition",
+							Name:       "test-def",
+							UID:        "123456",
+						},
+					},
+				},
+				RoleRef: rbacv1.RoleRef{
+					Name: "test-role",
+					Kind: "ClusterRole",
+				},
+				Subjects: []rbacv1.Subject{{APIGroup: "", Kind: "ServiceAccount", Name: "default", Namespace: "default"}},
+			}
+
+			def := &accessmanagerv1beta1.RbacDefinition{
+				ObjectMeta: metav1.ObjectMeta{Name: "test-def"},
+				Spec: accessmanagerv1beta1.RbacDefinitionSpec{
+					Namespaced: []accessmanagerv1beta1.NamespacedSpec{
+						{
+							Namespace: accessmanagerv1beta1.NamespaceSpec{Name: "default"},
+						},
+					},
+				},
+			}
+
+			createRoleBinding(ctx, &ownedRb)
+
+			err := rec.DeleteOwnedRoleBindings("default", *def)
+			Expect(err).NotTo(HaveOccurred())
+
+			_, err = clientset.RbacV1().RoleBindings("default").Get(ctx, ownedRb.Name, metav1.GetOptions{})
+			Expect(errors.IsNotFound(err)).To(BeTrue())
+
+			ex, err := clientset.RbacV1().RoleBindings("default").Get(ctx, roleBinding.Name, metav1.GetOptions{})
+			Expect(err).NotTo(HaveOccurred())
+			Expect(ex).NotTo(BeNil())
+
 			close(done)
 		})
 	})
