@@ -5,9 +5,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
-
 type BindingsSpec struct {
 	Name     string           `json:"name"`
 	RoleName string           `json:"roleName"`
@@ -33,9 +30,7 @@ type ClusterSpec struct {
 
 // RbacDefinitionSpec defines the desired state of RbacDefinition
 type RbacDefinitionSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "operator-sdk generate k8s" to regenerate code after modifying this file
-	// Add custom validation using kubebuilder tags: https://book-v1.book.kubebuilder.io/beyond_basics/generating_crd.html
+	Paused     bool             `json:"paused,omitempty"`
 	Namespaced []NamespacedSpec `json:"namespaced,omitempty"`
 	Cluster    []ClusterSpec    `json:"cluster,omitempty"`
 }

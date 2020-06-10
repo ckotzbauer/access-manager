@@ -70,7 +70,6 @@ var _ reconcile.Reconciler = &ReconcileRbacDefinition{}
 // Result.Requeue is true, otherwise upon completion it will remove the work from the queue.
 func (r *ReconcileRbacDefinition) Reconcile(request reconcile.Request) (reconcile.Result, error) {
 	r.Logger = logRbacDefinition.WithValues("Request.Name", request.Name)
-	r.Logger.Info("Reconciling RbacDefinition")
 
 	// Fetch the RbacDefinition instance
 	instance := &accessmanagerv1beta1.RbacDefinition{}
@@ -87,6 +86,11 @@ func (r *ReconcileRbacDefinition) Reconcile(request reconcile.Request) (reconcil
 		return reconcile.Result{}, err
 	}
 
+	if instance.Spec.Paused {
+		return reconcile.Result{}, nil
+	}
+
+	r.Logger.Info("Reconciling RbacDefinition")
 	rec := reconciler.Reconciler{Client: *kubernetes.NewForConfigOrDie(r.Config), Logger: r.Logger, Scheme: r.Scheme}
 	return rec.ReconcileRbacDefinition(instance)
 }

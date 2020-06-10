@@ -66,7 +66,6 @@ var _ reconcile.Reconciler = &ReconcileNamespace{}
 // Result.Requeue is true, otherwise upon completion it will remove the work from the queue.
 func (r *ReconcileNamespace) Reconcile(request reconcile.Request) (reconcile.Result, error) {
 	r.Logger = logNamespace.WithValues("Request.Name", request.Name)
-	r.Logger.Info("Reconciling Namespace")
 
 	// Fetch the Namespace instance
 	instance := &corev1.Namespace{}
@@ -83,6 +82,7 @@ func (r *ReconcileNamespace) Reconcile(request reconcile.Request) (reconcile.Res
 		return reconcile.Result{}, err
 	}
 
+	r.Logger.Info("Reconciling Namespace")
 	rec := reconciler.Reconciler{Client: *kubernetes.NewForConfigOrDie(r.Config), ControllerClient: r.Client, Logger: r.Logger, Scheme: r.Scheme}
 	return rec.ReconcileNamespace(instance)
 }

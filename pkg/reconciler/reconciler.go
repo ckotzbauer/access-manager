@@ -39,6 +39,10 @@ func (r *Reconciler) ReconcileNamespace(instance *corev1.Namespace) (reconcile.R
 	}
 
 	for _, def := range list.Items {
+		if def.Spec.Paused {
+			continue
+		}
+
 		if err = r.DeleteOwnedRoleBindings(instance.Name, def); err != nil {
 			return reconcile.Result{}, err
 		}
