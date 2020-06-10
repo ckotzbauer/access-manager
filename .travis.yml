@@ -9,6 +9,8 @@ services:
 jobs:
   include:
     - stage: Unit Tests
+      before_script:
+        - curl -L https://go.kubebuilder.io/dl/2.3.1/linux/amd64 | tar -xz -C /tmp/ && sudo mv /tmp/kubebuilder_2.3.1_linux_amd64 /usr/local/kubebuilder
       script: make unit-test
 
     - stage: Integration Tests
