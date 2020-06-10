@@ -56,6 +56,7 @@ var _ = Describe("Reconciler", func() {
 	var logger logr.Logger
 	var rec *reconciler.Reconciler
 	ctx := context.TODO()
+	flag := true
 
 	BeforeEach(func(done Done) {
 		atomic.AddUint64(&count, 1)
@@ -81,7 +82,10 @@ var _ = Describe("Reconciler", func() {
 			Spec: corev1.NamespaceSpec{},
 		}
 		clusterRoleBinding := rbacv1.ClusterRoleBinding{
-			ObjectMeta: metav1.ObjectMeta{Name: fmt.Sprintf("existing-crb-%v", count)},
+			ObjectMeta: metav1.ObjectMeta{
+				Name:            fmt.Sprintf("existing-crb-%v", count),
+				OwnerReferences: []metav1.OwnerReference{{Kind: "RbacDefinition", APIVersion: "access-manager.io/v1beta1", Controller: &flag, Name: "xx", UID: "123456"}},
+			},
 			RoleRef: rbacv1.RoleRef{
 				Name: "test-role",
 				Kind: "ClusterRole",
@@ -89,7 +93,10 @@ var _ = Describe("Reconciler", func() {
 			Subjects: []rbacv1.Subject{{APIGroup: "", Kind: "ServiceAccount", Name: "default", Namespace: "default"}},
 		}
 		roleBinding = &rbacv1.RoleBinding{
-			ObjectMeta: metav1.ObjectMeta{Name: fmt.Sprintf("existing-rb-%v", count)},
+			ObjectMeta: metav1.ObjectMeta{
+				Name:            fmt.Sprintf("existing-rb-%v", count),
+				OwnerReferences: []metav1.OwnerReference{{Kind: "RbacDefinition", APIVersion: "access-manager.io/v1beta1", Controller: &flag, Name: "xx", UID: "123456"}},
+			},
 			RoleRef: rbacv1.RoleRef{
 				Name: "test-role",
 				Kind: "ClusterRole",

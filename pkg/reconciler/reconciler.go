@@ -94,8 +94,13 @@ func (r *Reconciler) ReconcileRbacDefinition(instance *accessmanagerv1beta1.Rbac
 
 // CreateOrRecreateRoleBinding creates a new or recreates a existing RoleBinding
 func (r *Reconciler) CreateOrRecreateRoleBinding(rb rbacv1.RoleBinding) (*rbacv1.RoleBinding, error) {
-	_, err := r.Client.RbacV1().RoleBindings(rb.Namespace).Get(context.TODO(), rb.Name, metav1.GetOptions{})
+	existing, err := r.Client.RbacV1().RoleBindings(rb.Namespace).Get(context.TODO(), rb.Name, metav1.GetOptions{})
 	if err == nil {
+		if !r.HasRbacDefinitionOwner(existing.OwnerReferences) {
+			r.Logger.Info("Existing RoleBinding is not owned by a RbacDefinition. Ignoring", "RoleBinding.Name", existing.Name)
+			return existing, nil
+		}
+
 		r.Logger.Info("Deleting RoleBinding", "RoleBinding.Namespace", rb.Namespace, "RoleBinding.Name", rb.Name)
 		err = r.Client.RbacV1().RoleBindings(rb.Namespace).Delete(context.TODO(), rb.Name, metav1.DeleteOptions{})
 		if err != nil {
@@ -111,8 +116,13 @@ func (r *Reconciler) CreateOrRecreateRoleBinding(rb rbacv1.RoleBinding) (*rbacv1
 
 // CreateOrRecreateClusterRoleBinding creates a new or recreates a existing ClusterRoleBinding
 func (r *Reconciler) CreateOrRecreateClusterRoleBinding(crb rbacv1.ClusterRoleBinding) (*rbacv1.ClusterRoleBinding, error) {
-	_, err := r.Client.RbacV1().ClusterRoleBindings().Get(context.TODO(), crb.Name, metav1.GetOptions{})
+	existing, err := r.Client.RbacV1().ClusterRoleBindings().Get(context.TODO(), crb.Name, metav1.GetOptions{})
 	if err == nil {
+		if !r.HasRbacDefinitionOwner(existing.OwnerReferences) {
+			r.Logger.Info("Existing ClusterRoleBinding is not owned by a RbacDefinition. Ignoring", "ClusterRoleBinding.Name", existing.Name)
+			return existing, nil
+		}
+
 		r.Logger.Info("Deleting ClusterRoleBinding", "ClusterRoleBinding.Name", crb.Name)
 		err = r.Client.RbacV1().ClusterRoleBindings().Delete(context.TODO(), crb.Name, metav1.DeleteOptions{})
 		if err != nil {
@@ -248,4 +258,15 @@ func (r *Reconciler) DeleteOwnedRoleBindings(namespace string, def accessmanager
 	}
 
 	return nil
+}
+
+// HasRbacDefinitionOwner returns true if any of the OwnerReferences references a RbacDefinition
+func (r *Reconciler) HasRbacDefinitionOwner(refs []metav1.OwnerReference) bool {
+	for _, ref := range refs {
+		if ref.Kind == "RbacDefinition" {
+			return true
+		}
+	}
+
+	return false
 }
