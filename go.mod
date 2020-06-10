@@ -4,7 +4,7 @@ go 1.13
 
 require (
 	github.com/go-logr/logr v0.1.0
-	github.com/onsi/ginkgo v1.12.2
+	github.com/onsi/ginkgo v1.12.3
 	github.com/onsi/gomega v1.10.1
 	github.com/operator-framework/operator-sdk v0.17.1-0.20200520173737-ab7109512243
 	github.com/spf13/pflag v1.0.5
