@@ -59,6 +59,8 @@ spec:
                       items:
                         type: object
                         properties:
+                          name:
+                            type: string
                           roleName:
                             type: string
                           kind:
@@ -81,6 +83,8 @@ spec:
                 items:
                   type: object
                   properties:
+                    name:
+                      type: string
                     clusterRoleName:
                       type: string
                     subjects:

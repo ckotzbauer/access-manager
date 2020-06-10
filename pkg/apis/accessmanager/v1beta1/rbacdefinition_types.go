@@ -9,6 +9,7 @@ import (
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
 type BindingsSpec struct {
+	Name     string           `json:"name"`
 	RoleName string           `json:"roleName"`
 	Kind     string           `json:"kind"`
 	Subjects []rbacv1.Subject `json:"subjects"`
@@ -25,6 +26,7 @@ type NamespacedSpec struct {
 }
 
 type ClusterSpec struct {
+	Name            string           `json:"name"`
 	ClusterRoleName string           `json:"clusterRoleName"`
 	Subjects        []rbacv1.Subject `json:"subjects"`
 }

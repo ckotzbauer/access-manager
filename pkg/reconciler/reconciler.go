@@ -138,9 +138,15 @@ func (r *Reconciler) BuildAllRoleBindings(cr *accessmanagerv1beta1.RbacDefinitio
 
 		for _, ns := range relevantNamespaces {
 			for _, bindingSpec := range nsSpec.Bindings {
+				name := bindingSpec.Name
+
+				if name == "" {
+					name = bindingSpec.RoleName
+				}
+
 				roleBinding := rbacv1.RoleBinding{
 					ObjectMeta: metav1.ObjectMeta{
-						Name:      bindingSpec.RoleName,
+						Name:      name,
 						Namespace: ns.Name,
 					},
 					RoleRef: rbacv1.RoleRef{
@@ -163,9 +169,15 @@ func (r *Reconciler) BuildAllClusterRoleBindings(cr *accessmanagerv1beta1.RbacDe
 	var bindingObjects []rbacv1.ClusterRoleBinding = []rbacv1.ClusterRoleBinding{}
 
 	for _, bindingSpec := range cr.Spec.Cluster {
+		name := bindingSpec.Name
+
+		if name == "" {
+			name = bindingSpec.ClusterRoleName
+		}
+
 		clusterRoleBinding := rbacv1.ClusterRoleBinding{
 			ObjectMeta: metav1.ObjectMeta{
-				Name: bindingSpec.ClusterRoleName,
+				Name: name,
 			},
 			RoleRef: rbacv1.RoleRef{
 				Name: bindingSpec.ClusterRoleName,

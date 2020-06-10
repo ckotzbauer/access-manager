@@ -165,6 +165,7 @@ var _ = Describe("Reconciler", func() {
 							Subjects:        []rbacv1.Subject{{APIGroup: "rbac.authorization.k8s.io", Kind: "ServiceAccount", Name: "default"}},
 						},
 						{
+							Name:            "my-awesome-clusterrolebinding",
 							ClusterRoleName: "admin-role",
 							Subjects:        []rbacv1.Subject{{APIGroup: "rbac.authorization.k8s.io", Kind: "Group", Name: "admins"}},
 						},
@@ -186,7 +187,7 @@ var _ = Describe("Reconciler", func() {
 					Subjects: []rbacv1.Subject{{APIGroup: "rbac.authorization.k8s.io", Kind: "ServiceAccount", Name: "default"}},
 				},
 				{
-					ObjectMeta: metav1.ObjectMeta{Name: "admin-role"},
+					ObjectMeta: metav1.ObjectMeta{Name: "my-awesome-clusterrolebinding"},
 					RoleRef: rbacv1.RoleRef{
 						Name: "admin-role",
 						Kind: "ClusterRole",
@@ -254,6 +255,7 @@ var _ = Describe("Reconciler", func() {
 								},
 								{
 									Kind:     "Role",
+									Name:     "my-awesome-rolebinding",
 									RoleName: "test-role",
 									Subjects: []rbacv1.Subject{
 										{APIGroup: "rbac.authorization.k8s.io", Kind: "ServiceAccount", Name: "default"},
@@ -276,7 +278,7 @@ var _ = Describe("Reconciler", func() {
 					Subjects: []rbacv1.Subject{{APIGroup: "rbac.authorization.k8s.io", Kind: "User", Name: "john"}},
 				},
 				{
-					ObjectMeta: metav1.ObjectMeta{Name: "test-role", Namespace: namespace1.Name},
+					ObjectMeta: metav1.ObjectMeta{Name: "my-awesome-rolebinding", Namespace: namespace1.Name},
 					RoleRef: rbacv1.RoleRef{
 						Name: "test-role",
 						Kind: "Role",
