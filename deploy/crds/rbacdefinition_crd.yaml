@@ -32,6 +32,8 @@ spec:
             description: RbacDefinitionSpec defines the desired state of RbacDefinition
             type: object
             properties:
+              paused:
+                type: boolean
               namespaced:
                 description: Defines the desired state of RoleBindings
                 type: array
