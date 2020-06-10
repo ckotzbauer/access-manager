@@ -98,6 +98,8 @@ spec:
                             type: string
                           kind:
                             type: string
+                          namespace:
+                            type: string
 
           status:
             description: RbacDefinitionStatus defines the observed state of RbacDefinition
