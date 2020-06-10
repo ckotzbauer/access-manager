@@ -1,15 +1,16 @@
 FROM alpine:3.12
 
-ENV OPERATOR=/usr/local/bin/access-manager \
-    USER_UID=1001 \
+ENV USER_UID=1001 \
     USER_NAME=access-manager
 
 # install operator binary
-COPY build/_output/bin/access-manager ${OPERATOR}
+COPY build/_output/bin/access-manager /usr/local/bin/access-manager
 
-COPY build/bin /usr/local/bin
-RUN  /usr/local/bin/user_setup
+RUN echo "${USER_NAME}:x:${USER_UID}:0:${USER_NAME} user:${HOME}:/sbin/nologin" >> /etc/passwd && \
+    mkdir -p "${HOME}" && \
+    chown "${USER_UID}:0" "${HOME}" && \
+    chmod ug+rwx "${HOME}"
 
-ENTRYPOINT ["/usr/local/bin/entrypoint"]
+ENTRYPOINT ["/usr/local/bin/access-manager"]
 
 USER ${USER_UID}
