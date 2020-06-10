@@ -6,7 +6,7 @@ require (
 	github.com/go-logr/logr v0.1.0
 	github.com/onsi/ginkgo v1.12.2
 	github.com/onsi/gomega v1.10.1
-	github.com/operator-framework/operator-sdk v0.17.1-0.20200520173737-ab7109512243
+	github.com/operator-framework/operator-sdk v0.18.1
 	github.com/spf13/pflag v1.0.5
 	golang.org/x/sys v0.0.0-20200523222454-059865788121 // indirect
 	k8s.io/api v0.18.2
