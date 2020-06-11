@@ -1,0 +1,40 @@
+apiVersion: access-manager.io/v1beta1
+kind: RbacDefinition
+metadata:
+  name: example-rolebindings
+spec:
+  namespaced:
+  - namespace:
+      name: my-product
+    bindings:
+    - roleName: my-product-management
+      kind: Role
+      subjects:
+      - name: my-product-team
+        kind: Group
+      - name: devops-team
+        kind: Group
+  - namespaceSelector:
+      matchLabels:
+        ci: "true"
+    bindings:
+    - roleName: ci-deploy
+      kind: ClusterRole
+      subjects:
+      - name: ci
+        namespace: ci-service
+        kind: ServiceAccount
+  - namespaceSelector:
+      matchExpressions:
+        - key: customer
+          operator: In
+          values:
+            - customer1
+            - customer2
+    bindings:
+    - name: customer-rolebinding
+      roleName: customer-role
+      kind: ClusterRole
+      subjects:
+      - name: customer
+        kind: Group

@@ -1,0 +1,11 @@
+apiVersion: access-manager.io/v1beta1
+kind: RbacDefinition
+metadata:
+  name: example-clusterrolebindings
+spec:
+  cluster:
+  - name: global-group-binding
+    clusterRoleName: view
+    subjects:
+      - name: admin
+        kind: Group
