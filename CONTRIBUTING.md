@@ -17,7 +17,7 @@ If you'd like to see a certain feature in access-manager, file an issue first wi
 
 1. Fork the repository.
 2. Setup the necessary dependencies (operator-sdk, kubebuilder, kind) and install the libraries.
-5. Make desired changes (including tests) and push.
+5. Make desired changes (including tests and docs) and push.
 6. Go to https://github.com/ckotzbauer/access-manager/compare?expand=1
 
 ## License
