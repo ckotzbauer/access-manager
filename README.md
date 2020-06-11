@@ -70,6 +70,8 @@ This would create the following objects:
 - A `RoleBinding` named `ci-deploy` in each namespace labeled with `ci: true` assigning the `ci-deploy` `ClusterRole` to the `ServiceAccount` `ci` in the `ci-service` namespace.
 - A `ClusterRoleBinding` named `john-view-binding` assigning the `view` `ClusterRole` to the `User` `john`.
 
+For more details, please read the [api-docs](https://github.com/ckotzbauer/access-manager/blob/master/docs/api.md) and view YAMLs in the `examples` directory.
+
 
 ## Behaviors
 
