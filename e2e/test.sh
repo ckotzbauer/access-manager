@@ -14,7 +14,7 @@ kind load docker-image ckotzbauer/access-manager:latest
 kubectl apply -f deploy/crds/rbacdefinition_crd.yaml
 kubectl apply -f deploy/
 
-sleep 5
+sleep 10
 OPERATOR_POD=$(kubectl get pod -l name=access-manager -o jsonpath='{.items[*].metadata.name}')
 kubectl wait --for=condition=Ready pod/$OPERATOR_POD
 
