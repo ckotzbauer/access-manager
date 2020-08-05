@@ -12,7 +12,7 @@ require (
     k8s.io/api v0.18.6
     k8s.io/apimachinery v0.18.6
     k8s.io/client-go v12.0.0+incompatible
-    sigs.k8s.io/controller-runtime v0.6.1
+    sigs.k8s.io/controller-runtime v0.6.2
 )
 
 replace (
