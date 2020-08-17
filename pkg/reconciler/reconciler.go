@@ -12,6 +12,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
 	accessmanagerv1beta1 "access-manager/pkg/apis/accessmanager/v1beta1"
+	"access-manager/pkg/metrics"
 	"access-manager/pkg/util"
 
 	corev1 "k8s.io/api/core/v1"
@@ -58,6 +59,8 @@ func (r *Reconciler) ReconcileNamespace(instance *corev1.Namespace) (reconcile.R
 
 // ReconcileRbacDefinition applies all desired changes of the RbacDefinition
 func (r *Reconciler) ReconcileRbacDefinition(instance *accessmanagerv1beta1.RbacDefinition) (reconcile.Result, error) {
+	metrics.ResetRbacDefinition(instance.Name)
+
 	// Define all (Cluster)RoleBindings objects
 	roleBindings := r.BuildAllRoleBindings(instance)
 	clusterRoleBindings := r.BuildAllClusterRoleBindings(instance)
@@ -73,7 +76,7 @@ func (r *Reconciler) ReconcileRbacDefinition(instance *accessmanagerv1beta1.Rbac
 			continue
 		}
 
-		if _, err := r.CreateOrRecreateRoleBinding(rb); err != nil {
+		if _, err := r.CreateOrRecreateRoleBinding(rb, instance.Name); err != nil {
 			r.Logger.WithValues("RoleBinding", rb.Namespace+"/"+rb.Name).Error(err, "Failed to reconcile RoleBinding.")
 		}
 	}
@@ -85,7 +88,7 @@ func (r *Reconciler) ReconcileRbacDefinition(instance *accessmanagerv1beta1.Rbac
 			continue
 		}
 
-		if _, err := r.CreateOrRecreateClusterRoleBinding(crb); err != nil {
+		if _, err := r.CreateOrRecreateClusterRoleBinding(crb, instance.Name); err != nil {
 			r.Logger.WithValues("ClusterRoleBinding", crb.Name).Error(err, "Failed to reconcile ClusterRoleBinding.")
 		}
 	}
@@ -94,7 +97,7 @@ func (r *Reconciler) ReconcileRbacDefinition(instance *accessmanagerv1beta1.Rbac
 }
 
 // CreateOrRecreateRoleBinding creates a new or recreates a existing RoleBinding
-func (r *Reconciler) CreateOrRecreateRoleBinding(rb rbacv1.RoleBinding) (*rbacv1.RoleBinding, error) {
+func (r *Reconciler) CreateOrRecreateRoleBinding(rb rbacv1.RoleBinding, defName string) (*rbacv1.RoleBinding, error) {
 	existing, err := r.Client.RbacV1().RoleBindings(rb.Namespace).Get(context.TODO(), rb.Name, metav1.GetOptions{})
 	if err == nil {
 		if !r.HasRbacDefinitionOwner(existing.OwnerReferences) {
@@ -107,16 +110,24 @@ func (r *Reconciler) CreateOrRecreateRoleBinding(rb rbacv1.RoleBinding) (*rbacv1
 		if err != nil {
 			return nil, err
 		}
+
+		metrics.AddGauge(rb.Namespace, "RoleBinding", defName, -1)
 	} else if err != nil && !errors.IsNotFound(err) {
 		return nil, err
 	}
 
 	r.Logger.Info("Creating new RoleBinding", "RoleBinding.Namespace", rb.Namespace, "RoleBinding.Name", rb.Name)
-	return r.Client.RbacV1().RoleBindings(rb.Namespace).Create(context.TODO(), &rb, metav1.CreateOptions{})
+	created, err := r.Client.RbacV1().RoleBindings(rb.Namespace).Create(context.TODO(), &rb, metav1.CreateOptions{})
+
+	if err == nil {
+		metrics.AddGauge(rb.Namespace, "RoleBinding", defName, 1)
+	}
+
+	return created, err
 }
 
 // CreateOrRecreateClusterRoleBinding creates a new or recreates a existing ClusterRoleBinding
-func (r *Reconciler) CreateOrRecreateClusterRoleBinding(crb rbacv1.ClusterRoleBinding) (*rbacv1.ClusterRoleBinding, error) {
+func (r *Reconciler) CreateOrRecreateClusterRoleBinding(crb rbacv1.ClusterRoleBinding, defName string) (*rbacv1.ClusterRoleBinding, error) {
 	existing, err := r.Client.RbacV1().ClusterRoleBindings().Get(context.TODO(), crb.Name, metav1.GetOptions{})
 	if err == nil {
 		if !r.HasRbacDefinitionOwner(existing.OwnerReferences) {
@@ -129,12 +140,20 @@ func (r *Reconciler) CreateOrRecreateClusterRoleBinding(crb rbacv1.ClusterRoleBi
 		if err != nil {
 			return nil, err
 		}
+
+		metrics.AddGauge("", "ClusterRoleBinding", defName, -1)
 	} else if err != nil && !errors.IsNotFound(err) {
 		return nil, err
 	}
 
 	r.Logger.Info("Creating new ClusterRoleBinding", "ClusterRoleBinding.Name", crb.Name)
-	return r.Client.RbacV1().ClusterRoleBindings().Create(context.TODO(), &crb, metav1.CreateOptions{})
+	created, err := r.Client.RbacV1().ClusterRoleBindings().Create(context.TODO(), &crb, metav1.CreateOptions{})
+
+	if err == nil {
+		metrics.AddGauge("", "ClusterRoleBinding", defName, 1)
+	}
+
+	return created, err
 }
 
 // BuildAllRoleBindings returns an array of RoleBindings for the given RbacDefinition
@@ -254,6 +273,8 @@ func (r *Reconciler) DeleteOwnedRoleBindings(namespace string, def accessmanager
 				if err != nil {
 					return err
 				}
+
+				metrics.AddGauge(rb.Namespace, "RoleBinding", def.Name, -1)
 			}
 		}
 	}

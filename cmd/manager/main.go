@@ -13,6 +13,7 @@ import (
 
 	"access-manager/pkg/apis"
 	"access-manager/pkg/controller"
+	"access-manager/pkg/metrics"
 
 	"github.com/operator-framework/operator-sdk/pkg/k8sutil"
 	"github.com/operator-framework/operator-sdk/pkg/leader"
@@ -125,6 +126,8 @@ func main() {
 		log.Error(err, "")
 		os.Exit(1)
 	}
+
+	metrics.InitMetrics(Version, metricsHost, metricsPort)
 
 	log.Info("Starting the Cmd.")
 

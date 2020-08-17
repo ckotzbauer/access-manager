@@ -388,7 +388,7 @@ var _ = Describe("Reconciler", func() {
 				Subjects: []rbacv1.Subject{{APIGroup: "", Kind: "ServiceAccount", Name: "default", Namespace: "default"}},
 			}
 
-			_, err := rec.CreateOrRecreateClusterRoleBinding(crb)
+			_, err := rec.CreateOrRecreateClusterRoleBinding(crb, "")
 			Expect(err).NotTo(HaveOccurred())
 
 			_, err = clientset.RbacV1().ClusterRoleBindings().Get(ctx, crb.Name, metav1.GetOptions{})
@@ -406,7 +406,7 @@ var _ = Describe("Reconciler", func() {
 				Subjects: []rbacv1.Subject{{APIGroup: "", Kind: "ServiceAccount", Name: "ci", Namespace: "default"}},
 			}
 
-			_, err := rec.CreateOrRecreateClusterRoleBinding(crb)
+			_, err := rec.CreateOrRecreateClusterRoleBinding(crb, "")
 			Expect(err).NotTo(HaveOccurred())
 
 			updated, err := clientset.RbacV1().ClusterRoleBindings().Get(ctx, crb.Name, metav1.GetOptions{})
@@ -428,7 +428,7 @@ var _ = Describe("Reconciler", func() {
 				Subjects: []rbacv1.Subject{{APIGroup: "", Kind: "ServiceAccount", Name: "default", Namespace: "default"}},
 			}
 
-			_, err := rec.CreateOrRecreateRoleBinding(rb)
+			_, err := rec.CreateOrRecreateRoleBinding(rb, "")
 			Expect(err).NotTo(HaveOccurred())
 
 			_, err = clientset.RbacV1().RoleBindings("default").Get(ctx, rb.Name, metav1.GetOptions{})
@@ -446,7 +446,7 @@ var _ = Describe("Reconciler", func() {
 				Subjects: []rbacv1.Subject{{APIGroup: "", Kind: "ServiceAccount", Name: "ci", Namespace: "default"}},
 			}
 
-			_, err := rec.CreateOrRecreateRoleBinding(rb)
+			_, err := rec.CreateOrRecreateRoleBinding(rb, "")
 			Expect(err).NotTo(HaveOccurred())
 
 			updated, err := clientset.RbacV1().RoleBindings("default").Get(ctx, rb.Name, metav1.GetOptions{})

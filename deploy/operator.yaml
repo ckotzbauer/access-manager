@@ -37,6 +37,9 @@ spec:
             limits:
               cpu: 50m
               memory: 128Mi
+          ports:
+            - containerPort: 8383
+              name: metrics
           securityContext:
             privileged: false
             runAsUser: 1001
