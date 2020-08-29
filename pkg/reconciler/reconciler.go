@@ -11,7 +11,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
-	accessmanagerv1beta1 "access-manager/pkg/apis/accessmanager/v1beta1"
+	accessmanagerv1beta1 "access-manager/api/v1beta1"
 	"access-manager/pkg/util"
 
 	corev1 "k8s.io/api/core/v1"
