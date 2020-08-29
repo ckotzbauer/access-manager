@@ -26,6 +26,7 @@ jobs:
   e2e-test:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         kubernetes-version:
           - 1.17.5

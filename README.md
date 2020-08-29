@@ -1,6 +1,6 @@
 # access-manager
 
-[![Build Status](https://travis-ci.com/ckotzbauer/access-manager.svg?branch=master)](https://travis-ci.com/ckotzbauer/access-manager)
+![test](https://github.com/ckotzbauer/access-manager/workflows/test/badge.svg?branch=master)
 
 The Access-Manager is a Kubernetes-Operator using the [Operator-SDK](https://github.com/operator-framework/operator-sdk) to simplify complex [RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) configurations in your cluster.
 
