@@ -15,8 +15,9 @@ The idea for this came up, when managing many different RBAC-Roles on namespace-
 #### Manifests
 
 ```
-kubectl apply -f deploy/crds/rbacdefinition_crd.yaml
-kubectl apply -f deploy/
+kubectl apply -f config/crd/rbacdefinitions.access-manager.io_rbacdefinitions.yaml
+kubectl apply -f config/rbac
+kubectl apply -f config/manager
 ```
 
 #### Helm-Chart
@@ -31,7 +32,7 @@ helm install ckotzbauer/access-manager
 The `RbacDefinition` itself is cluster-scoped.
 
 ```yaml
-apiVersion: access-manager.io/v1beta1
+apiVersion: rbacdefinitions.access-manager.io/v1beta1
 kind: RbacDefinition
 metadata:
   name: example-definition

@@ -8,11 +8,10 @@ kind create cluster
 kind get kubeconfig >e2e/kind-kubeconfig
 export KUBECONFIG=e2e/kind-kubeconfig
 
-operator-sdk build ckotzbauer/access-manager:latest
+make docker-build
 kind load docker-image ckotzbauer/access-manager:latest
 
-kubectl apply -f deploy/crds/rbacdefinition_crd.yaml
-kubectl apply -f deploy/
+make install deploy
 
 sleep 10
 OPERATOR_POD=$(kubectl get pod -l name=access-manager -o jsonpath='{.items[*].metadata.name}')

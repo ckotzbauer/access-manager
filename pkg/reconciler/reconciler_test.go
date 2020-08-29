@@ -1,12 +1,13 @@
 package reconciler_test
 
 import (
-	accessmanagerv1beta1 "access-manager/pkg/apis/accessmanager/v1beta1"
+	accessmanagerv1beta1 "access-manager/api/v1beta1"
 	"access-manager/pkg/reconciler"
 	"access-manager/pkg/util"
 	"context"
 	"fmt"
 	"sync/atomic"
+	"testing"
 
 	"github.com/go-logr/logr"
 	. "github.com/onsi/ginkgo"
@@ -16,9 +17,41 @@ import (
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/client-go/kubernetes"
 	kscheme "k8s.io/client-go/kubernetes/scheme"
+	"sigs.k8s.io/controller-runtime/pkg/envtest"
 	"sigs.k8s.io/controller-runtime/pkg/log"
+	logf "sigs.k8s.io/controller-runtime/pkg/log"
+	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 )
+
+func TestReconciliation(t *testing.T) {
+	RegisterFailHandler(Fail)
+	RunSpecs(t, "Reconciliation Suite")
+}
+
+var testenv *envtest.Environment
+var clientset *kubernetes.Clientset
+
+var _ = BeforeSuite(func(done Done) {
+	logf.SetLogger(zap.LoggerTo(GinkgoWriter, true))
+
+	testenv = &envtest.Environment{}
+
+	var err error
+	cfg, err := testenv.Start()
+	Expect(err).NotTo(HaveOccurred())
+
+	clientset, err = kubernetes.NewForConfig(cfg)
+	Expect(err).NotTo(HaveOccurred())
+	Expect(clientset).NotTo(BeNil())
+
+	close(done)
+}, 60)
+
+var _ = AfterSuite(func() {
+	Expect(testenv.Stop()).To(Succeed())
+})
 
 func createNamespaces(ctx context.Context, nss ...*corev1.Namespace) {
 	for _, ns := range nss {

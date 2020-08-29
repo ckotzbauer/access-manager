@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: access-manager
+  labels:
+    name: access-manager
+spec:
+  selector:
+    matchLabels:
+      name: access-manager
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: access-manager
+    spec:
+      serviceAccountName: access-manager
+      containers:
+      - name: manager
+        image: ckotzbauer/access-manager:latest
+        imagePullPolicy: IfNotPresent
+        args:
+        - --enable-leader-election
+        resources:
+          requests:
+            cpu: 10m
+            memory: 128Mi
+          limits:
+            cpu: 50m
+            memory: 128Mi
+        securityContext:
+          privileged: false
+          runAsUser: 1001
+          runAsNonRoot: false
