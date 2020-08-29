@@ -8,6 +8,19 @@ The Access-Manager is a Kubernetes-Operator using the [Operator-SDK](https://git
 
 The idea for this came up, when managing many different RBAC-Roles on namespace-basis. This was getting more complex over time, and the administrator always has to ensure that the correct roles are applied for different people or ServiceAccounts in multiple namespaces. The scope of the operator is limited to the creation and removal of `RoleBinding`s and `ClusterRoleBinding`s. So all referenced `Role`s and `ClusterRole`s have to exist. Let's automate it.
 
+## Kubernetes & OS Compatibility
+
+The image contains versions of `k8s.io/client-go`. Kubernetes aims to provide forwards & backwards compatibility of one minor version between client and server:
+
+| access-manager  | k8s.io/client-go | k8s.io/apimachinery | expected kubernetes compatibility |
+|-----------------|------------------|---------------------|-----------------------------------|
+| master          | v0.18.8          | v0.18.8             | 1.17.x, 1.18.x, 1.19.x            |
+| 0.2.0           | v12.0.0          | v0.18.5             | 1.17.x, 1.18.x, 1.19.x            |
+| 0.1.0           | v12.0.0          | v0.18.3             | 1.17.x, 1.18.x, 1.19.x            |
+
+See the [release notes](https://github.com/ckotzbauer/access-manager/releases) for specific version compatibility information, including which
+combination have been formally tested.
+
 ## Installation
 
 **Note:** The `ServiceAccount` must have at least the permissions that it should grant. The `cluster-admin` `ClusterRole` is assigned to the `ServiceAccount` by default.
