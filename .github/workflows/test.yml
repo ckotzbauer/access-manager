@@ -1,0 +1,47 @@
+name: test
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  unit-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.14.7'
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: "0"
+      - name: Execute Tests
+        run: |
+          curl -L https://go.kubebuilder.io/dl/2.3.1/linux/amd64 | tar -xz -C /tmp/ && sudo mv /tmp/kubebuilder_2.3.1_linux_amd64 /usr/local/kubebuilder
+          make test
+
+
+  e2e-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        kubernetes-version:
+          - 1.17.5
+          - 1.18.8
+          - 1.19.0
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.14.7'
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: "0"
+      - name: Execute Tests
+        run: |
+          curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.19.0/bin/linux/amd64/kubectl && chmod +x kubectl && sudo mv kubectl /usr/local/bin/
+          curl -LO https://github.com/operator-framework/operator-sdk/releases/download/v1.0.0/operator-sdk-v1.0.0-x86_64-linux-gnu && mv operator-sdk-v1.0.0-x86_64-linux-gnu operator-sdk && chmod +x operator-sdk && sudo mv operator-sdk /usr/local/bin/
+          make test -e K8S_VERSION=${{ matrix.kubernetes-version }}

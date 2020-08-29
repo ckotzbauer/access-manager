@@ -1,10 +1,12 @@
 #!/bin/bash
 set -eu
 
+K8S_VERSION=$1
+
 cd ..
 
 GO111MODULE=off go get sigs.k8s.io/kind
-kind create cluster
+kind create cluster --image kindest/node:v${K8S_VERSION}
 kind get kubeconfig >e2e/kind-kubeconfig
 export KUBECONFIG=e2e/kind-kubeconfig
 

@@ -6,6 +6,9 @@ IMG ?= ckotzbauer/access-manager:latest
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
 CRD_OPTIONS ?= "crd:trivialVersions=true"
 
+# default k8s version for e2e tests
+K8S_VERSION ?= 1.19.0
+
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
 GOBIN=$(shell go env GOPATH)/bin
@@ -22,7 +25,7 @@ test: generate fmt vet manifests
 # Run e2e-tests
 e2e-test:
 	cd e2e && \
-	bash test.sh
+	bash test.sh $(K8S_VERSION)
 
 # Build manager binary
 manager: generate fmt vet
