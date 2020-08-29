@@ -1,7 +1,6 @@
 #!/bin/bash
 set -eu
 
-# used for matrix ci build
 K8S_VERSION=$1
 
 cd ..
