@@ -28,7 +28,7 @@ combination have been formally tested.
 #### Manifests
 
 ```
-kubectl apply -f config/crd/rbacdefinitions.access-manager.io_rbacdefinitions.yaml
+kubectl apply -f config/crd/access-manager.io_rbacdefinitions.yaml
 kubectl apply -f config/rbac
 kubectl apply -f config/manager
 ```
@@ -45,7 +45,7 @@ helm install ckotzbauer/access-manager
 The `RbacDefinition` itself is cluster-scoped.
 
 ```yaml
-apiVersion: rbacdefinitions.access-manager.io/v1beta1
+apiVersion: access-manager.io/v1beta1
 kind: RbacDefinition
 metadata:
   name: example-definition

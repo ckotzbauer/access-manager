@@ -1,4 +1,4 @@
-apiVersion: rbacdefinitions.access-manager.io/v1beta1
+apiVersion: access-manager.io/v1beta1
 kind: RbacDefinition
 metadata:
   name: example-clusterrolebindings

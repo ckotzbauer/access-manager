@@ -6,9 +6,9 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.4.0
   creationTimestamp: null
-  name: rbacdefinitions.rbacdefinitions.access-manager.io
+  name: rbacdefinitions.access-manager.io
 spec:
-  group: rbacdefinitions.access-manager.io
+  group: access-manager.io
   names:
     kind: RbacDefinition
     listKind: RbacDefinitionList

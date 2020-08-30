@@ -25,7 +25,7 @@ import (
 
 var (
 	rbacDefGVR = schema.GroupVersionResource{
-		Group:    "rbacdefinitions.access-manager.io",
+		Group:    "access-manager.io",
 		Version:  "v1beta1",
 		Resource: "rbacdefinitions",
 	}
