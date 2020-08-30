@@ -1,8 +1,8 @@
 # Current Operator version
-VERSION ?= 0.3.0
+VERSION ?= $(shell git describe --tags)
 
 # Image URL to use all building/pushing image targets
-IMG ?= ckotzbauer/access-manager:latest
+IMG ?= ckotzbauer/access-manager
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
 CRD_OPTIONS ?= "crd:trivialVersions=true"
 
@@ -66,11 +66,13 @@ generate: controller-gen
 
 # Build the docker image
 docker-build: manager
-	docker build . -t ${IMG}
+	docker build . -t $(IMG):latest
+	docker tag $(IMG):latest $(IMG):$(VERSION)
 
 # Push the docker image
 docker-push:
-	docker push ${IMG}
+	docker push $(IMG):latest
+	docker push $(IMG):$(VERSION)
 
 # find or download controller-gen
 # download controller-gen if necessary
