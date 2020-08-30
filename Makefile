@@ -66,13 +66,17 @@ generate: controller-gen
 
 # Build the docker image
 docker-build: manager
-	docker build . -t $(IMG):latest
-	docker tag $(IMG):latest $(IMG):$(VERSION)
+	docker build . -t $(IMG):$(VERSION)
 
 # Push the docker image
 docker-push:
-	docker push $(IMG):latest
 	docker push $(IMG):$(VERSION)
+
+# Promote docker image to latest
+promote-docker-image:
+	docker pull $(IMG):$(VERSION)
+	docker tag $(IMG):$(VERSION) $(IMG):latest
+	docker push $(IMG):latest
 
 # find or download controller-gen
 # download controller-gen if necessary
