@@ -25,6 +25,6 @@ jobs:
         uses: "pascalgn/automerge-action@a6eda95628e71aa97719c9e111847402fa9d476a"
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-          MERGE_LABELS: "approved,!work-in-progress"
+          MERGE_LABELS: "approved,!work-in-progress,!hold"
           MERGE_METHOD: "rebase"
           MERGE_DELETE_BRANCH: "true"
