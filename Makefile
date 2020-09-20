@@ -7,7 +7,7 @@ IMG ?= ckotzbauer/access-manager
 CRD_OPTIONS ?= "crd:trivialVersions=true"
 
 # default k8s version for e2e tests
-K8S_VERSION ?= 1.19.0
+K8S_VERSION ?= 1.19.1
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
@@ -23,9 +23,9 @@ test: generate fmt vet manifests
 	go test access-manager/pkg/reconciler -coverprofile cover.out
 
 # Run e2e-tests
-e2e-test:
+e2e-test: kind
 	cd e2e && \
-	bash test.sh $(K8S_VERSION)
+	bash test.sh $(KIND) $(K8S_VERSION)
 
 # Build manager binary
 manager: generate fmt vet
@@ -94,3 +94,21 @@ CONTROLLER_GEN=$(GOBIN)/controller-gen
 else
 CONTROLLER_GEN=$(shell which controller-gen)
 endif
+
+# find or download kind
+# download kind if necessary
+kind:
+ifeq (, $(shell which kind))
+	@{ \
+	set -e ;\
+	KIND_TMP_DIR=$$(mktemp -d) ;\
+	cd $$KIND_TMP_DIR ;\
+	go mod init tmp ;\
+	go get sigs.k8s.io/kind@v0.9.0 ;\
+	rm -rf $$KIND_TMP_DIR ;\
+	}
+KIND=$(GOBIN)/kind
+else
+KIND=$(shell which kind)
+endif
+
