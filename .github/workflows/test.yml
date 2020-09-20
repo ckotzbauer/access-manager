@@ -49,7 +49,7 @@ jobs:
           chmod +x kubectl
           sudo mv kubectl /usr/local/bin/
           curl -LO https://github.com/operator-framework/operator-sdk/releases/download/v1.0.1/operator-sdk-v1.0.1-x86_64-linux-gnu
-          mv operator-sdk-v1.0.0-x86_64-linux-gnu operator-sdk
+          mv operator-sdk-v1.0.1-x86_64-linux-gnu operator-sdk
           chmod +x operator-sdk
           sudo mv operator-sdk /usr/local/bin/
           make e2e-test -e K8S_VERSION=${{ matrix.kubernetes-version }}
