@@ -26,6 +26,9 @@ type BindingsSpec struct {
 	RoleName string           `json:"roleName"`
 	Kind     string           `json:"kind"`
 	Subjects []rbacv1.Subject `json:"subjects"`
+	// +kubebuilder:default=false
+	// +kubebuilder:validation:Optional
+	AllServiceAccounts bool `json:"allServiceAccounts"`
 }
 
 type NamespaceSpec struct {

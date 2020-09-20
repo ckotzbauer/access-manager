@@ -155,6 +155,12 @@ func (r *Reconciler) BuildAllRoleBindings(cr *accessmanagerv1beta1.RbacDefinitio
 					name = bindingSpec.RoleName
 				}
 
+				subjects := bindingSpec.Subjects
+
+				if bindingSpec.AllServiceAccounts {
+					subjects = r.AppendServiceAccountSubjects(r.GetServiceAccounts(ns.Name), subjects)
+				}
+
 				roleBinding := rbacv1.RoleBinding{
 					ObjectMeta: metav1.ObjectMeta{
 						Name:      name,
@@ -164,7 +170,7 @@ func (r *Reconciler) BuildAllRoleBindings(cr *accessmanagerv1beta1.RbacDefinitio
 						Name: bindingSpec.RoleName,
 						Kind: bindingSpec.Kind,
 					},
-					Subjects: bindingSpec.Subjects,
+					Subjects: subjects,
 				}
 
 				bindingObjects = append(bindingObjects, roleBinding)
@@ -270,4 +276,30 @@ func (r *Reconciler) HasRbacDefinitionOwner(refs []metav1.OwnerReference) bool {
 	}
 
 	return false
+}
+
+func (r *Reconciler) GetServiceAccounts(ns string) []corev1.ServiceAccount {
+	accountList, err := r.Client.CoreV1().ServiceAccounts(ns).List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		r.Logger.WithValues("NsName", ns).Error(err, "Could not list ServiceAccounts in namespace.")
+		return nil
+	}
+
+	return accountList.Items
+}
+
+func (r *Reconciler) AppendServiceAccountSubjects(accounts []corev1.ServiceAccount, subjects []rbacv1.Subject) []rbacv1.Subject {
+	for _, account := range accounts {
+		subject := rbacv1.Subject{
+			APIGroup: "rbac.authorization.k8s.io",
+			Kind:     "ServiceAccount",
+			Name:     account.Name,
+		}
+
+		if !util.ContainsSubject(subjects, subject) {
+			subjects = append(subjects, subject)
+		}
+	}
+
+	return subjects
 }
