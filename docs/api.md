@@ -21,6 +21,7 @@ BindingsSpec defines the name and "body" of a RoleBinding.
 | name | Name of the RoleBinding. Optional, if not set `roleName` is used. | string | false |
 | roleName | Name of the Role or ClusterRole to reference. | string | true |
 | kind | Kind of the `roleName` Either `Role` or `ClusterRole`. | string | true |
+| allServiceAccounts | Whether all `ServiceAccount`s of this namespace should be included as subjects. | bool | false |
 | subjects | List of RBAC-Subjects. | [][rbacv1.Subject](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#subject-v1-rbac-authorization-k8s-io) | true |
 
 [Back to TOC](#table-of-contents)

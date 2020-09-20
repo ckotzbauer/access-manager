@@ -63,6 +63,16 @@ func createNamespaces(ctx context.Context, nss ...*corev1.Namespace) {
 	}
 }
 
+func createServiceAccounts(ctx context.Context, accounts ...*corev1.ServiceAccount) {
+	for _, account := range accounts {
+		_, err := clientset.CoreV1().ServiceAccounts(account.Namespace).Get(ctx, account.Name, metav1.GetOptions{})
+		if err != nil && errors.IsNotFound(err) {
+			account, err = clientset.CoreV1().ServiceAccounts(account.Namespace).Create(ctx, account, metav1.CreateOptions{})
+			Expect(err).NotTo(HaveOccurred())
+		}
+	}
+}
+
 func createClusterRoleBinding(ctx context.Context, crb *rbacv1.ClusterRoleBinding) {
 	_, err := clientset.RbacV1().ClusterRoleBindings().Get(ctx, crb.Name, metav1.GetOptions{})
 	if err != nil && errors.IsNotFound(err) {
@@ -83,6 +93,9 @@ var _ = Describe("Reconciler", func() {
 	var namespace1 *corev1.Namespace
 	var namespace2 *corev1.Namespace
 	var namespace3 *corev1.Namespace
+	var namespace4 *corev1.Namespace
+	var serviceAccount1 *corev1.ServiceAccount
+	var serviceAccount2 *corev1.ServiceAccount
 	var roleBinding *rbacv1.RoleBinding
 	var count uint64 = 0
 	var scheme *runtime.Scheme
@@ -114,6 +127,13 @@ var _ = Describe("Reconciler", func() {
 			},
 			Spec: corev1.NamespaceSpec{},
 		}
+		namespace4 = &corev1.Namespace{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:   fmt.Sprintf("ns-four-%v", count),
+				Labels: map[string]string{"team": fmt.Sprintf("four-%v", count)},
+			},
+			Spec: corev1.NamespaceSpec{},
+		}
 		clusterRoleBinding := rbacv1.ClusterRoleBinding{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:            fmt.Sprintf("existing-crb-%v", count),
@@ -136,13 +156,26 @@ var _ = Describe("Reconciler", func() {
 			},
 			Subjects: []rbacv1.Subject{{APIGroup: "", Kind: "ServiceAccount", Name: "default", Namespace: "default"}},
 		}
+		serviceAccount1 = &corev1.ServiceAccount{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      fmt.Sprintf("one-%v", count),
+				Namespace: fmt.Sprintf("ns-four-%v", count),
+			},
+		}
+		serviceAccount2 = &corev1.ServiceAccount{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      fmt.Sprintf("two-%v", count),
+				Namespace: fmt.Sprintf("ns-four-%v", count),
+			},
+		}
 
 		scheme = kscheme.Scheme
 		logger = log.Log.WithName("testLogger")
 		rec = &reconciler.Reconciler{Client: *clientset, Scheme: scheme, Logger: logger}
-		createNamespaces(ctx, namespace1, namespace2, namespace3)
+		createNamespaces(ctx, namespace1, namespace2, namespace3, namespace4)
 		createClusterRoleBinding(ctx, &clusterRoleBinding)
 		createRoleBinding(ctx, roleBinding)
+		createServiceAccounts(ctx, serviceAccount1, serviceAccount2)
 		close(done)
 	})
 
@@ -399,6 +432,89 @@ var _ = Describe("Reconciler", func() {
 					Subjects: []rbacv1.Subject{
 						{APIGroup: "rbac.authorization.k8s.io", Kind: "ServiceAccount", Name: "default"},
 						{APIGroup: "rbac.authorization.k8s.io", Kind: "ServiceAccount", Name: "ci"},
+					},
+				},
+			}
+
+			clusterRoles := rec.BuildAllRoleBindings(cr)
+			Expect(clusterRoles).NotTo(BeNil())
+			Expect(clusterRoles).To(BeEquivalentTo(expectedBindings))
+			close(done)
+		})
+
+		It("should return correct RoleBindings - allServiceAccounts 1", func(done Done) {
+			cr := &accessmanagerv1beta1.RbacDefinition{
+				Spec: accessmanagerv1beta1.RbacDefinitionSpec{
+					Namespaced: []accessmanagerv1beta1.NamespacedSpec{
+						{
+							NamespaceSelector: metav1.LabelSelector{MatchLabels: map[string]string{"team": fmt.Sprintf("four-%v", count)}},
+							Bindings: []accessmanagerv1beta1.BindingsSpec{
+								{
+									Kind:               "Role",
+									Name:               "my-awesome-rolebinding",
+									RoleName:           "test-role",
+									AllServiceAccounts: true,
+								},
+							},
+						},
+					},
+				},
+			}
+
+			expectedBindings := []rbacv1.RoleBinding{
+				{
+					ObjectMeta: metav1.ObjectMeta{Name: "my-awesome-rolebinding", Namespace: namespace4.Name},
+					RoleRef: rbacv1.RoleRef{
+						Name: "test-role",
+						Kind: "Role",
+					},
+					Subjects: []rbacv1.Subject{
+						{APIGroup: "rbac.authorization.k8s.io", Kind: "ServiceAccount", Name: fmt.Sprintf("one-%v", count)},
+						{APIGroup: "rbac.authorization.k8s.io", Kind: "ServiceAccount", Name: fmt.Sprintf("two-%v", count)},
+					},
+				},
+			}
+
+			clusterRoles := rec.BuildAllRoleBindings(cr)
+			Expect(clusterRoles).NotTo(BeNil())
+			Expect(clusterRoles).To(BeEquivalentTo(expectedBindings))
+			close(done)
+		})
+
+		It("should return correct RoleBindings - allServiceAccounts 2", func(done Done) {
+			cr := &accessmanagerv1beta1.RbacDefinition{
+				Spec: accessmanagerv1beta1.RbacDefinitionSpec{
+					Namespaced: []accessmanagerv1beta1.NamespacedSpec{
+						{
+							NamespaceSelector: metav1.LabelSelector{MatchLabels: map[string]string{"team": fmt.Sprintf("four-%v", count)}},
+							Bindings: []accessmanagerv1beta1.BindingsSpec{
+								{
+									Kind:               "Role",
+									Name:               "my-awesome-rolebinding",
+									RoleName:           "test-role",
+									AllServiceAccounts: true,
+									Subjects: []rbacv1.Subject{
+										{APIGroup: "rbac.authorization.k8s.io", Kind: "ServiceAccount", Name: fmt.Sprintf("one-%v", count)},
+										{APIGroup: "rbac.authorization.k8s.io", Kind: "ServiceAccount", Name: "myacc"},
+									},
+								},
+							},
+						},
+					},
+				},
+			}
+
+			expectedBindings := []rbacv1.RoleBinding{
+				{
+					ObjectMeta: metav1.ObjectMeta{Name: "my-awesome-rolebinding", Namespace: namespace4.Name},
+					RoleRef: rbacv1.RoleRef{
+						Name: "test-role",
+						Kind: "Role",
+					},
+					Subjects: []rbacv1.Subject{
+						{APIGroup: "rbac.authorization.k8s.io", Kind: "ServiceAccount", Name: fmt.Sprintf("one-%v", count)},
+						{APIGroup: "rbac.authorization.k8s.io", Kind: "ServiceAccount", Name: "myacc"},
+						{APIGroup: "rbac.authorization.k8s.io", Kind: "ServiceAccount", Name: fmt.Sprintf("two-%v", count)},
 					},
 				},
 			}
