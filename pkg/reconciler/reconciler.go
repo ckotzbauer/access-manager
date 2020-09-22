@@ -56,6 +56,31 @@ func (r *Reconciler) ReconcileNamespace(instance *corev1.Namespace) (reconcile.R
 	return reconcile.Result{}, nil
 }
 
+// ReconcileServiceAccount applies all desired changes of the ServiceAccount
+func (r *Reconciler) ReconcileServiceAccount(instance *corev1.ServiceAccount) (reconcile.Result, error) {
+	list := &accessmanagerv1beta1.RbacDefinitionList{}
+	err := r.ControllerClient.List(context.TODO(), list)
+
+	if err != nil {
+		r.Logger.Error(err, "Unexpected error occurred!")
+		return reconcile.Result{}, err
+	}
+
+	for _, def := range list.Items {
+		if def.Spec.Paused {
+			continue
+		}
+
+		_, err = r.ReconcileRbacDefinition(&def)
+
+		if err != nil {
+			return reconcile.Result{}, err
+		}
+	}
+
+	return reconcile.Result{}, nil
+}
+
 // ReconcileRbacDefinition applies all desired changes of the RbacDefinition
 func (r *Reconciler) ReconcileRbacDefinition(instance *accessmanagerv1beta1.RbacDefinition) (reconcile.Result, error) {
 	// Define all (Cluster)RoleBindings objects
@@ -97,8 +122,13 @@ func (r *Reconciler) ReconcileRbacDefinition(instance *accessmanagerv1beta1.Rbac
 func (r *Reconciler) CreateOrRecreateRoleBinding(rb rbacv1.RoleBinding) (*rbacv1.RoleBinding, error) {
 	existing, err := r.Client.RbacV1().RoleBindings(rb.Namespace).Get(context.TODO(), rb.Name, metav1.GetOptions{})
 	if err == nil {
-		if !r.HasRbacDefinitionOwner(existing.OwnerReferences) {
+		if !r.hasRbacDefinitionOwner(existing.OwnerReferences) {
 			r.Logger.Info("Existing RoleBinding is not owned by a RbacDefinition. Ignoring", "RoleBinding.Name", existing.Name)
+			return existing, nil
+		}
+
+		existing = util.RemoveAPIGroupFromRoleBinding(existing)
+		if util.IsRoleBindingEqual(*existing, rb) {
 			return existing, nil
 		}
 
@@ -119,8 +149,13 @@ func (r *Reconciler) CreateOrRecreateRoleBinding(rb rbacv1.RoleBinding) (*rbacv1
 func (r *Reconciler) CreateOrRecreateClusterRoleBinding(crb rbacv1.ClusterRoleBinding) (*rbacv1.ClusterRoleBinding, error) {
 	existing, err := r.Client.RbacV1().ClusterRoleBindings().Get(context.TODO(), crb.Name, metav1.GetOptions{})
 	if err == nil {
-		if !r.HasRbacDefinitionOwner(existing.OwnerReferences) {
+		if !r.hasRbacDefinitionOwner(existing.OwnerReferences) {
 			r.Logger.Info("Existing ClusterRoleBinding is not owned by a RbacDefinition. Ignoring", "ClusterRoleBinding.Name", existing.Name)
+			return existing, nil
+		}
+
+		existing = util.RemoveAPIGroupFromClusterRoleBinding(existing)
+		if util.IsClusterRoleBindingEqual(*existing, crb) {
 			return existing, nil
 		}
 
@@ -158,7 +193,11 @@ func (r *Reconciler) BuildAllRoleBindings(cr *accessmanagerv1beta1.RbacDefinitio
 				subjects := bindingSpec.Subjects
 
 				if bindingSpec.AllServiceAccounts {
-					subjects = r.AppendServiceAccountSubjects(r.GetServiceAccounts(ns.Name), subjects)
+					subjects = r.appendServiceAccountSubjects(r.getServiceAccounts(ns.Name), subjects)
+				}
+
+				if len(subjects) == 0 {
+					continue
 				}
 
 				roleBinding := rbacv1.RoleBinding{
@@ -190,6 +229,10 @@ func (r *Reconciler) BuildAllClusterRoleBindings(cr *accessmanagerv1beta1.RbacDe
 
 		if name == "" {
 			name = bindingSpec.ClusterRoleName
+		}
+
+		if len(bindingSpec.Subjects) == 0 {
+			continue
 		}
 
 		clusterRoleBinding := rbacv1.ClusterRoleBinding{
@@ -267,8 +310,7 @@ func (r *Reconciler) DeleteOwnedRoleBindings(namespace string, def accessmanager
 	return nil
 }
 
-// HasRbacDefinitionOwner returns true if any of the OwnerReferences references a RbacDefinition
-func (r *Reconciler) HasRbacDefinitionOwner(refs []metav1.OwnerReference) bool {
+func (r *Reconciler) hasRbacDefinitionOwner(refs []metav1.OwnerReference) bool {
 	for _, ref := range refs {
 		if ref.Kind == "RbacDefinition" {
 			return true
@@ -278,7 +320,7 @@ func (r *Reconciler) HasRbacDefinitionOwner(refs []metav1.OwnerReference) bool {
 	return false
 }
 
-func (r *Reconciler) GetServiceAccounts(ns string) []corev1.ServiceAccount {
+func (r *Reconciler) getServiceAccounts(ns string) []corev1.ServiceAccount {
 	accountList, err := r.Client.CoreV1().ServiceAccounts(ns).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		r.Logger.WithValues("NsName", ns).Error(err, "Could not list ServiceAccounts in namespace.")
@@ -288,12 +330,11 @@ func (r *Reconciler) GetServiceAccounts(ns string) []corev1.ServiceAccount {
 	return accountList.Items
 }
 
-func (r *Reconciler) AppendServiceAccountSubjects(accounts []corev1.ServiceAccount, subjects []rbacv1.Subject) []rbacv1.Subject {
+func (r *Reconciler) appendServiceAccountSubjects(accounts []corev1.ServiceAccount, subjects []rbacv1.Subject) []rbacv1.Subject {
 	for _, account := range accounts {
 		subject := rbacv1.Subject{
-			APIGroup: "rbac.authorization.k8s.io",
-			Kind:     "ServiceAccount",
-			Name:     account.Name,
+			Kind: "ServiceAccount",
+			Name: account.Name,
 		}
 
 		if !util.ContainsSubject(subjects, subject) {

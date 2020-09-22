@@ -99,6 +99,16 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "Namespace")
 		os.Exit(1)
 	}
+
+	if err = (&controllers.ServiceAccountReconciler{
+		Client: mgr.GetClient(),
+		Logger: ctrl.Log.WithName("controllers").WithName("Namespace"),
+		Scheme: mgr.GetScheme(),
+		Config: mgr.GetConfig(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "ServiceAccount")
+		os.Exit(1)
+	}
 	// +kubebuilder:scaffold:builder
 
 	setupLog.Info("starting access-manager")
