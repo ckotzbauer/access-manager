@@ -73,19 +73,23 @@ func createServiceAccounts(ctx context.Context, accounts ...*corev1.ServiceAccou
 	}
 }
 
-func createClusterRoleBinding(ctx context.Context, crb *rbacv1.ClusterRoleBinding) {
-	_, err := clientset.RbacV1().ClusterRoleBindings().Get(ctx, crb.Name, metav1.GetOptions{})
-	if err != nil && errors.IsNotFound(err) {
-		crb, err = clientset.RbacV1().ClusterRoleBindings().Create(ctx, crb, metav1.CreateOptions{})
-		Expect(err).NotTo(HaveOccurred())
+func createClusterRoleBindings(ctx context.Context, crbs ...*rbacv1.ClusterRoleBinding) {
+	for _, crb := range crbs {
+		_, err := clientset.RbacV1().ClusterRoleBindings().Get(ctx, crb.Name, metav1.GetOptions{})
+		if err != nil && errors.IsNotFound(err) {
+			crb, err = clientset.RbacV1().ClusterRoleBindings().Create(ctx, crb, metav1.CreateOptions{})
+			Expect(err).NotTo(HaveOccurred())
+		}
 	}
 }
 
-func createRoleBinding(ctx context.Context, rb *rbacv1.RoleBinding) {
-	_, err := clientset.RbacV1().RoleBindings("default").Get(ctx, rb.Name, metav1.GetOptions{})
-	if err != nil && errors.IsNotFound(err) {
-		rb, err = clientset.RbacV1().RoleBindings("default").Create(ctx, rb, metav1.CreateOptions{})
-		Expect(err).NotTo(HaveOccurred())
+func createRoleBindings(ctx context.Context, rbs ...*rbacv1.RoleBinding) {
+	for _, rb := range rbs {
+		_, err := clientset.RbacV1().RoleBindings("default").Get(ctx, rb.Name, metav1.GetOptions{})
+		if err != nil && errors.IsNotFound(err) {
+			rb, err = clientset.RbacV1().RoleBindings("default").Create(ctx, rb, metav1.CreateOptions{})
+			Expect(err).NotTo(HaveOccurred())
+		}
 	}
 }
 
@@ -94,9 +98,7 @@ var _ = Describe("Reconciler", func() {
 	var namespace2 *corev1.Namespace
 	var namespace3 *corev1.Namespace
 	var namespace4 *corev1.Namespace
-	var serviceAccount1 *corev1.ServiceAccount
-	var serviceAccount2 *corev1.ServiceAccount
-	var roleBinding *rbacv1.RoleBinding
+	var roleBinding1 *rbacv1.RoleBinding
 	var count uint64 = 0
 	var scheme *runtime.Scheme
 	var logger logr.Logger
@@ -134,9 +136,9 @@ var _ = Describe("Reconciler", func() {
 			},
 			Spec: corev1.NamespaceSpec{},
 		}
-		clusterRoleBinding := rbacv1.ClusterRoleBinding{
+		clusterRoleBinding1 := rbacv1.ClusterRoleBinding{
 			ObjectMeta: metav1.ObjectMeta{
-				Name:            fmt.Sprintf("existing-crb-%v", count),
+				Name:            fmt.Sprintf("existing-crb1-%v", count),
 				OwnerReferences: []metav1.OwnerReference{{Kind: "RbacDefinition", APIVersion: "access-manager.io/v1beta1", Controller: &flag, Name: "xx", UID: "123456"}},
 			},
 			RoleRef: rbacv1.RoleRef{
@@ -145,9 +147,19 @@ var _ = Describe("Reconciler", func() {
 			},
 			Subjects: []rbacv1.Subject{{APIGroup: "", Kind: "ServiceAccount", Name: "default", Namespace: "default"}},
 		}
-		roleBinding = &rbacv1.RoleBinding{
+		clusterRoleBinding2 := rbacv1.ClusterRoleBinding{
 			ObjectMeta: metav1.ObjectMeta{
-				Name:            fmt.Sprintf("existing-rb-%v", count),
+				Name: fmt.Sprintf("existing-crb2-%v", count),
+			},
+			RoleRef: rbacv1.RoleRef{
+				Name: "test-role",
+				Kind: "ClusterRole",
+			},
+			Subjects: []rbacv1.Subject{{APIGroup: "", Kind: "ServiceAccount", Name: "default", Namespace: "default"}},
+		}
+		roleBinding1 = &rbacv1.RoleBinding{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:            fmt.Sprintf("existing-rb1-%v", count),
 				OwnerReferences: []metav1.OwnerReference{{Kind: "RbacDefinition", APIVersion: "access-manager.io/v1beta1", Controller: &flag, Name: "xx", UID: "123456"}},
 			},
 			RoleRef: rbacv1.RoleRef{
@@ -156,13 +168,23 @@ var _ = Describe("Reconciler", func() {
 			},
 			Subjects: []rbacv1.Subject{{APIGroup: "", Kind: "ServiceAccount", Name: "default", Namespace: "default"}},
 		}
-		serviceAccount1 = &corev1.ServiceAccount{
+		roleBinding2 := &rbacv1.RoleBinding{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: fmt.Sprintf("existing-rb2-%v", count),
+			},
+			RoleRef: rbacv1.RoleRef{
+				Name: "test-role",
+				Kind: "ClusterRole",
+			},
+			Subjects: []rbacv1.Subject{{APIGroup: "", Kind: "ServiceAccount", Name: "default", Namespace: "default"}},
+		}
+		serviceAccount1 := &corev1.ServiceAccount{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      fmt.Sprintf("one-%v", count),
 				Namespace: fmt.Sprintf("ns-four-%v", count),
 			},
 		}
-		serviceAccount2 = &corev1.ServiceAccount{
+		serviceAccount2 := &corev1.ServiceAccount{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      fmt.Sprintf("two-%v", count),
 				Namespace: fmt.Sprintf("ns-four-%v", count),
@@ -173,8 +195,8 @@ var _ = Describe("Reconciler", func() {
 		logger = log.Log.WithName("testLogger")
 		rec = &reconciler.Reconciler{Client: *clientset, Scheme: scheme, Logger: logger}
 		createNamespaces(ctx, namespace1, namespace2, namespace3, namespace4)
-		createClusterRoleBinding(ctx, &clusterRoleBinding)
-		createRoleBinding(ctx, roleBinding)
+		createClusterRoleBindings(ctx, &clusterRoleBinding1, &clusterRoleBinding2)
+		createRoleBindings(ctx, roleBinding1, roleBinding2)
 		createServiceAccounts(ctx, serviceAccount1, serviceAccount2)
 		close(done)
 	})
@@ -221,6 +243,23 @@ var _ = Describe("Reconciler", func() {
 			cr := &accessmanagerv1beta1.RbacDefinition{
 				Spec: accessmanagerv1beta1.RbacDefinitionSpec{
 					Cluster: []accessmanagerv1beta1.ClusterSpec{},
+				},
+			}
+
+			clusterRoles := rec.BuildAllClusterRoleBindings(cr)
+			Expect(clusterRoles).To(BeEmpty())
+			close(done)
+		})
+
+		It("should return nothing if no subjects are provided", func(done Done) {
+			cr := &accessmanagerv1beta1.RbacDefinition{
+				Spec: accessmanagerv1beta1.RbacDefinitionSpec{
+					Cluster: []accessmanagerv1beta1.ClusterSpec{
+						{
+							ClusterRoleName: "test-role",
+							Subjects:        []rbacv1.Subject{},
+						},
+					},
 				},
 			}
 
@@ -310,6 +349,29 @@ var _ = Describe("Reconciler", func() {
 
 			roles := rec.BuildAllRoleBindings(cr)
 			Expect(roles).NotTo(BeNil())
+			Expect(roles).To(BeEmpty())
+			close(done)
+		})
+
+		It("should return empty array - no subjects", func(done Done) {
+			cr := &accessmanagerv1beta1.RbacDefinition{
+				Spec: accessmanagerv1beta1.RbacDefinitionSpec{
+					Namespaced: []accessmanagerv1beta1.NamespacedSpec{
+						{
+							NamespaceSelector: metav1.LabelSelector{MatchLabels: map[string]string{"team": fmt.Sprintf("one-%v", count)}},
+							Bindings: []accessmanagerv1beta1.BindingsSpec{
+								{
+									Kind:     "ClusterRole",
+									RoleName: "admin-role",
+									Subjects: []rbacv1.Subject{},
+								},
+							},
+						},
+					},
+				},
+			}
+
+			roles := rec.BuildAllRoleBindings(cr)
 			Expect(roles).To(BeEmpty())
 			close(done)
 		})
@@ -469,8 +531,8 @@ var _ = Describe("Reconciler", func() {
 						Kind: "Role",
 					},
 					Subjects: []rbacv1.Subject{
-						{APIGroup: "rbac.authorization.k8s.io", Kind: "ServiceAccount", Name: fmt.Sprintf("one-%v", count)},
-						{APIGroup: "rbac.authorization.k8s.io", Kind: "ServiceAccount", Name: fmt.Sprintf("two-%v", count)},
+						{APIGroup: "", Kind: "ServiceAccount", Name: fmt.Sprintf("one-%v", count)},
+						{APIGroup: "", Kind: "ServiceAccount", Name: fmt.Sprintf("two-%v", count)},
 					},
 				},
 			}
@@ -494,8 +556,8 @@ var _ = Describe("Reconciler", func() {
 									RoleName:           "test-role",
 									AllServiceAccounts: true,
 									Subjects: []rbacv1.Subject{
-										{APIGroup: "rbac.authorization.k8s.io", Kind: "ServiceAccount", Name: fmt.Sprintf("one-%v", count)},
-										{APIGroup: "rbac.authorization.k8s.io", Kind: "ServiceAccount", Name: "myacc"},
+										{APIGroup: "", Kind: "ServiceAccount", Name: fmt.Sprintf("one-%v", count)},
+										{APIGroup: "", Kind: "ServiceAccount", Name: "myacc"},
 									},
 								},
 							},
@@ -512,9 +574,9 @@ var _ = Describe("Reconciler", func() {
 						Kind: "Role",
 					},
 					Subjects: []rbacv1.Subject{
-						{APIGroup: "rbac.authorization.k8s.io", Kind: "ServiceAccount", Name: fmt.Sprintf("one-%v", count)},
-						{APIGroup: "rbac.authorization.k8s.io", Kind: "ServiceAccount", Name: "myacc"},
-						{APIGroup: "rbac.authorization.k8s.io", Kind: "ServiceAccount", Name: fmt.Sprintf("two-%v", count)},
+						{APIGroup: "", Kind: "ServiceAccount", Name: fmt.Sprintf("one-%v", count)},
+						{APIGroup: "", Kind: "ServiceAccount", Name: "myacc"},
+						{APIGroup: "", Kind: "ServiceAccount", Name: fmt.Sprintf("two-%v", count)},
 					},
 				},
 			}
@@ -547,7 +609,7 @@ var _ = Describe("Reconciler", func() {
 
 		It("should recreate a existing ClusterRoleBinding", func(done Done) {
 			crb := rbacv1.ClusterRoleBinding{
-				ObjectMeta: metav1.ObjectMeta{Name: fmt.Sprintf("existing-crb-%v", count)},
+				ObjectMeta: metav1.ObjectMeta{Name: fmt.Sprintf("existing-crb1-%v", count)},
 				RoleRef: rbacv1.RoleRef{
 					Name: "new-role",
 					Kind: "ClusterRole",
@@ -561,6 +623,31 @@ var _ = Describe("Reconciler", func() {
 			updated, err := clientset.RbacV1().ClusterRoleBindings().Get(ctx, crb.Name, metav1.GetOptions{})
 			Expect(updated.RoleRef.Name == "new-role").To(BeTrue())
 			Expect(updated.Subjects[0].Name == "ci").To(BeTrue())
+			Expect(err).NotTo(HaveOccurred())
+			close(done)
+		})
+
+		It("should not touch a unchanged ClusterRoleBinding", func(done Done) {
+			original, err := clientset.RbacV1().ClusterRoleBindings().Get(ctx, fmt.Sprintf("existing-crb2-%v", count), metav1.GetOptions{})
+			Expect(err).NotTo(HaveOccurred())
+
+			crb := rbacv1.ClusterRoleBinding{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      fmt.Sprintf("existing-crb2-%v", count),
+					Namespace: "default",
+				},
+				RoleRef: rbacv1.RoleRef{
+					Name: "test-role",
+					Kind: "ClusterRole",
+				},
+				Subjects: []rbacv1.Subject{{APIGroup: "", Kind: "ServiceAccount", Name: "default", Namespace: "default"}},
+			}
+
+			_, err = rec.CreateOrRecreateClusterRoleBinding(crb)
+			Expect(err).NotTo(HaveOccurred())
+
+			unchanged, err := clientset.RbacV1().ClusterRoleBindings().Get(ctx, crb.Name, metav1.GetOptions{})
+			Expect(unchanged.UID).To(BeEquivalentTo(original.UID))
 			Expect(err).NotTo(HaveOccurred())
 			close(done)
 		})
@@ -586,8 +673,11 @@ var _ = Describe("Reconciler", func() {
 		})
 
 		It("should recreate a existing RoleBinding", func(done Done) {
+			original, err := clientset.RbacV1().RoleBindings("default").Get(ctx, fmt.Sprintf("existing-rb1-%v", count), metav1.GetOptions{})
+			Expect(err).NotTo(HaveOccurred())
+
 			rb := rbacv1.RoleBinding{
-				ObjectMeta: metav1.ObjectMeta{Name: fmt.Sprintf("existing-rb-%v", count), Namespace: "default"},
+				ObjectMeta: metav1.ObjectMeta{Name: fmt.Sprintf("existing-rb1-%v", count), Namespace: "default"},
 				RoleRef: rbacv1.RoleRef{
 					Name: "new-role",
 					Kind: "ClusterRole",
@@ -595,12 +685,38 @@ var _ = Describe("Reconciler", func() {
 				Subjects: []rbacv1.Subject{{APIGroup: "", Kind: "ServiceAccount", Name: "ci", Namespace: "default"}},
 			}
 
-			_, err := rec.CreateOrRecreateRoleBinding(rb)
+			_, err = rec.CreateOrRecreateRoleBinding(rb)
 			Expect(err).NotTo(HaveOccurred())
 
 			updated, err := clientset.RbacV1().RoleBindings("default").Get(ctx, rb.Name, metav1.GetOptions{})
+			Expect(updated.UID).ToNot(BeEquivalentTo(original.UID))
 			Expect(updated.RoleRef.Name == "new-role").To(BeTrue())
 			Expect(updated.Subjects[0].Name == "ci").To(BeTrue())
+			Expect(err).NotTo(HaveOccurred())
+			close(done)
+		})
+
+		It("should not touch a unchanged RoleBinding", func(done Done) {
+			original, err := clientset.RbacV1().RoleBindings("default").Get(ctx, fmt.Sprintf("existing-rb2-%v", count), metav1.GetOptions{})
+			Expect(err).NotTo(HaveOccurred())
+
+			rb := rbacv1.RoleBinding{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      fmt.Sprintf("existing-rb2-%v", count),
+					Namespace: "default",
+				},
+				RoleRef: rbacv1.RoleRef{
+					Name: "test-role",
+					Kind: "ClusterRole",
+				},
+				Subjects: []rbacv1.Subject{{APIGroup: "", Kind: "ServiceAccount", Name: "default", Namespace: "default"}},
+			}
+
+			_, err = rec.CreateOrRecreateRoleBinding(rb)
+			Expect(err).NotTo(HaveOccurred())
+
+			unchanged, err := clientset.RbacV1().RoleBindings("default").Get(ctx, rb.Name, metav1.GetOptions{})
+			Expect(unchanged.UID).To(BeEquivalentTo(original.UID))
 			Expect(err).NotTo(HaveOccurred())
 			close(done)
 		})
@@ -642,7 +758,7 @@ var _ = Describe("Reconciler", func() {
 				},
 			}
 
-			createRoleBinding(ctx, &ownedRb)
+			createRoleBindings(ctx, &ownedRb)
 
 			err := rec.DeleteOwnedRoleBindings("default", *def)
 			Expect(err).NotTo(HaveOccurred())
@@ -650,7 +766,7 @@ var _ = Describe("Reconciler", func() {
 			_, err = clientset.RbacV1().RoleBindings("default").Get(ctx, ownedRb.Name, metav1.GetOptions{})
 			Expect(errors.IsNotFound(err)).To(BeTrue())
 
-			ex, err := clientset.RbacV1().RoleBindings("default").Get(ctx, roleBinding.Name, metav1.GetOptions{})
+			ex, err := clientset.RbacV1().RoleBindings("default").Get(ctx, roleBinding1.Name, metav1.GetOptions{})
 			Expect(err).NotTo(HaveOccurred())
 			Expect(ex).NotTo(BeNil())
 

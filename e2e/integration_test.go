@@ -45,6 +45,14 @@ func getClusterRoleBinding(c kubernetes.Clientset, ctx context.Context, name str
 	return c.RbacV1().ClusterRoleBindings().Get(ctx, name, metav1.GetOptions{})
 }
 
+func createServiceAccount(c kubernetes.Clientset, ctx context.Context, serviceAccount corev1.ServiceAccount) (*corev1.ServiceAccount, error) {
+	return c.CoreV1().ServiceAccounts(serviceAccount.Namespace).Create(ctx, &serviceAccount, metav1.CreateOptions{})
+}
+
+func deleteServiceAccount(c kubernetes.Clientset, ctx context.Context, namespace, name string) error {
+	return c.CoreV1().ServiceAccounts(namespace).Delete(ctx, name, metav1.DeleteOptions{})
+}
+
 func patchNamespace(c kubernetes.Interface, ctx context.Context, cur, mod corev1.Namespace) error {
 	curJson, err := json.Marshal(cur)
 	if err != nil {
@@ -135,6 +143,7 @@ func deleteRbacDefinition(c dynamic.Interface, ctx context.Context, def accessma
 var _ = Describe("IntegrationTest", func() {
 	var def1 accessmanagerv1beta1.RbacDefinition
 	var def2 accessmanagerv1beta1.RbacDefinition
+	var def3 accessmanagerv1beta1.RbacDefinition
 	ctx := context.TODO()
 
 	def1 = accessmanagerv1beta1.RbacDefinition{
@@ -176,6 +185,30 @@ var _ = Describe("IntegrationTest", func() {
 							Kind:      "ServiceAccount",
 							Name:      "default",
 							Namespace: "namespace2",
+						},
+					},
+				},
+			},
+		},
+	}
+
+	def3 = accessmanagerv1beta1.RbacDefinition{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "rbac-def3",
+		},
+		Spec: accessmanagerv1beta1.RbacDefinitionSpec{
+			Namespaced: []accessmanagerv1beta1.NamespacedSpec{
+				{
+					Namespace: accessmanagerv1beta1.NamespaceSpec{
+						Name: "namespace4",
+					},
+					Bindings: []accessmanagerv1beta1.BindingsSpec{
+						{
+							Name:               "test-rolebinding",
+							RoleName:           "test-role",
+							Kind:               "Role",
+							AllServiceAccounts: true,
+							Subjects:           []rbacv1.Subject{},
 						},
 					},
 				},
@@ -266,5 +299,46 @@ var _ = Describe("IntegrationTest", func() {
 			Expect(errors.IsNotFound(err)).To(BeTrue())
 			close(done)
 		}, 5)
+
+		It("should modify RoleBinding on ServiceAccount creation", func(done Done) {
+			err := createRbacDefinition(client, ctx, def3)
+			Expect(err).NotTo(HaveOccurred())
+			time.Sleep(3 * time.Second)
+
+			expectedRb := rbacv1.RoleBinding{
+				ObjectMeta: metav1.ObjectMeta{Name: "test-rolebinding", Namespace: "namespace4"},
+				RoleRef: rbacv1.RoleRef{
+					APIGroup: "rbac.authorization.k8s.io",
+					Name:     "test-role",
+					Kind:     "Role",
+				},
+				Subjects: []rbacv1.Subject{{Kind: "ServiceAccount", Name: "default", Namespace: ""}},
+			}
+
+			rb, err := getRoleBinding(*clientset, ctx, "test-rolebinding", "namespace4")
+			Expect(err).NotTo(HaveOccurred())
+			checkRoleBindingToBeEquivalent(*rb, expectedRb)
+
+			createServiceAccount(*clientset, ctx, corev1.ServiceAccount{ObjectMeta: metav1.ObjectMeta{Name: "new-sa", Namespace: "namespace4"}})
+			time.Sleep(3 * time.Second)
+
+			expectedRb = rbacv1.RoleBinding{
+				ObjectMeta: metav1.ObjectMeta{Name: "test-rolebinding", Namespace: "namespace4"},
+				RoleRef: rbacv1.RoleRef{
+					APIGroup: "rbac.authorization.k8s.io",
+					Name:     "test-role",
+					Kind:     "Role",
+				},
+				Subjects: []rbacv1.Subject{
+					{Kind: "ServiceAccount", Name: "default", Namespace: ""},
+					{Kind: "ServiceAccount", Name: "new-sa", Namespace: ""},
+				},
+			}
+
+			rb, err = getRoleBinding(*clientset, ctx, "test-rolebinding", "namespace4")
+			Expect(err).NotTo(HaveOccurred())
+			checkRoleBindingToBeEquivalent(*rb, expectedRb)
+			close(done)
+		}, 10)
 	})
 })

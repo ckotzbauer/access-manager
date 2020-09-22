@@ -30,4 +30,6 @@ cd e2e
 export KUBECONFIG=kind-kubeconfig
 go test
 
+kubectl logs $OPERATOR_POD
+
 ${KIND} delete cluster
