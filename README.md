@@ -15,6 +15,7 @@ The image contains versions of `k8s.io/client-go`. Kubernetes aims to provide fo
 | access-manager  | k8s.io/client-go | k8s.io/apimachinery | expected kubernetes compatibility |
 |-----------------|------------------|---------------------|-----------------------------------|
 | master          | v0.19.2          | v0.19.2             | 1.18.x, 1.19.x, 1.20.x            |
+| 0.4.0           | v0.19.2          | v0.19.2             | 1.18.x, 1.19.x, 1.20.x            |
 | 0.3.0           | v0.18.8          | v0.18.8             | 1.17.x, 1.18.x, 1.19.x            |
 | 0.2.0           | v12.0.0          | v0.18.5             | 1.17.x, 1.18.x, 1.19.x            |
 | 0.1.0           | v12.0.0          | v0.18.3             | 1.17.x, 1.18.x, 1.19.x            |
@@ -93,7 +94,7 @@ For more details, please read the [api-docs](https://github.com/ckotzbauer/acces
 - A `RbacDefinition` can be marked as "paused" (set `spec.paused` to `true`), so that the operator will not interfere you.
 - The `RoleBinding`s and `ClusterRoleBinding`s are named the same as the given `Role` or `ClusterRole` unless the name is explicitly specified.
 - If there is a existing binding with the same name that is not owned by the `RbacDefinition` it is not touched.
-- The operator detects changes to all `RbacDefinition`s and `Namespace`s automatically.
+- The operator detects changes to all `RbacDefinition`s, `Namespace`s and `ServiceAccount`s automatically.
 
 
 ## Roadmap

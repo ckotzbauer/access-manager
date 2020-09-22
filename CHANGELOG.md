@@ -1,5 +1,29 @@
 # Changelog
 
+## Version 0.4.0
+
+Released on September 22, 2020.
+
+- Updated sigs.k8s.io/controller-runtime to v0.6.3 #37
+- Updated k8s.io/api to v0.19.2 #40
+- Updated k8s.io/apimachinery to v0.19.2 #40
+- Updated k8s.io/client-go to v0.19.2 #40
+- Updated onsi/ginko to v1.14.1 #27
+- Updated onsi/gomega to v1.10.2 #28
+- Updated go-logr/logr to v0.2.1 #29
+- Updated go-logr/zapr to 49ca6b4dc551f8fdf9fe385fbd7a60ee3b846a21 #29
+- Updated go to v1.15.2 #42
+- Updated sigs.k8s.io/kind to v0.9.0 #42
+- Updated operator-framework/operator-sdk to v1.0.1 #42
+- Added automations with Github Actions.
+- FEATURE: Added optional `allServiceAccounts` field
+- FEATURE: Added controller for ServiceAccounts to detect changes
+- ENHANCEMENT: Avoid replacement of untouched `RoleBinding`s and `ClusterRoleBinding`s.
+
+
+**Note:** This release was tested on Kubernetes 1.17.11, 1.18.8 and 1.19.1
+
+
 ## Version 0.3.0
 
 Released on August 30, 2020.
