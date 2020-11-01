@@ -45,7 +45,7 @@ func (r *ServiceAccountReconciler) Reconcile(request reconcile.Request) (reconci
 		return reconcile.Result{}, err
 	}
 
-	r.Logger.Info("Reconciling ServiceAccount")
+	r.Logger.Info("Reconciling ServiceAccount", "Name", request.NamespacedName)
 	rec := reconciler.Reconciler{Client: *kubernetes.NewForConfigOrDie(r.Config), ControllerClient: r.Client, Logger: r.Logger, Scheme: r.Scheme}
 	return rec.ReconcileServiceAccount(instance)
 }

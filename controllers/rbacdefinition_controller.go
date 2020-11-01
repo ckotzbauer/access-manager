@@ -65,7 +65,7 @@ func (r *RbacDefinitionReconciler) Reconcile(req ctrl.Request) (ctrl.Result, err
 		return reconcile.Result{}, nil
 	}
 
-	r.Logger.Info("Reconciling RbacDefinition")
+	r.Logger.Info("Reconciling RbacDefinition", "Name", req.Name)
 	rec := reconciler.Reconciler{Client: *kubernetes.NewForConfigOrDie(r.Config), Logger: r.Logger, Scheme: r.Scheme}
 	return rec.ReconcileRbacDefinition(instance)
 }

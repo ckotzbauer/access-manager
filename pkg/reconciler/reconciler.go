@@ -42,10 +42,6 @@ func (r *Reconciler) ReconcileNamespace(instance *corev1.Namespace) (reconcile.R
 			continue
 		}
 
-		if err = r.DeleteOwnedRoleBindings(instance.Name, def); err != nil {
-			return reconcile.Result{}, err
-		}
-
 		_, err = r.ReconcileRbacDefinition(&def)
 
 		if err != nil {
@@ -71,6 +67,10 @@ func (r *Reconciler) ReconcileServiceAccount(instance *corev1.ServiceAccount) (r
 			continue
 		}
 
+		if !r.isServiceAccountRelevant(def, instance.Namespace) {
+			continue
+		}
+
 		_, err = r.ReconcileRbacDefinition(&def)
 
 		if err != nil {
@@ -84,14 +84,13 @@ func (r *Reconciler) ReconcileServiceAccount(instance *corev1.ServiceAccount) (r
 // ReconcileRbacDefinition applies all desired changes of the RbacDefinition
 func (r *Reconciler) ReconcileRbacDefinition(instance *accessmanagerv1beta1.RbacDefinition) (reconcile.Result, error) {
 	// Define all (Cluster)RoleBindings objects
-	roleBindings := r.BuildAllRoleBindings(instance)
-	clusterRoleBindings := r.BuildAllClusterRoleBindings(instance)
+	roleBindingsToCreate := r.BuildAllRoleBindings(instance)
+	clusterRoleBindingsToCreate := r.BuildAllClusterRoleBindings(instance)
 
-	if roleBindings == nil {
-		return reconcile.Result{}, nil
-	}
+	r.removeAllDeletableRoleBindings(instance.Name, roleBindingsToCreate)
+	r.removeAllDeletableClusterRoleBindings(instance.Name, clusterRoleBindingsToCreate)
 
-	for _, rb := range roleBindings {
+	for _, rb := range roleBindingsToCreate {
 		// Set RbacDefinition instance as the owner and controller
 		if err := controllerutil.SetControllerReference(instance, &rb, r.Scheme); err != nil {
 			r.Logger.WithValues("RoleBinding", rb.Namespace+"/"+rb.Name).Error(err, "Failed to set controllerReference.")
@@ -103,7 +102,7 @@ func (r *Reconciler) ReconcileRbacDefinition(instance *accessmanagerv1beta1.Rbac
 		}
 	}
 
-	for _, crb := range clusterRoleBindings {
+	for _, crb := range clusterRoleBindingsToCreate {
 		// Set RbacDefinition instance as the owner and controller
 		if err := controllerutil.SetControllerReference(instance, &crb, r.Scheme); err != nil {
 			r.Logger.WithValues("ClusterRoleBinding", crb.Name).Error(err, "Failed to set controllerReference.")
@@ -118,16 +117,49 @@ func (r *Reconciler) ReconcileRbacDefinition(instance *accessmanagerv1beta1.Rbac
 	return reconcile.Result{}, nil
 }
 
+func (r *Reconciler) removeAllDeletableRoleBindings(defName string, roleBindingsToCreate []rbacv1.RoleBinding) {
+	roleBindingsToDelete, err := r.getRoleBindingsToDelete(defName, roleBindingsToCreate)
+
+	if err != nil {
+		r.Logger.Error(err, "Failed to fetch all deletable RoleBindings.")
+	}
+
+	for _, rb := range roleBindingsToDelete {
+		r.Logger.Info("Deleting RoleBinding", "RoleBinding.Namespace", rb.Namespace, "RoleBinding.Name", rb.Name)
+		err = r.Client.RbacV1().RoleBindings(rb.Namespace).Delete(context.TODO(), rb.Name, metav1.DeleteOptions{})
+
+		if err != nil {
+			r.Logger.WithValues("RoleBinding", rb.Name, "Namespace", rb.Namespace).Error(err, "Failed to delete RoleBinding.")
+		}
+	}
+}
+
+func (r *Reconciler) removeAllDeletableClusterRoleBindings(defName string, clusterRoleBindingsToCreate []rbacv1.ClusterRoleBinding) {
+	clusterRoleBindingsToDelete, err := r.getClusterRoleBindingsToDelete(defName, clusterRoleBindingsToCreate)
+
+	if err != nil {
+		r.Logger.Error(err, "Failed to fetch all deletable ClusterRoleBindings.")
+	}
+
+	for _, crb := range clusterRoleBindingsToDelete {
+		r.Logger.Info("Deleting ClusterRoleBinding", "ClusterRoleBinding.Name", crb.Name)
+		err = r.Client.RbacV1().ClusterRoleBindings().Delete(context.TODO(), crb.Name, metav1.DeleteOptions{})
+
+		if err != nil {
+			r.Logger.WithValues("ClusterRoleBinding", crb.Name).Error(err, "Failed to delete ClusterRoleBinding.")
+		}
+	}
+}
+
 // CreateOrRecreateRoleBinding creates a new or recreates a existing RoleBinding
 func (r *Reconciler) CreateOrRecreateRoleBinding(rb rbacv1.RoleBinding) (*rbacv1.RoleBinding, error) {
 	existing, err := r.Client.RbacV1().RoleBindings(rb.Namespace).Get(context.TODO(), rb.Name, metav1.GetOptions{})
 	if err == nil {
-		if !r.hasRbacDefinitionOwner(existing.OwnerReferences) {
+		if !r.hasRbacDefinitionOwner(existing.OwnerReferences, "") {
 			r.Logger.Info("Existing RoleBinding is not owned by a RbacDefinition. Ignoring", "RoleBinding.Name", existing.Name)
 			return existing, nil
 		}
 
-		existing = util.RemoveAPIGroupFromRoleBinding(existing)
 		if util.IsRoleBindingEqual(*existing, rb) {
 			return existing, nil
 		}
@@ -149,12 +181,11 @@ func (r *Reconciler) CreateOrRecreateRoleBinding(rb rbacv1.RoleBinding) (*rbacv1
 func (r *Reconciler) CreateOrRecreateClusterRoleBinding(crb rbacv1.ClusterRoleBinding) (*rbacv1.ClusterRoleBinding, error) {
 	existing, err := r.Client.RbacV1().ClusterRoleBindings().Get(context.TODO(), crb.Name, metav1.GetOptions{})
 	if err == nil {
-		if !r.hasRbacDefinitionOwner(existing.OwnerReferences) {
+		if !r.hasRbacDefinitionOwner(existing.OwnerReferences, "") {
 			r.Logger.Info("Existing ClusterRoleBinding is not owned by a RbacDefinition. Ignoring", "ClusterRoleBinding.Name", existing.Name)
 			return existing, nil
 		}
 
-		existing = util.RemoveAPIGroupFromClusterRoleBinding(existing)
 		if util.IsClusterRoleBindingEqual(*existing, crb) {
 			return existing, nil
 		}
@@ -181,6 +212,8 @@ func (r *Reconciler) BuildAllRoleBindings(cr *accessmanagerv1beta1.RbacDefinitio
 		if relevantNamespaces == nil {
 			return nil
 		}
+
+		r.Logger.WithValues("Namespaces", util.MapNamespaces(relevantNamespaces)).Info("Found matching Namespaces.")
 
 		for _, ns := range relevantNamespaces {
 			for _, bindingSpec := range nsSpec.Bindings {
@@ -268,7 +301,6 @@ func (r *Reconciler) GetRelevantNamespaces(spec accessmanagerv1beta1.NamespacedS
 			return nil
 		}
 
-		r.Logger.WithValues("Namespaces", util.MapNamespaces(namespaces.Items)).Info("Found matching Namespaces.")
 		return namespaces.Items
 
 	} else if spec.Namespace.Name != "" {
@@ -278,7 +310,6 @@ func (r *Reconciler) GetRelevantNamespaces(spec accessmanagerv1beta1.NamespacedS
 			return nil
 		}
 
-		r.Logger.WithValues("NsName", namespace.Name).Info("Found namespaces with name.")
 		return []corev1.Namespace{*namespace}
 	} else {
 		r.Logger.Error(nil, "Invalid role binding, namespace or namespaceSelector required")
@@ -296,7 +327,7 @@ func (r *Reconciler) DeleteOwnedRoleBindings(namespace string, def accessmanager
 
 	for _, rb := range list.Items {
 		for _, ref := range rb.OwnerReferences {
-			if *ref.Controller && ref.Kind == "RbacDefinition" && ref.Name == def.Name {
+			if r.hasRbacDefinitionOwner([]metav1.OwnerReference{ref}, def.Name) {
 				r.Logger.Info("Deleting owned RoleBinding", "RoleBinding.Namespace", rb.Namespace, "RoleBinding.Name", rb.Name)
 				err = r.Client.RbacV1().RoleBindings(namespace).Delete(context.TODO(), rb.Name, metav1.DeleteOptions{})
 
@@ -310,9 +341,9 @@ func (r *Reconciler) DeleteOwnedRoleBindings(namespace string, def accessmanager
 	return nil
 }
 
-func (r *Reconciler) hasRbacDefinitionOwner(refs []metav1.OwnerReference) bool {
+func (r *Reconciler) hasRbacDefinitionOwner(refs []metav1.OwnerReference, name string) bool {
 	for _, ref := range refs {
-		if ref.Kind == "RbacDefinition" {
+		if *ref.Controller && ref.Kind == "RbacDefinition" && (name == "" || name == ref.Name) {
 			return true
 		}
 	}
@@ -343,4 +374,56 @@ func (r *Reconciler) appendServiceAccountSubjects(accounts []corev1.ServiceAccou
 	}
 
 	return subjects
+}
+
+func (r *Reconciler) getRoleBindingsToDelete(defName string, creating []rbacv1.RoleBinding) ([]rbacv1.RoleBinding, error) {
+	list, err := r.Client.RbacV1().RoleBindings("").List(context.TODO(), metav1.ListOptions{})
+
+	if err != nil {
+		return nil, err
+	}
+
+	var bindings []rbacv1.RoleBinding = []rbacv1.RoleBinding{}
+
+	for _, rb := range list.Items {
+		if r.hasRbacDefinitionOwner(rb.OwnerReferences, defName) && !util.ContainsRoleBinding(creating, rb.Name, rb.Namespace) {
+			bindings = append(bindings, rb)
+		}
+	}
+
+	return bindings, nil
+}
+
+func (r *Reconciler) getClusterRoleBindingsToDelete(defName string, creating []rbacv1.ClusterRoleBinding) ([]rbacv1.ClusterRoleBinding, error) {
+	list, err := r.Client.RbacV1().ClusterRoleBindings().List(context.TODO(), metav1.ListOptions{})
+
+	if err != nil {
+		return nil, err
+	}
+
+	var bindings []rbacv1.ClusterRoleBinding = []rbacv1.ClusterRoleBinding{}
+
+	for _, crb := range list.Items {
+		if r.hasRbacDefinitionOwner(crb.OwnerReferences, defName) && !util.ContainsClusterRoleBinding(creating, crb.Name) {
+			bindings = append(bindings, crb)
+		}
+	}
+
+	return bindings, nil
+}
+
+func (r *Reconciler) isServiceAccountRelevant(spec accessmanagerv1beta1.RbacDefinition, ns string) bool {
+	for _, nsSpec := range spec.Spec.Namespaced {
+		namespaces := r.GetRelevantNamespaces(nsSpec)
+
+		if util.ContainsNamespace(namespaces, ns) {
+			for _, bindingSpec := range nsSpec.Bindings {
+				if bindingSpec.AllServiceAccounts {
+					return true
+				}
+			}
+		}
+	}
+
+	return false
 }

@@ -45,7 +45,7 @@ func (r *NamespaceReconciler) Reconcile(request reconcile.Request) (reconcile.Re
 		return reconcile.Result{}, err
 	}
 
-	r.Logger.Info("Reconciling Namespace")
+	r.Logger.Info("Reconciling Namespace", "Name", request.Name)
 	rec := reconciler.Reconciler{Client: *kubernetes.NewForConfigOrDie(r.Config), ControllerClient: r.Client, Logger: r.Logger, Scheme: r.Scheme}
 	return rec.ReconcileNamespace(instance)
 }

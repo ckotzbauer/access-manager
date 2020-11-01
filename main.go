@@ -102,7 +102,7 @@ func main() {
 
 	if err = (&controllers.ServiceAccountReconciler{
 		Client: mgr.GetClient(),
-		Logger: ctrl.Log.WithName("controllers").WithName("Namespace"),
+		Logger: ctrl.Log.WithName("controllers").WithName("ServiceAccount"),
 		Scheme: mgr.GetScheme(),
 		Config: mgr.GetConfig(),
 	}).SetupWithManager(mgr); err != nil {
