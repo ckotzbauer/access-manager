@@ -22,9 +22,12 @@ import (
 )
 
 type BindingsSpec struct {
-	Name     string           `json:"name"`
-	RoleName string           `json:"roleName"`
-	Kind     string           `json:"kind"`
+	// +kubebuilder:default=""
+	// +kubebuilder:validation:Optional
+	Name     string `json:"name"`
+	RoleName string `json:"roleName"`
+	Kind     string `json:"kind"`
+	// +kubebuilder:validation:Optional
 	Subjects []rbacv1.Subject `json:"subjects"`
 	// +kubebuilder:default=false
 	// +kubebuilder:validation:Optional
