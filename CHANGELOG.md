@@ -1,5 +1,21 @@
 # Changelog
 
+## Version 0.4.1
+
+Released on November 1, 2020.
+
+- Updated k8s.io/api to v0.19.3 #51
+- Updated k8s.io/apimachinery to v0.19.3 #51
+- Updated k8s.io/client-go to v0.19.3 #51
+- Updated onsi/ginko to v1.14.2 #47
+- Updated onsi/gomega to v1.10.3 #48
+- Updated go to v1.15.3
+- FIX: Modify (Cluster-)RoleBindings more selective and avoid unneeded changes.
+- FIX: Make "name" and "subjects" of BindingSpec optional in CRD.
+
+**Note:** This release was tested on Kubernetes 1.17.11, 1.18.8 and 1.19.1
+
+
 ## Version 0.4.0
 
 Released on September 22, 2020.
@@ -19,7 +35,6 @@ Released on September 22, 2020.
 - FEATURE: Added optional `allServiceAccounts` field
 - FEATURE: Added controller for ServiceAccounts to detect changes
 - ENHANCEMENT: Avoid replacement of untouched `RoleBinding`s and `ClusterRoleBinding`s.
-
 
 **Note:** This release was tested on Kubernetes 1.17.11, 1.18.8 and 1.19.1
 
