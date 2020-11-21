@@ -1,5 +1,9 @@
 # Current Operator version
-VERSION ?= $(shell git describe --tags)
+ifeq (,${VERSION})
+BIN_VERSION=latest
+else
+BIN_VERSION=${VERSION}
+endif
 
 # Image URL to use all building/pushing image targets
 IMG ?= ckotzbauer/access-manager
@@ -29,7 +33,7 @@ e2e-test: kind
 
 # Build manager binary
 manager: generate fmt vet
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags '-w -X=main.Version=$(VERSION)' -o bin/manager main.go
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags '-w -X=main.Version=$(BIN_VERSION)' -o bin/manager main.go
 
 # Run against the configured Kubernetes cluster in ~/.kube/config
 run: generate fmt vet manifests
@@ -63,20 +67,6 @@ vet:
 # Generate code
 generate: controller-gen
 	$(CONTROLLER_GEN) object:headerFile= paths="./..."
-
-# Build the docker image
-docker-build: manager
-	docker build . -t $(IMG):$(VERSION)
-
-# Push the docker image
-docker-push:
-	docker push $(IMG):$(VERSION)
-
-# Promote docker image to latest
-promote-docker-image:
-	docker pull $(IMG):$(VERSION)
-	docker tag $(IMG):$(VERSION) $(IMG):latest
-	docker push $(IMG):latest
 
 # find or download controller-gen
 # download controller-gen if necessary
