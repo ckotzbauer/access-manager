@@ -45,8 +45,8 @@ jobs:
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
           name: ckotzbauer/access-manager
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
           buildargs: version=${{ github.event.inputs.version }}
           tags: "${{ github.event.inputs.version }},latest"
 
