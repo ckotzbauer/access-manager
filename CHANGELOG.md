@@ -1,3 +1,15 @@
+## Version 0.4.2 (2020-11-22)
+
+* [[`1dfbfcdf`](https://github.com/ckotzbauer&#x2F;access-manager/commit/1dfbfcdf)] - **chore**: fix release-pipeline
+* [[`b3a6c6c1`](https://github.com/ckotzbauer&#x2F;access-manager/commit/b3a6c6c1)] - **chore**: rename workflow file
+* [[`825d7839`](https://github.com/ckotzbauer&#x2F;access-manager/commit/825d7839)] - **chore**: rename action
+* [[`ab918ecc`](https://github.com/ckotzbauer&#x2F;access-manager/commit/ab918ecc)] - **chore**: add release workflow
+* [[`addfbfb5`](https://github.com/ckotzbauer&#x2F;access-manager/commit/addfbfb5)] - **chore**: update kubebuilder-action
+* [[`2dc9e167`](https://github.com/ckotzbauer&#x2F;access-manager/commit/2dc9e167)] - **chore**: fix test pipeline
+* [[`caaa775d`](https://github.com/ckotzbauer&#x2F;access-manager/commit/caaa775d)] - **chore**: refactor docker-build and test-pipeline
+* [[`a488520b`](https://github.com/ckotzbauer&#x2F;access-manager/commit/a488520b)] - **chore**: Update module sigs.k8s.io&#x2F;controller-runtime to v0.6.4
+* [[`3383b989`](https://github.com/ckotzbauer&#x2F;access-manager/commit/3383b989)] - **chore**: Update module k8s.io&#x2F;client-go to v0.19.4
+* [[`7802a89d`](https://github.com/ckotzbauer&#x2F;access-manager/commit/7802a89d)] - **chore**: Update module go-logr&#x2F;logr to v0.3.0
 # Changelog
 
 ## Version 0.4.1
