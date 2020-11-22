@@ -1,10 +1,13 @@
 domain: access-manager.io
 layout: go.kubebuilder.io/v2
+multigroup: true
 projectName: access-manager
 repo: access-manager
 resources:
-- group: ""
-  kind: RbacDefinition
+- kind: RbacDefinition
+  version: v1beta1
+- group: access-manager.io
+  kind: SyncSecretDefinition
   version: v1beta1
 version: 3-alpha
 plugins:

@@ -1,7 +1,7 @@
 package integration_test
 
 import (
-	accessmanagerv1beta1 "access-manager/api/v1beta1"
+	accessmanagerv1beta1 "access-manager/apis/access-manager.io/v1beta1"
 	"context"
 	"encoding/json"
 	"fmt"
