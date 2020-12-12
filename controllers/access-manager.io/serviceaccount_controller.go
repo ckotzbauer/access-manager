@@ -26,13 +26,13 @@ type ServiceAccountReconciler struct {
 // Reconcile reads that state of the cluster for a ServiceAccount object and makes changes based on the state
 // The Controller will requeue the Request to be processed again if the returned error is non-nil or
 // Result.Requeue is true, otherwise upon completion it will remove the work from the queue.
-func (r *ServiceAccountReconciler) Reconcile(request reconcile.Request) (reconcile.Result, error) {
+func (r *ServiceAccountReconciler) Reconcile(ctx context.Context, request reconcile.Request) (reconcile.Result, error) {
 	_ = context.Background()
 	_ = r.Logger.WithValues("serviceAccount", request.Name)
 
 	// Fetch the ServiceAccount instance
 	instance := &corev1.ServiceAccount{}
-	err := r.Client.Get(context.TODO(), request.NamespacedName, instance)
+	err := r.Client.Get(ctx, request.NamespacedName, instance)
 	if err != nil {
 		if errors.IsNotFound(err) {
 			// Request object not found, could have been deleted after reconcile request.

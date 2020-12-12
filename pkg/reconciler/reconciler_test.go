@@ -34,7 +34,7 @@ var testenv *envtest.Environment
 var clientset *kubernetes.Clientset
 
 var _ = BeforeSuite(func(done Done) {
-	logf.SetLogger(zap.LoggerTo(GinkgoWriter, true))
+	logf.SetLogger(zap.New(zap.WriteTo(GinkgoWriter)))
 
 	testenv = &envtest.Environment{}
 

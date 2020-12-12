@@ -26,13 +26,13 @@ type NamespaceReconciler struct {
 // Reconcile reads that state of the cluster for a Namespace object and makes changes based on the state
 // The Controller will requeue the Request to be processed again if the returned error is non-nil or
 // Result.Requeue is true, otherwise upon completion it will remove the work from the queue.
-func (r *NamespaceReconciler) Reconcile(request reconcile.Request) (reconcile.Result, error) {
+func (r *NamespaceReconciler) Reconcile(ctx context.Context, request reconcile.Request) (reconcile.Result, error) {
 	_ = context.Background()
 	_ = r.Logger.WithValues("namespace", request.Name)
 
 	// Fetch the Namespace instance
 	instance := &corev1.Namespace{}
-	err := r.Client.Get(context.TODO(), request.NamespacedName, instance)
+	err := r.Client.Get(ctx, request.NamespacedName, instance)
 	if err != nil {
 		if errors.IsNotFound(err) {
 			// Request object not found, could have been deleted after reconcile request.

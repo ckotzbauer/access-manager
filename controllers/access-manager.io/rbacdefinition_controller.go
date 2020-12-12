@@ -42,13 +42,13 @@ type RbacDefinitionReconciler struct {
 	Logger logr.Logger
 }
 
-func (r *RbacDefinitionReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
+func (r *RbacDefinitionReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	_ = context.Background()
 	_ = r.Logger.WithValues("rbacdefinition", req.NamespacedName)
 
 	// Fetch the RbacDefinition instance
 	instance := &accessmanagerv1beta1.RbacDefinition{}
-	err := r.Client.Get(context.TODO(), req.NamespacedName, instance)
+	err := r.Client.Get(ctx, req.NamespacedName, instance)
 	if err != nil {
 		if errors.IsNotFound(err) {
 			// Request object not found, could have been deleted after reconcile request.
