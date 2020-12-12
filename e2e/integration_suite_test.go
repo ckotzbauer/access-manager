@@ -23,7 +23,7 @@ var clientset *kubernetes.Clientset
 var client dynamic.Interface
 
 var _ = BeforeSuite(func(done Done) {
-	logf.SetLogger(zap.LoggerTo(GinkgoWriter, true))
+	logf.SetLogger(zap.New(zap.WriteTo(GinkgoWriter)))
 
 	kubeconfig := os.Getenv("KUBECONFIG")
 	cwd, _ := os.Getwd()
