@@ -28,9 +28,9 @@ jobs:
       fail-fast: false
       matrix:
         kubernetes-version:
-          - 1.17.11
           - 1.18.8
-          - 1.19.1
+          - 1.19.4
+          - 1.20.0
     steps:
       - name: Install Go
         uses: actions/setup-go@v2
