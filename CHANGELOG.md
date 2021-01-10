@@ -1,3 +1,28 @@
+## Version 0.5.0 (2021-01-10)
+
+* [[`3d43b144`](https://github.com/ckotzbauer&#x2F;access-manager/commit/3d43b144)] - **build**: fix release-process
+* [[`5b98e10b`](https://github.com/ckotzbauer&#x2F;access-manager/commit/5b98e10b)] - **build**: update to go 1.15.6
+* [[`873c9d19`](https://github.com/ckotzbauer&#x2F;access-manager/commit/873c9d19)] - **chore**: several automation improvements
+* [[`c748a4d3`](https://github.com/ckotzbauer&#x2F;access-manager/commit/c748a4d3)] - **chore**: change create-default-labels action
+* [[`3fa90e56`](https://github.com/ckotzbauer&#x2F;access-manager/commit/3fa90e56)] - **chore**: use renovate-preset
+* [[`4592a21b`](https://github.com/ckotzbauer&#x2F;access-manager/commit/4592a21b)] - **chore**: Bump pascalgn&#x2F;automerge-action (#70)
+* [[`39a35341`](https://github.com/ckotzbauer&#x2F;access-manager/commit/39a35341)] - **chore**: update module k8s.io&#x2F;client-go to v0.20.1 (#69)
+* [[`a93da23c`](https://github.com/ckotzbauer&#x2F;access-manager/commit/a93da23c)] - **chore**: Bump actions&#x2F;setup-node from v2.1.3 to v2.1.4 (#66)
+* [[`a1fc77d6`](https://github.com/ckotzbauer&#x2F;access-manager/commit/a1fc77d6)] - **chore**: update module sigs.k8s.io&#x2F;controller-runtime to v0.7.0 (#65)
+* [[`22bb25b4`](https://github.com/ckotzbauer&#x2F;access-manager/commit/22bb25b4)] - **chore**: update to k8s@1.20
+* [[`c825a185`](https://github.com/ckotzbauer&#x2F;access-manager/commit/c825a185)] - **chore**: update module onsi&#x2F;gomega to v1.10.4 (#63)
+* [[`d0b780d6`](https://github.com/ckotzbauer&#x2F;access-manager/commit/d0b780d6)] - **chore**: change automerge policy
+* [[`907b0341`](https://github.com/ckotzbauer&#x2F;access-manager/commit/907b0341)] - **chore**: Bump actions&#x2F;setup-node from v2.1.2 to v2.1.3
+* [[`b226aca3`](https://github.com/ckotzbauer&#x2F;access-manager/commit/b226aca3)] - **chore**: update module k8s.io&#x2F;client-go to v0.20.0
+* [[`3b5cc7d9`](https://github.com/ckotzbauer&#x2F;access-manager/commit/3b5cc7d9)] - **chore**: enable automerge
+* [[`5f9c6e82`](https://github.com/ckotzbauer&#x2F;access-manager/commit/5f9c6e82)] - **chore**: convert project to multi-group
+* [[`ddbcf203`](https://github.com/ckotzbauer&#x2F;access-manager/commit/ddbcf203)] - **chore**: update golang docker tag to v1.15.6
+* [[`a1745e4d`](https://github.com/ckotzbauer&#x2F;access-manager/commit/a1745e4d)] - **chore**: release 0.4.2
+* [[`a623347e`](https://github.com/ckotzbauer&#x2F;access-manager/commit/a623347e)] - **doc**: fix typo
+* [[`81d111f8`](https://github.com/ckotzbauer&#x2F;access-manager/commit/81d111f8)] - **feat**: added sync-secret feature
+* [[`00aaa566`](https://github.com/ckotzbauer&#x2F;access-manager/commit/00aaa566)] - **security**: add snyk job
+* [[`68dc3249`](https://github.com/ckotzbauer&#x2F;access-manager/commit/68dc3249)] - **security**: add docker-image scan
+
 ## Version 0.4.2 (2020-11-22)
 
 * [[`1dfbfcdf`](https://github.com/ckotzbauer&#x2F;access-manager/commit/1dfbfcdf)] - **chore**: fix release-pipeline
