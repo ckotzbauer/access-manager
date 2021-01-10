@@ -29,7 +29,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	rbacdefinitionsv1beta1 "access-manager/apis/access-manager.io/v1beta1"
+	accessmanageriov1beta1 "access-manager/apis/access-manager.io/v1beta1"
 	controllers "access-manager/controllers/access-manager.io"
 	// +kubebuilder:scaffold:imports
 )
@@ -47,7 +47,7 @@ var (
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 
-	utilruntime.Must(rbacdefinitionsv1beta1.AddToScheme(scheme))
+	utilruntime.Must(accessmanageriov1beta1.AddToScheme(scheme))
 	// +kubebuilder:scaffold:scheme
 }
 
@@ -107,6 +107,26 @@ func main() {
 		Config: mgr.GetConfig(),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "ServiceAccount")
+		os.Exit(1)
+	}
+
+	if err = (&controllers.SyncSecretDefinitionReconciler{
+		Client: mgr.GetClient(),
+		Logger: ctrl.Log.WithName("controllers").WithName("SyncSecretDefinition"),
+		Scheme: mgr.GetScheme(),
+		Config: mgr.GetConfig(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "SyncSecretDefinition")
+		os.Exit(1)
+	}
+
+	if err = (&controllers.SecretReconciler{
+		Client: mgr.GetClient(),
+		Logger: ctrl.Log.WithName("controllers").WithName("Secret"),
+		Scheme: mgr.GetScheme(),
+		Config: mgr.GetConfig(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Secret")
 		os.Exit(1)
 	}
 	// +kubebuilder:scaffold:builder

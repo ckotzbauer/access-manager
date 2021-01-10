@@ -8,6 +8,8 @@ import (
 	"log"
 	"time"
 
+	b64 "encoding/base64"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
@@ -29,6 +31,11 @@ var (
 		Version:  "v1beta1",
 		Resource: "rbacdefinitions",
 	}
+	secretDefGVR = schema.GroupVersionResource{
+		Group:    "access-manager.io",
+		Version:  "v1beta1",
+		Resource: "syncsecretdefinitions",
+	}
 )
 
 type patchStringValue struct {
@@ -43,6 +50,10 @@ func getRoleBinding(c kubernetes.Clientset, ctx context.Context, name string, na
 
 func getClusterRoleBinding(c kubernetes.Clientset, ctx context.Context, name string) (*rbacv1.ClusterRoleBinding, error) {
 	return c.RbacV1().ClusterRoleBindings().Get(ctx, name, metav1.GetOptions{})
+}
+
+func getSecret(c kubernetes.Clientset, ctx context.Context, name string, namespace string) (*corev1.Secret, error) {
+	return c.CoreV1().Secrets(namespace).Get(ctx, name, metav1.GetOptions{})
 }
 
 func createServiceAccount(c kubernetes.Clientset, ctx context.Context, serviceAccount corev1.ServiceAccount) (*corev1.ServiceAccount, error) {
@@ -110,6 +121,14 @@ func checkClusterRoleBindingToBeEquivalent(crb rbacv1.ClusterRoleBinding, expect
 	Expect(crb.Subjects).To(BeEquivalentTo(expected.Subjects))
 }
 
+func checkSecretToBeEquivalent(secret corev1.Secret, expected corev1.Secret) {
+	Expect(secret.Name).To(BeEquivalentTo(expected.Name))
+	Expect(secret.Namespace).To(BeEquivalentTo(expected.Namespace))
+	Expect(secret.Type).To(BeEquivalentTo(secret.Type))
+	Expect(secret.Data).To(BeEquivalentTo(secret.Data))
+	Expect(secret.Immutable).To(BeEquivalentTo(expected.Immutable))
+}
+
 func createRbacDefinition(c dynamic.Interface, ctx context.Context, def accessmanagerv1beta1.RbacDefinition) error {
 	res := c.Resource(rbacDefGVR)
 	unstructuredObj, err := runtime.DefaultUnstructuredConverter.ToUnstructured(&def)
@@ -140,10 +159,42 @@ func deleteRbacDefinition(c dynamic.Interface, ctx context.Context, def accessma
 	return err
 }
 
+func createSyncSecretDefinition(c dynamic.Interface, ctx context.Context, def accessmanagerv1beta1.SyncSecretDefinition) error {
+	res := c.Resource(secretDefGVR)
+	unstructuredObj, err := runtime.DefaultUnstructuredConverter.ToUnstructured(&def)
+	if err != nil {
+		return err
+	}
+
+	unstructuredObj["kind"] = "SyncSecretDefinition"
+	unstructuredObj["apiVersion"] = secretDefGVR.Group + "/" + secretDefGVR.Version
+	log.Printf("Creating SyncSecretDefinition %s", def.Name)
+	_, err = res.Create(ctx, &unstructured.Unstructured{Object: unstructuredObj}, metav1.CreateOptions{})
+	if err != nil {
+		fmt.Printf("Failed to create SyncSecretDefinition %#v", def)
+	}
+
+	return err
+}
+
+func deleteSyncSecretDefinition(c dynamic.Interface, ctx context.Context, def accessmanagerv1beta1.SyncSecretDefinition) error {
+	res := c.Resource(secretDefGVR)
+
+	log.Printf("Deleting SyncSecretDefinition %s", def.Name)
+	err := res.Delete(ctx, def.Name, metav1.DeleteOptions{})
+	if err != nil {
+		fmt.Printf("Failed to delete SyncSecretDefinition %#v", def)
+	}
+
+	return err
+}
+
 var _ = Describe("IntegrationTest", func() {
 	var def1 accessmanagerv1beta1.RbacDefinition
 	var def2 accessmanagerv1beta1.RbacDefinition
 	var def3 accessmanagerv1beta1.RbacDefinition
+	var secretDef1 accessmanagerv1beta1.SyncSecretDefinition
+	var secretDef2 accessmanagerv1beta1.SyncSecretDefinition
 	ctx := context.TODO()
 
 	def1 = accessmanagerv1beta1.RbacDefinition{
@@ -211,6 +262,34 @@ var _ = Describe("IntegrationTest", func() {
 							Subjects:           []rbacv1.Subject{},
 						},
 					},
+				},
+			},
+		},
+	}
+
+	secretDef1 = accessmanagerv1beta1.SyncSecretDefinition{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "secret-def1",
+		},
+		Spec: accessmanagerv1beta1.SyncSecretDefinitionSpec{
+			Source: accessmanagerv1beta1.SourceSpec{Namespace: "default", Name: "test-secret"},
+			Targets: []accessmanagerv1beta1.TargetSpec{
+				{
+					NamespaceSelector: metav1.LabelSelector{MatchLabels: map[string]string{"ci": "true"}},
+				},
+			},
+		},
+	}
+
+	secretDef2 = accessmanagerv1beta1.SyncSecretDefinition{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "secret-def2",
+		},
+		Spec: accessmanagerv1beta1.SyncSecretDefinitionSpec{
+			Source: accessmanagerv1beta1.SourceSpec{Namespace: "namespace2", Name: "test-secret2"},
+			Targets: []accessmanagerv1beta1.TargetSpec{
+				{
+					Namespace: accessmanagerv1beta1.NamespaceSpec{Name: "namespace4"},
 				},
 			},
 		},
@@ -340,5 +419,66 @@ var _ = Describe("IntegrationTest", func() {
 			checkRoleBindingToBeEquivalent(*rb, expectedRb)
 			close(done)
 		}, 10)
+	})
+
+	Describe("SyncSecretDefinition", func() {
+		It("should apply new Secret", func(done Done) {
+			err := createSyncSecretDefinition(client, ctx, secretDef1)
+			Expect(err).NotTo(HaveOccurred())
+			err = createSyncSecretDefinition(client, ctx, secretDef2)
+			Expect(err).NotTo(HaveOccurred())
+			time.Sleep(3 * time.Second)
+
+			expectedSecret := corev1.Secret{
+				ObjectMeta: metav1.ObjectMeta{Name: "test-secret", Namespace: "namespace1"},
+				Type:       corev1.SecretTypeOpaque,
+				Data:       map[string][]byte{"key2": []byte(b64.StdEncoding.EncodeToString([]byte("value2")))},
+			}
+
+			secret, err := getSecret(*clientset, ctx, "test-secret", "namespace1")
+			Expect(err).NotTo(HaveOccurred())
+			checkSecretToBeEquivalent(*secret, expectedSecret)
+			close(done)
+		}, 5)
+
+		It("should delete Secrets on definition removal", func(done Done) {
+			_, err := getSecret(*clientset, ctx, "test-secret2", "namespace4")
+			Expect(err).To(BeNil())
+
+			err = deleteSyncSecretDefinition(client, ctx, secretDef2)
+			Expect(err).NotTo(HaveOccurred())
+			time.Sleep(3 * time.Second)
+
+			_, err = getSecret(*clientset, ctx, "test-secret2", "namespace4")
+			Expect(errors.IsNotFound(err)).To(BeTrue())
+			close(done)
+		}, 5)
+
+		It("should create a Secret if namespace is labeled", func(done Done) {
+			err := addNamespaceLabel(*clientset, ctx, "namespace3", "ci", "true")
+			Expect(err).NotTo(HaveOccurred())
+			time.Sleep(3 * time.Second)
+
+			expectedSecret := corev1.Secret{
+				ObjectMeta: metav1.ObjectMeta{Name: "test-secret", Namespace: "namespace3"},
+				Type:       corev1.SecretTypeOpaque,
+				Data:       map[string][]byte{"key2": []byte(b64.StdEncoding.EncodeToString([]byte("value2")))},
+			}
+
+			secret, err := getSecret(*clientset, ctx, "test-secret", "namespace3")
+			Expect(err).NotTo(HaveOccurred())
+			checkSecretToBeEquivalent(*secret, expectedSecret)
+			close(done)
+		}, 5)
+
+		It("should delete a RoleBinding if namespace is unlabeled", func(done Done) {
+			err := deleteNamespaceLabel(*clientset, ctx, "namespace3", "ci")
+			Expect(err).NotTo(HaveOccurred())
+			time.Sleep(3 * time.Second)
+
+			_, err = getSecret(*clientset, ctx, "test-secret", "namespace3")
+			Expect(errors.IsNotFound(err)).To(BeTrue())
+			close(done)
+		}, 5)
 	})
 })

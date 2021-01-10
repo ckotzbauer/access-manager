@@ -2,19 +2,20 @@
 
 ![test](https://github.com/ckotzbauer/access-manager/workflows/test/badge.svg)
 
-The Access-Manager is a Kubernetes-Operator using the [Operator-SDK](https://github.com/operator-framework/operator-sdk) to simplify complex [RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) configurations in your cluster.
+The Access-Manager is a Kubernetes-Operator using the [Operator-SDK](https://github.com/operator-framework/operator-sdk) to simplify complex [RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) configurations in your cluster and spread secrets accross namespaces.
 
 ## Motivation
 
 The idea for this came up, when managing many different RBAC-Roles on namespace-basis. This was getting more complex over time, and the administrator always has to ensure that the correct roles are applied for different people or ServiceAccounts in multiple namespaces. The scope of the operator is limited to the creation and removal of `RoleBinding`s and `ClusterRoleBinding`s. So all referenced `Role`s and `ClusterRole`s have to exist. Let's automate it.
 
-## Kubernetes & OS Compatibility
+## Kubernetes Compatibility
 
 The image contains versions of `k8s.io/client-go`. Kubernetes aims to provide forwards & backwards compatibility of one minor version between client and server:
 
 | access-manager  | k8s.io/client-go | k8s.io/apimachinery | expected kubernetes compatibility |
 |-----------------|------------------|---------------------|-----------------------------------|
-| master          | v0.20.0          | v0.20.0             | 1.19.x, 1.20.x, 1.21.x            |
+| master          | v0.20.1          | v0.20.1             | 1.19.x, 1.20.x, 1.21.x            |
+| 0.5.0           | v0.20.1          | v0.20.1             | 1.19.x, 1.20.x, 1.21.x            |
 | 0.4.0           | v0.19.2          | v0.19.2             | 1.18.x, 1.19.x, 1.20.x            |
 | 0.3.0           | v0.18.8          | v0.18.8             | 1.17.x, 1.18.x, 1.19.x            |
 | 0.2.0           | v12.0.0          | v0.18.5             | 1.17.x, 1.18.x, 1.19.x            |
@@ -31,6 +32,7 @@ combination have been formally tested.
 
 ```
 kubectl apply -f config/crd/access-manager.io_rbacdefinitions.yaml
+kubectl apply -f config/crd/access-manager.io_syncsecretdefinitions.yaml
 kubectl apply -f config/rbac
 kubectl apply -f config/manager
 ```
@@ -42,7 +44,9 @@ helm repo add ckotzbauer https://ckotzbauer.github.io/helm-charts
 helm install ckotzbauer/access-manager
 ```
 
-## Example Definition
+## Examples
+
+### RBAC-Definition
 
 The `RbacDefinition` itself is cluster-scoped.
 
@@ -89,7 +93,7 @@ This would create the following objects:
 For more details, please read the [api-docs](https://github.com/ckotzbauer/access-manager/blob/master/docs/api.md) and view YAMLs in the `examples` directory.
 
 
-## Behaviors
+### Behaviors
 
 - A `RbacDefinition` can be marked as "paused" (set `spec.paused` to `true`), so that the operator will not interfere you.
 - The `RoleBinding`s and `ClusterRoleBinding`s are named the same as the given `Role` or `ClusterRole` unless the name is explicitly specified.
@@ -97,10 +101,44 @@ For more details, please read the [api-docs](https://github.com/ckotzbauer/acces
 - The operator detects changes to all `RbacDefinition`s, `Namespace`s and `ServiceAccount`s automatically.
 
 
+### SyncSecret-Definition
+
+The `SyncSecretDefinition` itself is cluster-scoped.
+
+```yaml
+apiVersion: access-manager.io/v1beta1
+kind: SyncSecretDefinition
+metadata:
+  name: example-definition
+spec:
+  source:
+    name: source-secret
+    namespace: default
+  targets:
+  - namespace:
+      name: my-product
+  - namespaceSelector:
+      matchLabels:
+        ci: "true"
+```
+
+This would create the following secret:
+- A `Secret` named `source-secret` in the namespace `my-product` and each namespace labeled with `ci: true`.
+
+For more details, please read the [api-docs](https://github.com/ckotzbauer/access-manager/blob/master/docs/api.md) and view YAMLs in the `examples` directory.
+
+
+### Behaviors
+
+- A `SyncSecretDefinition` can be marked as "paused" (set `spec.paused` to `true`), so that the operator will not interfere you.
+- The `Secrets`s are named the same as the given `Secret` in "source".
+- If there is a existing secret with the same name that is not owned by the `SyncSecretDefinition` it is not touched.
+- The operator detects changes to all `SyncSecretDefinition`s, `Namespace`s and source `Secrets`s automatically.
+
+
 ## Roadmap
 
 - Expose Prometheus metrics about created bindings and reconcile errors.
-- Manage secrets (e.g. imagePullSecrets) to be available in certain namespaces automatically.
 
 
 #### Credits

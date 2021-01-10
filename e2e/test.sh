@@ -25,6 +25,8 @@ kubectl create ns namespace3
 kubectl create ns namespace4
 
 kubectl label ns namespace1 ci=true
+kubectl create secret generic test-secret --from-literal key2=value2
+kubectl create secret generic test-secret2 -n namespace2 --from-literal key7=value14
 
 cd e2e
 export KUBECONFIG=kind-kubeconfig

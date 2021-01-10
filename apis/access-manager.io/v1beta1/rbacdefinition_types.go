@@ -34,10 +34,6 @@ type BindingsSpec struct {
 	AllServiceAccounts bool `json:"allServiceAccounts"`
 }
 
-type NamespaceSpec struct {
-	Name string `json:"name"`
-}
-
 type NamespacedSpec struct {
 	Namespace         NamespaceSpec        `json:"namespace,omitempty"`
 	NamespaceSelector metav1.LabelSelector `json:"namespaceSelector,omitempty"`
