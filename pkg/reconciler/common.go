@@ -88,7 +88,7 @@ func (r *Reconciler) processSecretDefinitions() (reconcile.Result, error) {
 // HasNamedOwner returns true if the owner array includes a object of the givien kind and name
 func HasNamedOwner(refs []metav1.OwnerReference, kind, name string) bool {
 	for _, ref := range refs {
-		if *ref.Controller && ref.Kind == kind && (name == "" || name == ref.Name) {
+		if ref.Controller != nil && *ref.Controller && ref.Kind == kind && (name == "" || name == ref.Name) {
 			return true
 		}
 	}
