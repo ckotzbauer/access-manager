@@ -1,3 +1,18 @@
+## Version 0.5.1 (2021-01-25)
+
+* [[`781b4226`](https://github.com/ckotzbauer&#x2F;access-manager/commit/781b4226)] - **build**: remove operator too on uninstall
+* [[`54f05964`](https://github.com/ckotzbauer&#x2F;access-manager/commit/54f05964)] - **build**: promote release on master
+* [[`6d7eacd2`](https://github.com/ckotzbauer&#x2F;access-manager/commit/6d7eacd2)] - **chore**: update golang docker tag to v1.15.7 (#77)
+* [[`fca8ec8f`](https://github.com/ckotzbauer&#x2F;access-manager/commit/fca8ec8f)] - **chore**: update module sigs.k8s.io&#x2F;controller-runtime to v0.8.1 (#78)
+* [[`ae430422`](https://github.com/ckotzbauer&#x2F;access-manager/commit/ae430422)] - **chore**: update module k8s.io&#x2F;client-go to v0.20.2 (#74)
+* [[`219fddd1`](https://github.com/ckotzbauer&#x2F;access-manager/commit/219fddd1)] - **chore**: update module k8s.io&#x2F;api to v0.20.2 (#72)
+* [[`89dca300`](https://github.com/ckotzbauer&#x2F;access-manager/commit/89dca300)] - **chore**: update alpine docker tag to v3.13 (#71)
+* [[`c196c1a3`](https://github.com/ckotzbauer&#x2F;access-manager/commit/c196c1a3)] - **chore**: update module k8s.io&#x2F;apimachinery to v0.20.2 (#73)
+* [[`e464b595`](https://github.com/ckotzbauer&#x2F;access-manager/commit/e464b595)] - **chore**: update module sigs.k8s.io&#x2F;controller-runtime to v0.8.0 (#75)
+* [[`7b66831e`](https://github.com/ckotzbauer&#x2F;access-manager/commit/7b66831e)] - **chore**: release 0.5.0
+* [[`2ba9ce54`](https://github.com/ckotzbauer&#x2F;access-manager/commit/2ba9ce54)] - **cleanup**: small cleanups and updates * updated golang to 1.15.7 * updated kind to 0.10.0 * updated kind image versions * updated controller-gen to 0.4.1 * go mod tidy * use kubectl 1.20.2
+* [[`70523ff2`](https://github.com/ckotzbauer&#x2F;access-manager/commit/70523ff2)] - **fix**: avoid nil pointer when checking ownerrefs closes #79
+
 ## Version 0.5.0 (2021-01-10)
 
 * [[`3d43b144`](https://github.com/ckotzbauer&#x2F;access-manager/commit/3d43b144)] - **build**: fix release-process
