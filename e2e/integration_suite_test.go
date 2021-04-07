@@ -22,22 +22,26 @@ func TestIntegration(t *testing.T) {
 var clientset *kubernetes.Clientset
 var client dynamic.Interface
 
-var _ = BeforeSuite(func(done Done) {
-	logf.SetLogger(zap.New(zap.WriteTo(GinkgoWriter)))
+var _ = BeforeSuite(func() {
+	done := make(chan interface{})
+	go func() {
+		logf.SetLogger(zap.New(zap.WriteTo(GinkgoWriter)))
 
-	kubeconfig := os.Getenv("KUBECONFIG")
-	cwd, _ := os.Getwd()
-	cfg, err := clientcmd.BuildConfigFromFlags("", filepath.Join(cwd, kubeconfig))
-	Expect(err).NotTo(HaveOccurred())
-	Expect(cfg).NotTo(BeNil())
+		kubeconfig := os.Getenv("KUBECONFIG")
+		cwd, _ := os.Getwd()
+		cfg, err := clientcmd.BuildConfigFromFlags("", filepath.Join(cwd, kubeconfig))
+		Expect(err).NotTo(HaveOccurred())
+		Expect(cfg).NotTo(BeNil())
 
-	client, err = dynamic.NewForConfig(cfg)
-	Expect(err).NotTo(HaveOccurred())
-	Expect(client).NotTo(BeNil())
+		client, err = dynamic.NewForConfig(cfg)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(client).NotTo(BeNil())
 
-	clientset, err = kubernetes.NewForConfig(cfg)
-	Expect(err).NotTo(HaveOccurred())
-	Expect(clientset).NotTo(BeNil())
+		clientset, err = kubernetes.NewForConfig(cfg)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(clientset).NotTo(BeNil())
 
-	close(done)
-}, 60)
+		close(done)
+	}()
+	Eventually(done, 60).Should(BeClosed())
+})

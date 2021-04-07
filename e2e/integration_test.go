@@ -296,189 +296,229 @@ var _ = Describe("IntegrationTest", func() {
 	}
 
 	Describe("RbacDefinition", func() {
-		It("should apply new RoleBinding", func(done Done) {
-			err := createRbacDefinition(client, ctx, def1)
-			Expect(err).NotTo(HaveOccurred())
-			time.Sleep(3 * time.Second)
+		It("should apply new RoleBinding", func() {
+			done := make(chan interface{})
+			go func() {
+				err := createRbacDefinition(client, ctx, def1)
+				Expect(err).NotTo(HaveOccurred())
+				time.Sleep(3 * time.Second)
 
-			expectedRb := rbacv1.RoleBinding{
-				ObjectMeta: metav1.ObjectMeta{Name: "test-role", Namespace: "namespace1"},
-				RoleRef: rbacv1.RoleRef{
-					APIGroup: "rbac.authorization.k8s.io",
-					Name:     "test-role",
-					Kind:     "Role",
-				},
-				Subjects: []rbacv1.Subject{{Kind: "ServiceAccount", Name: "default", Namespace: "namespace1"}},
-			}
+				expectedRb := rbacv1.RoleBinding{
+					ObjectMeta: metav1.ObjectMeta{Name: "test-role", Namespace: "namespace1"},
+					RoleRef: rbacv1.RoleRef{
+						APIGroup: "rbac.authorization.k8s.io",
+						Name:     "test-role",
+						Kind:     "Role",
+					},
+					Subjects: []rbacv1.Subject{{Kind: "ServiceAccount", Name: "default", Namespace: "namespace1"}},
+				}
 
-			rb, err := getRoleBinding(*clientset, ctx, "test-role", "namespace1")
-			Expect(err).NotTo(HaveOccurred())
-			checkRoleBindingToBeEquivalent(*rb, expectedRb)
-			close(done)
-		}, 5)
+				rb, err := getRoleBinding(*clientset, ctx, "test-role", "namespace1")
+				Expect(err).NotTo(HaveOccurred())
+				checkRoleBindingToBeEquivalent(*rb, expectedRb)
+				close(done)
+			}()
+			Eventually(done, 5).Should(BeClosed())
+		})
 
-		It("should apply new ClusterRoleBinding", func(done Done) {
-			err := createRbacDefinition(client, ctx, def2)
-			Expect(err).NotTo(HaveOccurred())
-			time.Sleep(3 * time.Second)
+		It("should apply new ClusterRoleBinding", func() {
+			done := make(chan interface{})
+			go func() {
+				err := createRbacDefinition(client, ctx, def2)
+				Expect(err).NotTo(HaveOccurred())
+				time.Sleep(3 * time.Second)
 
-			expectedCrb := rbacv1.ClusterRoleBinding{
-				ObjectMeta: metav1.ObjectMeta{Name: "test-role"},
-				RoleRef: rbacv1.RoleRef{
-					APIGroup: "rbac.authorization.k8s.io",
-					Name:     "test-role",
-					Kind:     "ClusterRole",
-				},
-				Subjects: []rbacv1.Subject{{Kind: "ServiceAccount", Name: "default", Namespace: "namespace2"}},
-			}
+				expectedCrb := rbacv1.ClusterRoleBinding{
+					ObjectMeta: metav1.ObjectMeta{Name: "test-role"},
+					RoleRef: rbacv1.RoleRef{
+						APIGroup: "rbac.authorization.k8s.io",
+						Name:     "test-role",
+						Kind:     "ClusterRole",
+					},
+					Subjects: []rbacv1.Subject{{Kind: "ServiceAccount", Name: "default", Namespace: "namespace2"}},
+				}
 
-			crb, err := getClusterRoleBinding(*clientset, ctx, "test-role")
-			Expect(err).NotTo(HaveOccurred())
-			checkClusterRoleBindingToBeEquivalent(*crb, expectedCrb)
-			close(done)
-		}, 5)
+				crb, err := getClusterRoleBinding(*clientset, ctx, "test-role")
+				Expect(err).NotTo(HaveOccurred())
+				checkClusterRoleBindingToBeEquivalent(*crb, expectedCrb)
+				close(done)
+			}()
+			Eventually(done, 5).Should(BeClosed())
+		})
 
-		It("should delete ClusterRoleBinding on definition removal", func(done Done) {
-			err := deleteRbacDefinition(client, ctx, def2)
-			Expect(err).NotTo(HaveOccurred())
-			time.Sleep(3 * time.Second)
+		It("should delete ClusterRoleBinding on definition removal", func() {
+			done := make(chan interface{})
+			go func() {
+				err := deleteRbacDefinition(client, ctx, def2)
+				Expect(err).NotTo(HaveOccurred())
+				time.Sleep(3 * time.Second)
 
-			_, err = getClusterRoleBinding(*clientset, ctx, "test-role")
-			Expect(errors.IsNotFound(err)).To(BeTrue())
-			close(done)
-		}, 5)
+				_, err = getClusterRoleBinding(*clientset, ctx, "test-role")
+				Expect(errors.IsNotFound(err)).To(BeTrue())
+				close(done)
+			}()
+			Eventually(done, 5).Should(BeClosed())
+		})
 
-		It("should create a RoleBinding if namespace is labeled", func(done Done) {
-			err := addNamespaceLabel(*clientset, ctx, "namespace3", "ci", "true")
-			Expect(err).NotTo(HaveOccurred())
-			time.Sleep(3 * time.Second)
+		It("should create a RoleBinding if namespace is labeled", func() {
+			done := make(chan interface{})
+			go func() {
+				err := addNamespaceLabel(*clientset, ctx, "namespace3", "ci", "true")
+				Expect(err).NotTo(HaveOccurred())
+				time.Sleep(3 * time.Second)
 
-			expectedRb := rbacv1.RoleBinding{
-				ObjectMeta: metav1.ObjectMeta{Name: "test-role", Namespace: "namespace3"},
-				RoleRef: rbacv1.RoleRef{
-					APIGroup: "rbac.authorization.k8s.io",
-					Name:     "test-role",
-					Kind:     "Role",
-				},
-				Subjects: []rbacv1.Subject{{Kind: "ServiceAccount", Name: "default", Namespace: "namespace1"}},
-			}
+				expectedRb := rbacv1.RoleBinding{
+					ObjectMeta: metav1.ObjectMeta{Name: "test-role", Namespace: "namespace3"},
+					RoleRef: rbacv1.RoleRef{
+						APIGroup: "rbac.authorization.k8s.io",
+						Name:     "test-role",
+						Kind:     "Role",
+					},
+					Subjects: []rbacv1.Subject{{Kind: "ServiceAccount", Name: "default", Namespace: "namespace1"}},
+				}
 
-			rb, err := getRoleBinding(*clientset, ctx, "test-role", "namespace3")
-			Expect(err).NotTo(HaveOccurred())
-			checkRoleBindingToBeEquivalent(*rb, expectedRb)
-			close(done)
-		}, 5)
+				rb, err := getRoleBinding(*clientset, ctx, "test-role", "namespace3")
+				Expect(err).NotTo(HaveOccurred())
+				checkRoleBindingToBeEquivalent(*rb, expectedRb)
+				close(done)
+			}()
+			Eventually(done, 5).Should(BeClosed())
+		})
 
-		It("should delete a RoleBinding if namespace is unlabeled", func(done Done) {
-			err := deleteNamespaceLabel(*clientset, ctx, "namespace3", "ci")
-			Expect(err).NotTo(HaveOccurred())
-			time.Sleep(3 * time.Second)
+		It("should delete a RoleBinding if namespace is unlabeled", func() {
+			done := make(chan interface{})
+			go func() {
+				err := deleteNamespaceLabel(*clientset, ctx, "namespace3", "ci")
+				Expect(err).NotTo(HaveOccurred())
+				time.Sleep(3 * time.Second)
 
-			_, err = getRoleBinding(*clientset, ctx, "test-role", "namespace3")
-			Expect(errors.IsNotFound(err)).To(BeTrue())
-			close(done)
-		}, 5)
+				_, err = getRoleBinding(*clientset, ctx, "test-role", "namespace3")
+				Expect(errors.IsNotFound(err)).To(BeTrue())
+				close(done)
+			}()
+			Eventually(done, 5).Should(BeClosed())
+		})
 
-		It("should modify RoleBinding on ServiceAccount creation", func(done Done) {
-			err := createRbacDefinition(client, ctx, def3)
-			Expect(err).NotTo(HaveOccurred())
-			time.Sleep(3 * time.Second)
+		It("should modify RoleBinding on ServiceAccount creation", func() {
+			done := make(chan interface{})
+			go func() {
+				err := createRbacDefinition(client, ctx, def3)
+				Expect(err).NotTo(HaveOccurred())
+				time.Sleep(3 * time.Second)
 
-			expectedRb := rbacv1.RoleBinding{
-				ObjectMeta: metav1.ObjectMeta{Name: "test-rolebinding", Namespace: "namespace4"},
-				RoleRef: rbacv1.RoleRef{
-					APIGroup: "rbac.authorization.k8s.io",
-					Name:     "test-role",
-					Kind:     "Role",
-				},
-				Subjects: []rbacv1.Subject{{Kind: "ServiceAccount", Name: "default", Namespace: ""}},
-			}
+				expectedRb := rbacv1.RoleBinding{
+					ObjectMeta: metav1.ObjectMeta{Name: "test-rolebinding", Namespace: "namespace4"},
+					RoleRef: rbacv1.RoleRef{
+						APIGroup: "rbac.authorization.k8s.io",
+						Name:     "test-role",
+						Kind:     "Role",
+					},
+					Subjects: []rbacv1.Subject{{Kind: "ServiceAccount", Name: "default", Namespace: ""}},
+				}
 
-			rb, err := getRoleBinding(*clientset, ctx, "test-rolebinding", "namespace4")
-			Expect(err).NotTo(HaveOccurred())
-			checkRoleBindingToBeEquivalent(*rb, expectedRb)
+				rb, err := getRoleBinding(*clientset, ctx, "test-rolebinding", "namespace4")
+				Expect(err).NotTo(HaveOccurred())
+				checkRoleBindingToBeEquivalent(*rb, expectedRb)
 
-			createServiceAccount(*clientset, ctx, corev1.ServiceAccount{ObjectMeta: metav1.ObjectMeta{Name: "new-sa", Namespace: "namespace4"}})
-			time.Sleep(3 * time.Second)
+				createServiceAccount(*clientset, ctx, corev1.ServiceAccount{ObjectMeta: metav1.ObjectMeta{Name: "new-sa", Namespace: "namespace4"}})
+				time.Sleep(3 * time.Second)
 
-			expectedRb = rbacv1.RoleBinding{
-				ObjectMeta: metav1.ObjectMeta{Name: "test-rolebinding", Namespace: "namespace4"},
-				RoleRef: rbacv1.RoleRef{
-					APIGroup: "rbac.authorization.k8s.io",
-					Name:     "test-role",
-					Kind:     "Role",
-				},
-				Subjects: []rbacv1.Subject{
-					{Kind: "ServiceAccount", Name: "default", Namespace: ""},
-					{Kind: "ServiceAccount", Name: "new-sa", Namespace: ""},
-				},
-			}
+				expectedRb = rbacv1.RoleBinding{
+					ObjectMeta: metav1.ObjectMeta{Name: "test-rolebinding", Namespace: "namespace4"},
+					RoleRef: rbacv1.RoleRef{
+						APIGroup: "rbac.authorization.k8s.io",
+						Name:     "test-role",
+						Kind:     "Role",
+					},
+					Subjects: []rbacv1.Subject{
+						{Kind: "ServiceAccount", Name: "default", Namespace: ""},
+						{Kind: "ServiceAccount", Name: "new-sa", Namespace: ""},
+					},
+				}
 
-			rb, err = getRoleBinding(*clientset, ctx, "test-rolebinding", "namespace4")
-			Expect(err).NotTo(HaveOccurred())
-			checkRoleBindingToBeEquivalent(*rb, expectedRb)
-			close(done)
-		}, 10)
+				rb, err = getRoleBinding(*clientset, ctx, "test-rolebinding", "namespace4")
+				Expect(err).NotTo(HaveOccurred())
+				checkRoleBindingToBeEquivalent(*rb, expectedRb)
+				close(done)
+			}()
+			Eventually(done, 10).Should(BeClosed())
+		})
 	})
 
 	Describe("SyncSecretDefinition", func() {
-		It("should apply new Secret", func(done Done) {
-			err := createSyncSecretDefinition(client, ctx, secretDef1)
-			Expect(err).NotTo(HaveOccurred())
-			err = createSyncSecretDefinition(client, ctx, secretDef2)
-			Expect(err).NotTo(HaveOccurred())
-			time.Sleep(3 * time.Second)
+		It("should apply new Secret", func() {
+			done := make(chan interface{})
+			go func() {
+				err := createSyncSecretDefinition(client, ctx, secretDef1)
+				Expect(err).NotTo(HaveOccurred())
+				err = createSyncSecretDefinition(client, ctx, secretDef2)
+				Expect(err).NotTo(HaveOccurred())
+				time.Sleep(3 * time.Second)
 
-			expectedSecret := corev1.Secret{
-				ObjectMeta: metav1.ObjectMeta{Name: "test-secret", Namespace: "namespace1"},
-				Type:       corev1.SecretTypeOpaque,
-				Data:       map[string][]byte{"key2": []byte(b64.StdEncoding.EncodeToString([]byte("value2")))},
-			}
+				expectedSecret := corev1.Secret{
+					ObjectMeta: metav1.ObjectMeta{Name: "test-secret", Namespace: "namespace1"},
+					Type:       corev1.SecretTypeOpaque,
+					Data:       map[string][]byte{"key2": []byte(b64.StdEncoding.EncodeToString([]byte("value2")))},
+				}
 
-			secret, err := getSecret(*clientset, ctx, "test-secret", "namespace1")
-			Expect(err).NotTo(HaveOccurred())
-			checkSecretToBeEquivalent(*secret, expectedSecret)
-			close(done)
-		}, 5)
+				secret, err := getSecret(*clientset, ctx, "test-secret", "namespace1")
+				Expect(err).NotTo(HaveOccurred())
+				checkSecretToBeEquivalent(*secret, expectedSecret)
+				close(done)
+			}()
+			Eventually(done, 5).Should(BeClosed())
+		})
 
-		It("should delete Secrets on definition removal", func(done Done) {
-			_, err := getSecret(*clientset, ctx, "test-secret2", "namespace4")
-			Expect(err).To(BeNil())
+		It("should delete Secrets on definition removal", func() {
+			done := make(chan interface{})
+			go func() {
+				_, err := getSecret(*clientset, ctx, "test-secret2", "namespace4")
+				Expect(err).To(BeNil())
 
-			err = deleteSyncSecretDefinition(client, ctx, secretDef2)
-			Expect(err).NotTo(HaveOccurred())
-			time.Sleep(3 * time.Second)
+				err = deleteSyncSecretDefinition(client, ctx, secretDef2)
+				Expect(err).NotTo(HaveOccurred())
+				time.Sleep(3 * time.Second)
 
-			_, err = getSecret(*clientset, ctx, "test-secret2", "namespace4")
-			Expect(errors.IsNotFound(err)).To(BeTrue())
-			close(done)
-		}, 5)
+				_, err = getSecret(*clientset, ctx, "test-secret2", "namespace4")
+				Expect(errors.IsNotFound(err)).To(BeTrue())
+				close(done)
+			}()
+			Eventually(done, 5).Should(BeClosed())
+		})
 
-		It("should create a Secret if namespace is labeled", func(done Done) {
-			err := addNamespaceLabel(*clientset, ctx, "namespace3", "ci", "true")
-			Expect(err).NotTo(HaveOccurred())
-			time.Sleep(3 * time.Second)
+		It("should create a Secret if namespace is labeled", func() {
+			done := make(chan interface{})
+			go func() {
+				err := addNamespaceLabel(*clientset, ctx, "namespace3", "ci", "true")
+				Expect(err).NotTo(HaveOccurred())
+				time.Sleep(3 * time.Second)
 
-			expectedSecret := corev1.Secret{
-				ObjectMeta: metav1.ObjectMeta{Name: "test-secret", Namespace: "namespace3"},
-				Type:       corev1.SecretTypeOpaque,
-				Data:       map[string][]byte{"key2": []byte(b64.StdEncoding.EncodeToString([]byte("value2")))},
-			}
+				expectedSecret := corev1.Secret{
+					ObjectMeta: metav1.ObjectMeta{Name: "test-secret", Namespace: "namespace3"},
+					Type:       corev1.SecretTypeOpaque,
+					Data:       map[string][]byte{"key2": []byte(b64.StdEncoding.EncodeToString([]byte("value2")))},
+				}
 
-			secret, err := getSecret(*clientset, ctx, "test-secret", "namespace3")
-			Expect(err).NotTo(HaveOccurred())
-			checkSecretToBeEquivalent(*secret, expectedSecret)
-			close(done)
-		}, 5)
+				secret, err := getSecret(*clientset, ctx, "test-secret", "namespace3")
+				Expect(err).NotTo(HaveOccurred())
+				checkSecretToBeEquivalent(*secret, expectedSecret)
+				close(done)
+			}()
+			Eventually(done, 5).Should(BeClosed())
+		})
 
-		It("should delete a RoleBinding if namespace is unlabeled", func(done Done) {
-			err := deleteNamespaceLabel(*clientset, ctx, "namespace3", "ci")
-			Expect(err).NotTo(HaveOccurred())
-			time.Sleep(3 * time.Second)
+		It("should delete a RoleBinding if namespace is unlabeled", func() {
+			done := make(chan interface{})
+			go func() {
+				err := deleteNamespaceLabel(*clientset, ctx, "namespace3", "ci")
+				Expect(err).NotTo(HaveOccurred())
+				time.Sleep(3 * time.Second)
 
-			_, err = getSecret(*clientset, ctx, "test-secret", "namespace3")
-			Expect(errors.IsNotFound(err)).To(BeTrue())
-			close(done)
-		}, 5)
+				_, err = getSecret(*clientset, ctx, "test-secret", "namespace3")
+				Expect(errors.IsNotFound(err)).To(BeTrue())
+				close(done)
+			}()
+			Eventually(done, 5).Should(BeClosed())
+		})
 	})
 })
