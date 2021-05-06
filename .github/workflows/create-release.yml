@@ -28,7 +28,7 @@ jobs:
           go-version: '1.16.0'
 
       - name: Setup Kubebuilder
-        uses: RyanSiu1995/kubebuilder-action@v1.1
+        uses: RyanSiu1995/kubebuilder-action@v1.2
         with:
           version: 2.3.1
 
