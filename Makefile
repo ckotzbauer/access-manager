@@ -11,7 +11,7 @@ IMG ?= ckotzbauer/access-manager
 CRD_OPTIONS ?= "crd:trivialVersions=true"
 
 # default k8s version for e2e tests
-K8S_VERSION ?= 1.20.2
+K8S_VERSION ?= 1.20.7
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
@@ -96,7 +96,7 @@ ifeq (, $(shell which kind))
 	KIND_TMP_DIR=$$(mktemp -d) ;\
 	cd $$KIND_TMP_DIR ;\
 	go mod init tmp ;\
-	go get sigs.k8s.io/kind@v0.10.0 ;\
+	go get sigs.k8s.io/kind@v0.11.1 ;\
 	rm -rf $$KIND_TMP_DIR ;\
 	}
 KIND=$(GOBIN)/kind
