@@ -14,12 +14,12 @@ The image contains versions of `k8s.io/client-go`. Kubernetes aims to provide fo
 
 | access-manager  | k8s.io/client-go | k8s.io/apimachinery | expected kubernetes compatibility |
 |-----------------|------------------|---------------------|-----------------------------------|
-| master          | v0.20.6          | v0.20.6             | 1.19.x, 1.20.x, 1.21.x            |
-| 0.5.0           | v0.20.1          | v0.20.1             | 1.19.x, 1.20.x, 1.21.x            |
-| 0.4.0           | v0.19.2          | v0.19.2             | 1.18.x, 1.19.x, 1.20.x            |
-| 0.3.0           | v0.18.8          | v0.18.8             | 1.17.x, 1.18.x, 1.19.x            |
-| 0.2.0           | v12.0.0          | v0.18.5             | 1.17.x, 1.18.x, 1.19.x            |
-| 0.1.0           | v12.0.0          | v0.18.3             | 1.17.x, 1.18.x, 1.19.x            |
+| master          | v0.21.1          | v0.21.1             | 1.20.x, 1.21.x, 1.22.x            |
+| 0.5.x           | v0.20.1          | v0.20.1             | 1.19.x, 1.20.x, 1.21.x            |
+| 0.4.x           | v0.19.2          | v0.19.2             | 1.18.x, 1.19.x, 1.20.x            |
+| 0.3.x           | v0.18.8          | v0.18.8             | 1.17.x, 1.18.x, 1.19.x            |
+| 0.2.x           | v12.0.0          | v0.18.5             | 1.17.x, 1.18.x, 1.19.x            |
+| 0.1.x           | v12.0.0          | v0.18.3             | 1.17.x, 1.18.x, 1.19.x            |
 
 See the [release notes](https://github.com/ckotzbauer/access-manager/releases) for specific version compatibility information, including which
 combination have been formally tested.
