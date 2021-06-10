@@ -1,3 +1,80 @@
+## Version 0.6.0 (2021-06-10)
+
+### Features and improvements
+
+* [[`e5b97bb0`](https://github.com/ckotzbauer&#x2F;access-manager/commit/e5b97bb0)] - **feat**: also push to ghcr
+
+### Bug fixes
+
+* [[`dc4fb158`](https://github.com/ckotzbauer&#x2F;access-manager/commit/dc4fb158)] - **fix**: update module github.com&#x2F;onsi&#x2F;ginkgo to v1.16.0 (#93)
+* [[`b624bba8`](https://github.com/ckotzbauer&#x2F;access-manager/commit/b624bba8)] - **fix**: update module github.com&#x2F;onsi&#x2F;ginkgo to v1.15.2 (#97)
+* [[`3cc51429`](https://github.com/ckotzbauer&#x2F;access-manager/commit/3cc51429)] - **fix**: update module k8s.io&#x2F;client-go to v0.20.5 (#100)
+* [[`c7731e71`](https://github.com/ckotzbauer&#x2F;access-manager/commit/c7731e71)] - **fix**: update module sigs.k8s.io&#x2F;controller-runtime to v0.8.3 (#96)
+* [[`efa2ba15`](https://github.com/ckotzbauer&#x2F;access-manager/commit/efa2ba15)] - **fix**: update module k8s.io&#x2F;client-go to v0.20.4 (#90)
+
+### Build and testing
+
+* [[`0b630c4f`](https://github.com/ckotzbauer&#x2F;access-manager/commit/0b630c4f)] - **build**: use newest patch [skip ci]
+* [[`bfbeeaaf`](https://github.com/ckotzbauer&#x2F;access-manager/commit/bfbeeaaf)] - **build**: use 1.21.1 as default version
+* [[`cd6a2fb3`](https://github.com/ckotzbauer&#x2F;access-manager/commit/cd6a2fb3)] - **build**: small pipeline updates
+* [[`5102addf`](https://github.com/ckotzbauer&#x2F;access-manager/commit/5102addf)] - **build**: update kind to 0.11.1
+* [[`2c87ae14`](https://github.com/ckotzbauer&#x2F;access-manager/commit/2c87ae14)] - **build**: use delete&#x3D;true for label-creation
+* [[`c28c5b8a`](https://github.com/ckotzbauer&#x2F;access-manager/commit/c28c5b8a)] - **build**: use golang@1.15.8
+* [[`a6a77916`](https://github.com/ckotzbauer&#x2F;access-manager/commit/a6a77916)] - **test**: rewrote async integration test for ginkgo@2
+
+### Documentation
+
+* [[`89c75430`](https://github.com/ckotzbauer&#x2F;access-manager/commit/89c75430)] - **doc**: add 0.6.x
+* [[`3d788f51`](https://github.com/ckotzbauer&#x2F;access-manager/commit/3d788f51)] - **doc**: updated k8s versions
+
+### Dependency updates
+
+* [[`a00cda53`](https://github.com/ckotzbauer&#x2F;access-manager/commit/a00cda53)] - **deps**: update to kubebuilder@3.1
+* [[`9133f5b1`](https://github.com/ckotzbauer&#x2F;access-manager/commit/9133f5b1)] - **deps**: update sigs.k8s.io&#x2F;controller-tools&#x2F;cmd&#x2F;controller-gen to 0.6.0
+* [[`741ce15a`](https://github.com/ckotzbauer&#x2F;access-manager/commit/741ce15a)] - **deps**: update sigs.k8s.io&#x2F;controller-runtime to 0.9.0
+* [[`c51ef019`](https://github.com/ckotzbauer&#x2F;access-manager/commit/c51ef019)] - **deps**: update kubernetes versions to v0.21.1
+* [[`eb480dc8`](https://github.com/ckotzbauer&#x2F;access-manager/commit/eb480dc8)] - **deps**: update golang docker tag to v1.16.5 (#123)
+* [[`260ba104`](https://github.com/ckotzbauer&#x2F;access-manager/commit/260ba104)] - **deps**: fix update of ginkgo
+* [[`dc443f84`](https://github.com/ckotzbauer&#x2F;access-manager/commit/dc443f84)] - **deps**: update module github.com&#x2F;onsi&#x2F;ginkgo to v1.16.4
+* [[`36f6defe`](https://github.com/ckotzbauer&#x2F;access-manager/commit/36f6defe)] - **deps**: bump pascalgn&#x2F;size-label-action from 0.4.2 to 0.4.3
+* [[`9d5dab34`](https://github.com/ckotzbauer&#x2F;access-manager/commit/9d5dab34)] - **deps**: update ginkgo and gomega
+* [[`b0cb26e9`](https://github.com/ckotzbauer&#x2F;access-manager/commit/b0cb26e9)] - **deps**: update lannonbr&#x2F;issue-label-manager-action action to v3
+* [[`0d00caa1`](https://github.com/ckotzbauer&#x2F;access-manager/commit/0d00caa1)] - **deps**: bump pascalgn&#x2F;automerge-action from 0.14.1 to 0.14.2
+* [[`0cd6979d`](https://github.com/ckotzbauer&#x2F;access-manager/commit/0cd6979d)] - **deps**: bump pascalgn&#x2F;automerge-action from 0.13.1 to 0.14.1 (#113)
+* [[`44671d47`](https://github.com/ckotzbauer&#x2F;access-manager/commit/44671d47)] - **deps**: update module github.com&#x2F;onsi&#x2F;ginkgo to v1.16.2 (#111)
+* [[`ccb51f4f`](https://github.com/ckotzbauer&#x2F;access-manager/commit/ccb51f4f)] - **deps**: update module github.com&#x2F;onsi&#x2F;gomega to v1.12.0 (#112)
+* [[`07ff77ac`](https://github.com/ckotzbauer&#x2F;access-manager/commit/07ff77ac)] - **deps**: update golang docker tag to v1.16.4 (#110)
+* [[`23e015a4`](https://github.com/ckotzbauer&#x2F;access-manager/commit/23e015a4)] - **deps**: bump RyanSiu1995&#x2F;kubebuilder-action from v1.1 to v1.2 (#109)
+* [[`b2225a26`](https://github.com/ckotzbauer&#x2F;access-manager/commit/b2225a26)] - **deps**: updated client-go@0.20.6
+* [[`7acf0294`](https://github.com/ckotzbauer&#x2F;access-manager/commit/7acf0294)] - **deps**: update module github.com&#x2F;onsi&#x2F;ginkgo to v1.16.1 (#102)
+* [[`acb7212c`](https://github.com/ckotzbauer&#x2F;access-manager/commit/acb7212c)] - **deps**: update module k8s.io&#x2F;apimachinery to v0.21.0 (#104)
+* [[`e4d9de41`](https://github.com/ckotzbauer&#x2F;access-manager/commit/e4d9de41)] - **deps**: bump actions&#x2F;setup-node from v2.1.4 to v2.1.5 (#92)
+
+### Common changes
+
+* [[`fa785cae`](https://github.com/ckotzbauer&#x2F;access-manager/commit/fa785cae)] - **chore**: Merge pull request #122 from ckotzbauer&#x2F;kubebuilder-v3
+* [[`67737c1f`](https://github.com/ckotzbauer&#x2F;access-manager/commit/67737c1f)] - **chore**: force build
+* [[`e7ff3ac1`](https://github.com/ckotzbauer&#x2F;access-manager/commit/e7ff3ac1)] - **chore**: Merge pull request #107 from ckotzbauer&#x2F;renovate&#x2F;kubernetes-versions
+* [[`6f1301a3`](https://github.com/ckotzbauer&#x2F;access-manager/commit/6f1301a3)] - **chore**: Merge pull request #119 from ckotzbauer&#x2F;renovate&#x2F;github.com-onsi-ginkgo-1.x
+* [[`8344b826`](https://github.com/ckotzbauer&#x2F;access-manager/commit/8344b826)] - **chore**: Merge pull request #121 from ckotzbauer&#x2F;dependabot&#x2F;github_actions&#x2F;pascalgn&#x2F;size-label-action-0.4.3
+* [[`cdcbe022`](https://github.com/ckotzbauer&#x2F;access-manager/commit/cdcbe022)] - **chore**: Merge pull request #120 from ckotzbauer&#x2F;renovate&#x2F;lannonbr-issue-label-manager-action-3.x
+* [[`93a5b81f`](https://github.com/ckotzbauer&#x2F;access-manager/commit/93a5b81f)] - **chore**: Merge pull request #117 from ckotzbauer&#x2F;dependabot&#x2F;github_actions&#x2F;pascalgn&#x2F;automerge-action-0.14.2
+* [[`06567bd9`](https://github.com/ckotzbauer&#x2F;access-manager/commit/06567bd9)] - **chore**: change k8s package update strategy
+* [[`7a6332fb`](https://github.com/ckotzbauer&#x2F;access-manager/commit/7a6332fb)] - **chore**: update to controller-gen@0.5.0
+* [[`44d24dbb`](https://github.com/ckotzbauer&#x2F;access-manager/commit/44d24dbb)] - **chore**: update golang docker tag to v1.16.3 (#101)
+* [[`fc1b1d11`](https://github.com/ckotzbauer&#x2F;access-manager/commit/fc1b1d11)] - **chore**: update golang docker tag to v1.16.2 (#95)
+* [[`a20de8b6`](https://github.com/ckotzbauer&#x2F;access-manager/commit/a20de8b6)] - **chore**: updated test-deps
+* [[`c4f6a4a8`](https://github.com/ckotzbauer&#x2F;access-manager/commit/c4f6a4a8)] - **chore**: update golang docker tag to v1.16.0 (#87)
+* [[`b3e63bc4`](https://github.com/ckotzbauer&#x2F;access-manager/commit/b3e63bc4)] - **chore**: Bump pascalgn&#x2F;automerge-action
+* [[`3b357d44`](https://github.com/ckotzbauer&#x2F;access-manager/commit/3b357d44)] - **chore**: update module sigs.k8s.io&#x2F;controller-runtime to v0.8.2 (#85)
+* [[`33a650f7`](https://github.com/ckotzbauer&#x2F;access-manager/commit/33a650f7)] - **chore**: update module onsi&#x2F;ginkgo to v1.15.0 (#83)
+* [[`c9c8adb9`](https://github.com/ckotzbauer&#x2F;access-manager/commit/c9c8adb9)] - **chore**: update golang docker tag to v1.15.8 (#82)
+* [[`b6a4d6be`](https://github.com/ckotzbauer&#x2F;access-manager/commit/b6a4d6be)] - **chore**: update module onsi&#x2F;gomega to v1.10.5 (#84)
+* [[`00e00512`](https://github.com/ckotzbauer&#x2F;access-manager/commit/00e00512)] - **chore**: update module go-logr&#x2F;logr to v0.4.0 (#81)
+* [[`219fe437`](https://github.com/ckotzbauer&#x2F;access-manager/commit/219fe437)] - **chore**: Bump pascalgn&#x2F;size-label-action
+* [[`45a8a299`](https://github.com/ckotzbauer&#x2F;access-manager/commit/45a8a299)] - **security**: fix CVE-2020-29652
+
+
 ## Version 0.5.1 (2021-01-25)
 
 * [[`781b4226`](https://github.com/ckotzbauer&#x2F;access-manager/commit/781b4226)] - **build**: remove operator too on uninstall
