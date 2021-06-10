@@ -42,14 +42,30 @@ jobs:
           make test
           make e2e-test
 
-      - name: Build docker-image
-        uses: elgohr/Publish-Docker-Github-Action@master
+      - name: Dockerhub Login
+        uses: docker/login-action@v1
         with:
-          name: ckotzbauer/access-manager
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
-          buildargs: version=${{ github.event.inputs.version }}
-          tags: "${{ github.event.inputs.version }},latest"
+
+      - name: GHCR Login
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_PASSWORD }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64
+          tags: |
+            ckotzbauer/access-manager:${{ github.event.inputs.version }}
+            ckotzbauer/access-manager:latest
+            ghcr.io/ckotzbauer/access-manager:${{ github.event.inputs.version }}
+            ghcr.io/ckotzbauer/access-manager:latest
 
       - name: Generate changelog
         run: npx @code-chris/changelog-generator --release-version ${{ github.event.inputs.version }} --github-handle ${{ github.repository }} --commit-output commits.md
