@@ -152,3 +152,4 @@ This projects was inspired by the [RBACManager](https://github.com/FairwindsOps/
 --------
 [Changelog](https://github.com/ckotzbauer/access-manager/blob/master/CHANGELOG.md)
 --------
+

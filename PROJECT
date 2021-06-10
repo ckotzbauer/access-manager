@@ -1,5 +1,5 @@
 domain: access-manager.io
-layout: go.kubebuilder.io/v2
+layout: go.kubebuilder.io/v3
 multigroup: true
 projectName: access-manager
 repo: access-manager
