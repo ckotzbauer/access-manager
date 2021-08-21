@@ -14,7 +14,8 @@ The image contains versions of `k8s.io/client-go`. Kubernetes aims to provide fo
 
 | access-manager  | k8s.io/client-go | k8s.io/apimachinery | expected kubernetes compatibility |
 |-----------------|------------------|---------------------|-----------------------------------|
-| master          | v0.21.1          | v0.21.1             | 1.20.x, 1.21.x, 1.22.x            |
+| master          | v0.22.1          | v0.22.1             | 1.21.x, 1.22.x, 1.23.x            |
+| 0.7.x           | v0.22.1          | v0.22.1             | 1.21.x, 1.22.x, 1.23.x            |
 | 0.6.x           | v0.21.1          | v0.21.1             | 1.20.x, 1.21.x, 1.22.x            |
 | 0.5.x           | v0.20.1          | v0.20.1             | 1.19.x, 1.20.x, 1.21.x            |
 | 0.4.x           | v0.19.2          | v0.19.2             | 1.18.x, 1.19.x, 1.20.x            |
