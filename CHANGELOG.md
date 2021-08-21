@@ -1,3 +1,42 @@
+## Version 0.7.0 (2021-08-21)
+
+### Dependency updates
+
+* [[`5ccb0dc3`](https://github.com/ckotzbauer&#x2F;access-manager/commit/5ccb0dc3)] - **deps**: updated gomega
+* [[`cdefa897`](https://github.com/ckotzbauer&#x2F;access-manager/commit/cdefa897)] - **deps**: update module github.com&#x2F;onsi&#x2F;gomega to v1.16.0
+* [[`ebde97c1`](https://github.com/ckotzbauer&#x2F;access-manager/commit/ebde97c1)] - **deps**: update to kubernetes@1.22.x
+* [[`8dfc28e6`](https://github.com/ckotzbauer&#x2F;access-manager/commit/8dfc28e6)] - **deps**: update to golang@1.17.0
+* [[`69dfe67e`](https://github.com/ckotzbauer&#x2F;access-manager/commit/69dfe67e)] - **deps**: update kubernetes versions to v0.22.1 (#143)
+* [[`63a99169`](https://github.com/ckotzbauer&#x2F;access-manager/commit/63a99169)] - **deps**: update golang docker tag to v1.17.0 (#144)
+* [[`38c51592`](https://github.com/ckotzbauer&#x2F;access-manager/commit/38c51592)] - **deps**: update module sigs.k8s.io&#x2F;controller-runtime to v0.9.6 (#142)
+* [[`bc699681`](https://github.com/ckotzbauer&#x2F;access-manager/commit/bc699681)] - **deps**: update golang docker tag to v1.16.7 (#139)
+* [[`3b143736`](https://github.com/ckotzbauer&#x2F;access-manager/commit/3b143736)] - **deps**: update kubernetes versions to v0.22.0 (#140)
+* [[`15f8c6a2`](https://github.com/ckotzbauer&#x2F;access-manager/commit/15f8c6a2)] - **deps**: bump actions&#x2F;setup-node from 2.3.2 to 2.4.0
+* [[`77c33688`](https://github.com/ckotzbauer&#x2F;access-manager/commit/77c33688)] - **deps**: bump actions&#x2F;setup-node from 2.3.1 to 2.3.2
+* [[`9709b1ea`](https://github.com/ckotzbauer&#x2F;access-manager/commit/9709b1ea)] - **deps**: bump actions&#x2F;setup-node from 2.3.0 to 2.3.1
+* [[`d3a7edd2`](https://github.com/ckotzbauer&#x2F;access-manager/commit/d3a7edd2)] - **deps**: update module sigs.k8s.io&#x2F;controller-runtime to v0.9.5 (#135)
+* [[`7b72a7a1`](https://github.com/ckotzbauer&#x2F;access-manager/commit/7b72a7a1)] - **deps**: update module sigs.k8s.io&#x2F;controller-runtime to v0.9.3 (#134)
+* [[`b640e1e1`](https://github.com/ckotzbauer&#x2F;access-manager/commit/b640e1e1)] - **deps**: bump actions&#x2F;setup-node from 2.2.0 to 2.3.0
+* [[`0e0c75bb`](https://github.com/ckotzbauer&#x2F;access-manager/commit/0e0c75bb)] - **deps**: update golang docker tag to v1.16.6 (#131)
+* [[`68976478`](https://github.com/ckotzbauer&#x2F;access-manager/commit/68976478)] - **deps**: update kubernetes versions to v0.21.3 (#132)
+* [[`3619f800`](https://github.com/ckotzbauer&#x2F;access-manager/commit/3619f800)] - **deps**: bump actions&#x2F;stale from 3 to 4
+* [[`170df71d`](https://github.com/ckotzbauer&#x2F;access-manager/commit/170df71d)] - **deps**: update module github.com&#x2F;onsi&#x2F;gomega to v1.14.0 (#128)
+* [[`be3d1f6e`](https://github.com/ckotzbauer&#x2F;access-manager/commit/be3d1f6e)] - **deps**: bump actions&#x2F;setup-node from 2.1.5 to 2.2.0
+* [[`6d4e67e3`](https://github.com/ckotzbauer&#x2F;access-manager/commit/6d4e67e3)] - **deps**: update module sigs.k8s.io&#x2F;controller-runtime to v0.9.2 (#126)
+* [[`830ae083`](https://github.com/ckotzbauer&#x2F;access-manager/commit/830ae083)] - **deps**: update kubernetes versions to v0.21.2 (#124)
+* [[`a092bf38`](https://github.com/ckotzbauer&#x2F;access-manager/commit/a092bf38)] - **deps**: update alpine docker tag to v3.14 (#125)
+
+### Common changes
+
+* [[`a7dff61c`](https://github.com/ckotzbauer&#x2F;access-manager/commit/a7dff61c)] - **chore**: Merge pull request #141 from ckotzbauer&#x2F;renovate&#x2F;github.com-onsi-gomega-1.x
+* [[`77632c1e`](https://github.com/ckotzbauer&#x2F;access-manager/commit/77632c1e)] - **chore**: Merge pull request #138 from ckotzbauer&#x2F;dependabot&#x2F;github_actions&#x2F;actions&#x2F;setup-node-2.4.0
+* [[`8439a9b4`](https://github.com/ckotzbauer&#x2F;access-manager/commit/8439a9b4)] - **chore**: Merge pull request #137 from ckotzbauer&#x2F;dependabot&#x2F;github_actions&#x2F;actions&#x2F;setup-node-2.3.2
+* [[`5f785835`](https://github.com/ckotzbauer&#x2F;access-manager/commit/5f785835)] - **chore**: Merge pull request #136 from ckotzbauer&#x2F;dependabot&#x2F;github_actions&#x2F;actions&#x2F;setup-node-2.3.1
+* [[`840ad4b4`](https://github.com/ckotzbauer&#x2F;access-manager/commit/840ad4b4)] - **chore**: Merge pull request #133 from ckotzbauer&#x2F;dependabot&#x2F;github_actions&#x2F;actions&#x2F;setup-node-2.3.0
+* [[`754382ed`](https://github.com/ckotzbauer&#x2F;access-manager/commit/754382ed)] - **chore**: Merge pull request #130 from ckotzbauer&#x2F;dependabot&#x2F;github_actions&#x2F;actions&#x2F;stale-4
+* [[`153c51ce`](https://github.com/ckotzbauer&#x2F;access-manager/commit/153c51ce)] - **chore**: Merge pull request #127 from ckotzbauer&#x2F;dependabot&#x2F;github_actions&#x2F;actions&#x2F;setup-node-2.2.0
+
+
 ## Version 0.6.0 (2021-06-10)
 
 ### Features and improvements
