@@ -3,7 +3,7 @@ module access-manager
 go 1.17
 
 require (
-	github.com/go-logr/logr v1.1.0
+	github.com/go-logr/logr v1.2.0
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.15.0
 	k8s.io/api v0.22.2
