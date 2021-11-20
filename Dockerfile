@@ -8,7 +8,7 @@ COPY . .
 RUN make manager
 
 
-FROM alpine:3.14
+FROM alpine:3.15
 
 ENV USER_UID=1001 \
     USER_NAME=access-manager
