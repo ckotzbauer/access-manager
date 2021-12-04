@@ -8,7 +8,7 @@ endif
 # Image URL to use all building/pushing image targets
 IMG ?= ckotzbauer/access-manager
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
-CRD_OPTIONS ?= "crd:trivialVersions=true"
+CRD_OPTIONS ?= "crd"
 
 # default k8s version for e2e tests
 K8S_VERSION ?= 1.22.0
@@ -79,7 +79,7 @@ ifeq (, $(shell which controller-gen))
 	CONTROLLER_GEN_TMP_DIR=$$(mktemp -d) ;\
 	cd $$CONTROLLER_GEN_TMP_DIR ;\
 	go mod init tmp ;\
-	go get sigs.k8s.io/controller-tools/cmd/controller-gen@v0.6.0 ;\
+	go install sigs.k8s.io/controller-tools/cmd/controller-gen@v0.7.0 ;\
 	rm -rf $$CONTROLLER_GEN_TMP_DIR ;\
 	}
 CONTROLLER_GEN=$(GOBIN)/controller-gen
@@ -96,7 +96,7 @@ ifeq (, $(shell which kind))
 	KIND_TMP_DIR=$$(mktemp -d) ;\
 	cd $$KIND_TMP_DIR ;\
 	go mod init tmp ;\
-	go get sigs.k8s.io/kind@v0.11.1 ;\
+	go download sigs.k8s.io/kind@v0.11.1 ;\
 	rm -rf $$KIND_TMP_DIR ;\
 	}
 KIND=$(GOBIN)/kind
