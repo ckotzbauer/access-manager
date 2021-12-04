@@ -4,6 +4,8 @@ import (
 	accessmanagerv1beta1 "access-manager/apis/access-manager.io/v1beta1"
 	"access-manager/pkg/util"
 	"context"
+	"fmt"
+	"reflect"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -18,13 +20,35 @@ var secretName = "SyncSecretDefinition"
 // ReconcileSyncSecretDefinition applies all desired changes of the SyncSecretDefinition
 func (r *Reconciler) ReconcileSyncSecretDefinition(instance *accessmanagerv1beta1.SyncSecretDefinition) (reconcile.Result, error) {
 	secrets := r.BuildAllSecrets(instance)
-	r.RemoveOwnedSecrets(instance.Name)
+	ownedSecrets, err := r.GetOwnedSecrets(instance.Name)
+
+	if err != nil {
+		r.Logger.Error(err, "Failed to fetch all owned Secrets.")
+	}
+
+	r.RemoveOwnedSecretsNotInList(ownedSecrets, secrets)
+
+	if err != nil {
+		r.Logger.Error(err, "Failed to fetch owned Secrets.")
+		return reconcile.Result{}, err
+	}
 
 	for _, s := range secrets {
 		// Set SyncSecretDefinition instance as the owner and controller
 		if err := controllerutil.SetControllerReference(instance, &s, r.Scheme); err != nil {
 			r.Logger.WithValues("Secret", s.Namespace+"/"+s.Name).Error(err, "Failed to set controllerReference.")
 			continue
+		}
+
+		existingSecret, err := r.getSecretFromSlice(ownedSecrets, s)
+
+		if err == nil && r.hasSecretChanged(existingSecret, s) {
+			r.Logger.Info("Reconciling Secret", "Name", fmt.Sprintf("%s/%s", existingSecret.Namespace, existingSecret.Name))
+			r.removeSecret(existingSecret)
+		} else if err == nil {
+			continue
+		} else {
+			r.Logger.Info("Reconciling Secret", "Name", fmt.Sprintf("%s/%s", s.Namespace, s.Name))
 		}
 
 		if _, err := r.CreateSecret(s); err != nil {
@@ -109,36 +133,37 @@ func (r *Reconciler) CreateSecret(s corev1.Secret) (*corev1.Secret, error) {
 	existing, err := r.Client.CoreV1().Secrets(s.Namespace).Get(context.TODO(), s.Name, metav1.GetOptions{})
 	if err == nil {
 		if !HasNamedOwner(existing.OwnerReferences, secretName, "") {
-			r.Logger.Info("Existing Secret is not owned by a SyncSecretDefinition. Ignoring", "Secret.Name", existing.Name)
+			r.Logger.Info("Existing Secret is not owned by a SyncSecretDefinition. Ignoring", "Name", fmt.Sprintf("%s/%s", existing.Namespace, existing.Name))
 			return existing, nil
 		}
 	} else if err != nil && !errors.IsNotFound(err) {
 		return nil, err
 	}
 
-	r.Logger.Info("Creating new Secret", "Secret.Name", s.Name)
+	r.Logger.Info("Creating new Secret", "Name", fmt.Sprintf("%s/%s", s.Namespace, s.Name))
 	return r.Client.CoreV1().Secrets(s.Namespace).Create(context.TODO(), &s, metav1.CreateOptions{})
 }
 
-// RemoveOwnedSecrets deletes all secrets which are owned from the given object name.
-func (r *Reconciler) RemoveOwnedSecrets(defName string) {
-	ownedSecrets, err := r.getOwnedSecrets(defName)
-
-	if err != nil {
-		r.Logger.Error(err, "Failed to fetch all owned Secrets.")
-	}
-
+// RemoveOwnedSecretsNotInList deletes all secrets which are owned from the given object name and not in the slice.
+func (r *Reconciler) RemoveOwnedSecretsNotInList(ownedSecrets []corev1.Secret, secrets []corev1.Secret) {
 	for _, s := range ownedSecrets {
-		r.Logger.Info("Deleting Secret", "Secret.Namespace", s.Namespace, "Secret.Name", s.Name)
-		err = r.Client.CoreV1().Secrets(s.Namespace).Delete(context.TODO(), s.Name, metav1.DeleteOptions{})
-
-		if err != nil {
-			r.Logger.WithValues("Secret", s.Name, "Namespace", s.Namespace).Error(err, "Failed to delete Secret.")
+		if !r.containsSecret(s, secrets) {
+			r.removeSecret(s)
 		}
 	}
 }
 
-func (r *Reconciler) getOwnedSecrets(defName string) ([]corev1.Secret, error) {
+func (r *Reconciler) removeSecret(s corev1.Secret) {
+	r.Logger.Info("Deleting Secret", "Name", fmt.Sprintf("%s/%s", s.Namespace, s.Name))
+	err := r.Client.CoreV1().Secrets(s.Namespace).Delete(context.TODO(), s.Name, metav1.DeleteOptions{})
+
+	if err != nil {
+		r.Logger.WithValues("Name", fmt.Sprintf("%s/%s", s.Namespace, s.Name)).Error(err, "Failed to delete Secret.")
+	}
+}
+
+// GetOwnedSecrets returns a slice of all secrets which are owned by the given definition name.
+func (r *Reconciler) GetOwnedSecrets(defName string) ([]corev1.Secret, error) {
 	list, err := r.Client.CoreV1().Secrets("").List(context.TODO(), metav1.ListOptions{})
 
 	if err != nil {
@@ -162,4 +187,31 @@ func (r *Reconciler) getSourceSecret(name, ns string) (*corev1.Secret, error) {
 
 func (r *Reconciler) isSecretRelevant(spec accessmanagerv1beta1.SyncSecretDefinition, secret *corev1.Secret) bool {
 	return spec.Spec.Source.Name == secret.Name && spec.Spec.Source.Namespace == secret.Namespace
+}
+
+func (r *Reconciler) getSecretFromSlice(secrets []corev1.Secret, secret corev1.Secret) (corev1.Secret, error) {
+	for _, s := range secrets {
+		if s.Namespace == secret.Namespace && s.Name == secret.Name {
+			return s, nil
+		}
+	}
+
+	return corev1.Secret{}, fmt.Errorf("no secret found")
+}
+
+func (r *Reconciler) hasSecretChanged(existingSecret corev1.Secret, secret corev1.Secret) bool {
+	return existingSecret.Namespace != secret.Namespace ||
+		existingSecret.Name != secret.Name ||
+		existingSecret.Type != secret.Type ||
+		!reflect.DeepEqual(existingSecret.Data, secret.Data)
+}
+
+func (r *Reconciler) containsSecret(secret corev1.Secret, secrets []corev1.Secret) bool {
+	for _, s := range secrets {
+		if s.Namespace == secret.Namespace && s.Name == secret.Name {
+			return true
+		}
+	}
+
+	return false
 }

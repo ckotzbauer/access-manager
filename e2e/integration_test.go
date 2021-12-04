@@ -299,6 +299,7 @@ var _ = Describe("IntegrationTest", func() {
 		It("should apply new RoleBinding", func() {
 			done := make(chan interface{})
 			go func() {
+				defer GinkgoRecover()
 				err := createRbacDefinition(client, ctx, def1)
 				Expect(err).NotTo(HaveOccurred())
 				time.Sleep(3 * time.Second)
@@ -324,6 +325,7 @@ var _ = Describe("IntegrationTest", func() {
 		It("should apply new ClusterRoleBinding", func() {
 			done := make(chan interface{})
 			go func() {
+				defer GinkgoRecover()
 				err := createRbacDefinition(client, ctx, def2)
 				Expect(err).NotTo(HaveOccurred())
 				time.Sleep(3 * time.Second)
@@ -349,6 +351,7 @@ var _ = Describe("IntegrationTest", func() {
 		It("should delete ClusterRoleBinding on definition removal", func() {
 			done := make(chan interface{})
 			go func() {
+				defer GinkgoRecover()
 				err := deleteRbacDefinition(client, ctx, def2)
 				Expect(err).NotTo(HaveOccurred())
 				time.Sleep(3 * time.Second)
@@ -363,6 +366,7 @@ var _ = Describe("IntegrationTest", func() {
 		It("should create a RoleBinding if namespace is labeled", func() {
 			done := make(chan interface{})
 			go func() {
+				defer GinkgoRecover()
 				err := addNamespaceLabel(*clientset, ctx, "namespace3", "ci", "true")
 				Expect(err).NotTo(HaveOccurred())
 				time.Sleep(3 * time.Second)
@@ -388,6 +392,7 @@ var _ = Describe("IntegrationTest", func() {
 		It("should delete a RoleBinding if namespace is unlabeled", func() {
 			done := make(chan interface{})
 			go func() {
+				defer GinkgoRecover()
 				err := deleteNamespaceLabel(*clientset, ctx, "namespace3", "ci")
 				Expect(err).NotTo(HaveOccurred())
 				time.Sleep(3 * time.Second)
@@ -402,6 +407,7 @@ var _ = Describe("IntegrationTest", func() {
 		It("should modify RoleBinding on ServiceAccount creation", func() {
 			done := make(chan interface{})
 			go func() {
+				defer GinkgoRecover()
 				err := createRbacDefinition(client, ctx, def3)
 				Expect(err).NotTo(HaveOccurred())
 				time.Sleep(3 * time.Second)
@@ -449,6 +455,7 @@ var _ = Describe("IntegrationTest", func() {
 		It("should apply new Secret", func() {
 			done := make(chan interface{})
 			go func() {
+				defer GinkgoRecover()
 				err := createSyncSecretDefinition(client, ctx, secretDef1)
 				Expect(err).NotTo(HaveOccurred())
 				err = createSyncSecretDefinition(client, ctx, secretDef2)
@@ -472,8 +479,9 @@ var _ = Describe("IntegrationTest", func() {
 		It("should delete Secrets on definition removal", func() {
 			done := make(chan interface{})
 			go func() {
+				defer GinkgoRecover()
 				_, err := getSecret(*clientset, ctx, "test-secret2", "namespace4")
-				Expect(err).To(BeNil())
+				Expect(err).NotTo(HaveOccurred())
 
 				err = deleteSyncSecretDefinition(client, ctx, secretDef2)
 				Expect(err).NotTo(HaveOccurred())
@@ -489,6 +497,7 @@ var _ = Describe("IntegrationTest", func() {
 		It("should create a Secret if namespace is labeled", func() {
 			done := make(chan interface{})
 			go func() {
+				defer GinkgoRecover()
 				err := addNamespaceLabel(*clientset, ctx, "namespace3", "ci", "true")
 				Expect(err).NotTo(HaveOccurred())
 				time.Sleep(3 * time.Second)
@@ -507,9 +516,29 @@ var _ = Describe("IntegrationTest", func() {
 			Eventually(done, 5).Should(BeClosed())
 		})
 
-		It("should delete a RoleBinding if namespace is unlabeled", func() {
+		It("should not touch secrets unchanged", func() {
 			done := make(chan interface{})
 			go func() {
+				defer GinkgoRecover()
+				existingSecret, err := getSecret(*clientset, ctx, "test-secret", "namespace3")
+				Expect(err).NotTo(HaveOccurred())
+
+				err = addNamespaceLabel(*clientset, ctx, "namespace3", "unspecified", "label")
+				Expect(err).NotTo(HaveOccurred())
+				time.Sleep(3 * time.Second)
+
+				secret, err := getSecret(*clientset, ctx, "test-secret", "namespace3")
+				Expect(err).NotTo(HaveOccurred())
+				Expect(existingSecret.GetUID()).To(BeEquivalentTo(secret.GetUID()))
+				close(done)
+			}()
+			Eventually(done, 5).Should(BeClosed())
+		})
+
+		It("should delete a Secret if namespace is unlabeled", func() {
+			done := make(chan interface{})
+			go func() {
+				defer GinkgoRecover()
 				err := deleteNamespaceLabel(*clientset, ctx, "namespace3", "ci")
 				Expect(err).NotTo(HaveOccurred())
 				time.Sleep(3 * time.Second)

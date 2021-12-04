@@ -45,7 +45,6 @@ func (r *SecretReconciler) Reconcile(ctx context.Context, request reconcile.Requ
 		return reconcile.Result{}, err
 	}
 
-	r.Logger.Info("Reconciling Secret", "Name", request.NamespacedName)
 	rec := reconciler.Reconciler{Client: *kubernetes.NewForConfigOrDie(r.Config), ControllerClient: r.Client, Logger: r.Logger, Scheme: r.Scheme}
 	return rec.ReconcileSecret(instance)
 }
