@@ -35,7 +35,7 @@ jobs:
       - name: Setup Kubectl
         uses: azure/setup-kubectl@v1
         with:
-          version: 'v1.22.1'
+          version: 'v1.23.0'
 
       - name: Execute Tests
         run: |

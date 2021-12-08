@@ -11,7 +11,7 @@ IMG ?= ckotzbauer/access-manager
 CRD_OPTIONS ?= "crd"
 
 # default k8s version for e2e tests
-K8S_VERSION ?= 1.22.0
+K8S_VERSION ?= 1.23.0
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
