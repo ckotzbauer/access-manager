@@ -1200,7 +1200,8 @@ var _ = Describe("Reconciler", func() {
 			}
 
 			createSecrets(ctx, &ownedSecret)
-			rec.RemoveOwnedSecrets(def.Name)
+			owned, _ := rec.GetOwnedSecrets(def.Name)
+			rec.RemoveOwnedSecretsNotInList(owned, []corev1.Secret{})
 
 			_, err := clientset.CoreV1().Secrets("default").Get(ctx, ownedSecret.Name, metav1.GetOptions{})
 			Expect(errors.IsNotFound(err)).To(BeTrue())
