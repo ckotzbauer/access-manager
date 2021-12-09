@@ -1,3 +1,73 @@
+## Version 0.8.0 (2021-12-09)
+
+### Features and improvements
+
+* [[`d8692b97`](https://github.com/ckotzbauer&#x2F;access-manager/commit/d8692b97)] - **feature**: only update secrets when changed close #153
+
+### Bug fixes
+
+* [[`df4aeb78`](https://github.com/ckotzbauer&#x2F;access-manager/commit/df4aeb78)] - **fix**: go mod tidy
+
+### Cleanup and refactoring
+
+* [[`baeaec33`](https://github.com/ckotzbauer&#x2F;access-manager/commit/baeaec33)] - **cleanup**: some logging improvements
+
+### Build and testing
+
+* [[`82e1af5a`](https://github.com/ckotzbauer&#x2F;access-manager/commit/82e1af5a)] - **build**: add buildx and qemu
+* [[`58834038`](https://github.com/ckotzbauer&#x2F;access-manager/commit/58834038)] - **build**: update kind matrix
+* [[`7234292d`](https://github.com/ckotzbauer&#x2F;access-manager/commit/7234292d)] - **build**: update kind image
+* [[`fcbfd81c`](https://github.com/ckotzbauer&#x2F;access-manager/commit/fcbfd81c)] - **build**: add arm64 support close #165
+* [[`c757cb22`](https://github.com/ckotzbauer&#x2F;access-manager/commit/c757cb22)] - **build**: update controller-gen to 0.7.0
+* [[`5de316b0`](https://github.com/ckotzbauer&#x2F;access-manager/commit/5de316b0)] - **build**: update to node@16
+
+### Documentation
+
+* [[`76ea2ea3`](https://github.com/ckotzbauer&#x2F;access-manager/commit/76ea2ea3)] - **doc**: update versions
+* [[`0db5f697`](https://github.com/ckotzbauer&#x2F;access-manager/commit/0db5f697)] - **docs**: update doc
+
+### Dependency updates
+
+* [[`c4640fac`](https://github.com/ckotzbauer&#x2F;access-manager/commit/c4640fac)] - **deps**: update to go 1.17.5
+* [[`8f43657b`](https://github.com/ckotzbauer&#x2F;access-manager/commit/8f43657b)] - **deps**: update kubernetes to 1.23.0
+* [[`1eaa190c`](https://github.com/ckotzbauer&#x2F;access-manager/commit/1eaa190c)] - **deps**: update k8s and ccontroller-runtime
+* [[`988ee879`](https://github.com/ckotzbauer&#x2F;access-manager/commit/988ee879)] - **deps**: go mod tidy
+* [[`41ef50e8`](https://github.com/ckotzbauer&#x2F;access-manager/commit/41ef50e8)] - **deps**: update golang docker tag to v1.17.4 (#168)
+* [[`1e95e7c3`](https://github.com/ckotzbauer&#x2F;access-manager/commit/1e95e7c3)] - **deps**: update module github.com&#x2F;go-logr&#x2F;logr to v1.2.1 (#167)
+* [[`09df896c`](https://github.com/ckotzbauer&#x2F;access-manager/commit/09df896c)] - **deps**: bump actions&#x2F;setup-node from 2.4.1 to 2.5.0
+* [[`694efd2f`](https://github.com/ckotzbauer&#x2F;access-manager/commit/694efd2f)] - **deps**: update kubernetes versions to v0.22.4 (#163)
+* [[`270f4736`](https://github.com/ckotzbauer&#x2F;access-manager/commit/270f4736)] - **deps**: update alpine docker tag to v3.15 (#164)
+* [[`723e8487`](https://github.com/ckotzbauer&#x2F;access-manager/commit/723e8487)] - **deps**: update go.sum
+* [[`c801e8c9`](https://github.com/ckotzbauer&#x2F;access-manager/commit/c801e8c9)] - **deps**: update module github.com&#x2F;onsi&#x2F;gomega to v1.17.0
+* [[`07d49479`](https://github.com/ckotzbauer&#x2F;access-manager/commit/07d49479)] - **deps**: update golang docker tag to v1.17.3 (#161)
+* [[`b735cb1c`](https://github.com/ckotzbauer&#x2F;access-manager/commit/b735cb1c)] - **deps**: update kubernetes versions to v0.22.3 (#159)
+* [[`0631f190`](https://github.com/ckotzbauer&#x2F;access-manager/commit/0631f190)] - **deps**: update module github.com&#x2F;go-logr&#x2F;logr to v1.2.0 (#158)
+* [[`fdb8540c`](https://github.com/ckotzbauer&#x2F;access-manager/commit/fdb8540c)] - **deps**: update module github.com&#x2F;onsi&#x2F;ginkgo to v1.16.5
+* [[`21f3bc05`](https://github.com/ckotzbauer&#x2F;access-manager/commit/21f3bc05)] - **deps**: update golang docker tag to v1.17.2 (#155)
+* [[`bd53ea06`](https://github.com/ckotzbauer&#x2F;access-manager/commit/bd53ea06)] - **deps**: bump actions&#x2F;setup-node from 2.4.0 to 2.4.1
+* [[`6ec3a67e`](https://github.com/ckotzbauer&#x2F;access-manager/commit/6ec3a67e)] - **deps**: update logr deps
+* [[`9f14bedd`](https://github.com/ckotzbauer&#x2F;access-manager/commit/9f14bedd)] - **deps**: update module github.com&#x2F;go-logr&#x2F;logr to v1
+* [[`4a628781`](https://github.com/ckotzbauer&#x2F;access-manager/commit/4a628781)] - **deps**: bump pascalgn&#x2F;automerge-action from 0.14.2 to 0.14.3
+* [[`5ccb0dc3`](https://github.com/ckotzbauer&#x2F;access-manager/commit/5ccb0dc3)] - **deps**: updated gomega
+* [[`cdefa897`](https://github.com/ckotzbauer&#x2F;access-manager/commit/cdefa897)] - **deps**: update module github.com&#x2F;onsi&#x2F;gomega to v1.16.0
+
+### Common changes
+
+* [[`bcd05509`](https://github.com/ckotzbauer&#x2F;access-manager/commit/bcd05509)] - **chore**: Merge pull request #169 from ckotzbauer&#x2F;feature&#x2F;release-0.8.0
+* [[`d0b197e9`](https://github.com/ckotzbauer&#x2F;access-manager/commit/d0b197e9)] - **chore**: use other pull_request_target trigger
+* [[`0d3c3aec`](https://github.com/ckotzbauer&#x2F;access-manager/commit/0d3c3aec)] - **chore**: Merge pull request #166 from ckotzbauer&#x2F;dependabot&#x2F;github_actions&#x2F;actions&#x2F;setup-node-2.5.0
+* [[`41f8b03a`](https://github.com/ckotzbauer&#x2F;access-manager/commit/41f8b03a)] - **chore**: Merge pull request #162 from ckotzbauer&#x2F;renovate&#x2F;github.com-onsi-gomega-1.x
+* [[`460e5411`](https://github.com/ckotzbauer&#x2F;access-manager/commit/460e5411)] - **chore**: Merge pull request #157 from ckotzbauer&#x2F;renovate&#x2F;github.com-onsi-ginkgo-1.x
+* [[`85cbfb43`](https://github.com/ckotzbauer&#x2F;access-manager/commit/85cbfb43)] - **chore**: Merge pull request #152 from ckotzbauer&#x2F;dependabot&#x2F;github_actions&#x2F;actions&#x2F;setup-node-2.4.1
+* [[`6d455085`](https://github.com/ckotzbauer&#x2F;access-manager/commit/6d455085)] - **chore**: Merge pull request #129 from ckotzbauer&#x2F;renovate&#x2F;github.com-go-logr-logr-1.x
+* [[`13d954ec`](https://github.com/ckotzbauer&#x2F;access-manager/commit/13d954ec)] - **chore**: use label-command-action@v1
+* [[`34dfe1ae`](https://github.com/ckotzbauer&#x2F;access-manager/commit/34dfe1ae)] - **chore**: Merge pull request #151 from ckotzbauer&#x2F;dependabot&#x2F;github_actions&#x2F;pascalgn&#x2F;automerge-action-0.14.3
+* [[`276e44e4`](https://github.com/ckotzbauer&#x2F;access-manager/commit/276e44e4)] - **chore**: add kind&#x2F;question label
+* [[`e8860c92`](https://github.com/ckotzbauer&#x2F;access-manager/commit/e8860c92)] - **chore**: use main as default branch
+* [[`b0391245`](https://github.com/ckotzbauer&#x2F;access-manager/commit/b0391245)] - **chore**: release 0.7.0
+* [[`a7dff61c`](https://github.com/ckotzbauer&#x2F;access-manager/commit/a7dff61c)] - **chore**: Merge pull request #141 from ckotzbauer&#x2F;renovate&#x2F;github.com-onsi-gomega-1.x
+
+
 ## Version 0.6.0 (2021-06-10)
 
 ### Features and improvements
