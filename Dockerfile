@@ -1,11 +1,15 @@
 FROM golang:1.17.5-buster as builder
 
+ARG TARGETOS
+ARG TARGETARCH
+
 ARG version
 ENV VERSION=$version
 
 WORKDIR /go/src/app
 COPY . .
-RUN make manager
+RUN TARGETOS=${TARGETOS} TARGETARCH=${TARGETARCH} make manager && \
+    mv bin/manager_${TARGETOS}_${TARGETARCH} bin/manager
 
 
 FROM alpine:3.15

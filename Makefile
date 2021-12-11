@@ -13,6 +13,11 @@ CRD_OPTIONS ?= "crd"
 # default k8s version for e2e tests
 K8S_VERSION ?= 1.23.0
 
+TARGETOS=linux
+ifeq (,${TARGETARCH})
+TARGETARCH=$(shell go env GOARCH)
+endif
+
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
 GOBIN=$(shell go env GOPATH)/bin
@@ -33,7 +38,7 @@ e2e-test: kind
 
 # Build manager binary
 manager: generate fmt vet
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags '-w -X=main.Version=$(BIN_VERSION)' -o bin/manager main.go
+	CGO_ENABLED=0 GOOS=$(TARGETOS) GOARCH=$(TARGETARCH) go build -a -ldflags '-w -X=main.Version=$(BIN_VERSION)' -o bin/manager_$(TARGETOS)_$(TARGETARCH) main.go
 
 # Run against the configured Kubernetes cluster in ~/.kube/config
 run: generate fmt vet manifests
