@@ -59,10 +59,20 @@ jobs:
         with:
           version: 'v${{ matrix.kubernetes-version }}'
 
+      - name: Build image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: false
+          load: true
+          platforms: linux/amd64
+          tags: |
+            ckotzbauer/access-manager:latest
+
       - name: Execute Tests
         run: make e2e-test -e K8S_VERSION=${{ matrix.kubernetes-version }}
 
-        
+
   build-image:
     runs-on: ubuntu-latest
     steps:

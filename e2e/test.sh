@@ -10,7 +10,6 @@ ${KIND} create cluster --image kindest/node:v${K8S_VERSION}
 ${KIND} get kubeconfig >e2e/kind-kubeconfig
 export KUBECONFIG=e2e/kind-kubeconfig
 
-docker buildx build --platform=linux/amd64 -t ckotzbauer/access-manager:latest .
 ${KIND} load docker-image ckotzbauer/access-manager:latest
 
 make install deploy
