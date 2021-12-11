@@ -1,3 +1,13 @@
+## Version 0.8.1 (2021-12-11)
+
+### Build and testing
+
+* [[`e6a5ea4f`](https://github.com/ckotzbauer&#x2F;access-manager/commit/e6a5ea4f)] - **build**: remove tests from release
+* [[`bc8a57d0`](https://github.com/ckotzbauer&#x2F;access-manager/commit/bc8a57d0)] - **build**: fix e2e tests
+* [[`136a7410`](https://github.com/ckotzbauer&#x2F;access-manager/commit/136a7410)] - **build**: fix arm build
+* [[`cc13944d`](https://github.com/ckotzbauer&#x2F;access-manager/commit/cc13944d)] - **build**: fix arm build
+
+
 ## Version 0.8.0 (2021-12-09)
 
 ### Features and improvements
