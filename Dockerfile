@@ -1,28 +1,8 @@
-FROM golang:1.17.5-buster as builder
+FROM gcr.io/distroless/base
 
 ARG TARGETOS
 ARG TARGETARCH
 
-ARG version
-ENV VERSION=$version
-
-WORKDIR /go/src/app
-COPY . .
-RUN TARGETOS=${TARGETOS} TARGETARCH=${TARGETARCH} make manager && \
-    mv bin/manager_${TARGETOS}_${TARGETARCH} bin/manager
-
-
-FROM alpine:3.15
-
-ENV USER_UID=1001 \
-    USER_NAME=access-manager
-
-RUN echo "${USER_NAME}:x:${USER_UID}:0:${USER_NAME} user:${HOME}:/sbin/nologin" >> /etc/passwd && \
-    mkdir -p "${HOME}" && \
-    chown "${USER_UID}:0" "${HOME}" && \
-    chmod ug+rwx "${HOME}"
-
-COPY --from=builder /go/src/app/bin/manager /usr/local/bin/access-manager
+COPY dist/access-manager_${TARGETOS}_${TARGETARCH}/access-manager /usr/local/bin/access-manager
 
 ENTRYPOINT ["/usr/local/bin/access-manager"]
-USER ${USER_UID}

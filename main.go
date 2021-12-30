@@ -42,6 +42,9 @@ var (
 var (
 	// Version sets the current Operator version
 	Version = "0.0.1"
+	Commit  = "main"
+	Date    = ""
+	BuiltBy = ""
 )
 
 func init() {
@@ -52,9 +55,11 @@ func init() {
 }
 
 func printVersion() {
-	setupLog.Info(fmt.Sprintf("Operator Version: %s", Version))
+	setupLog.Info(fmt.Sprintf("Version: %s", Version))
+	setupLog.Info(fmt.Sprintf("Commit: %s", Commit))
+	setupLog.Info(fmt.Sprintf("Buit at: %s", Date))
+	setupLog.Info(fmt.Sprintf("Buit by: %s", BuiltBy))
 	setupLog.Info(fmt.Sprintf("Go Version: %s", rtm.Version()))
-	setupLog.Info(fmt.Sprintf("Go OS/Arch: %s/%s", rtm.GOOS, rtm.GOARCH))
 }
 
 func main() {
