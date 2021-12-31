@@ -1,3 +1,25 @@
+## Version 0.9.0-beta.1 (2021-12-31)
+
+### Build and testing
+
+* [[`637991dc`](https://github.com/ckotzbauer&#x2F;access-manager/commit/637991dc)] - **build**: update pipeline
+* [[`ccdb842a`](https://github.com/ckotzbauer&#x2F;access-manager/commit/ccdb842a)] - **build**: fix dockerignore
+* [[`404c6297`](https://github.com/ckotzbauer&#x2F;access-manager/commit/404c6297)] - **build**: use goreleaser, new release-workflow and distroless image
+
+### Dependency updates
+
+* [[`5863cf22`](https://github.com/ckotzbauer&#x2F;access-manager/commit/5863cf22)] - **deps**: bump actions&#x2F;setup-node from 2.5.0 to 2.5.1
+* [[`399e39cb`](https://github.com/ckotzbauer&#x2F;access-manager/commit/399e39cb)] - **deps**: update kubernetes versions to v0.23.1
+* [[`36011683`](https://github.com/ckotzbauer&#x2F;access-manager/commit/36011683)] - **deps**: update module github.com&#x2F;go-logr&#x2F;logr to v1.2.2 (#171)
+* [[`5965f181`](https://github.com/ckotzbauer&#x2F;access-manager/commit/5965f181)] - **deps**: update module sigs.k8s.io&#x2F;controller-runtime to v0.11.0 (#172)
+
+### Common changes
+
+* [[`0e6b5c72`](https://github.com/ckotzbauer&#x2F;access-manager/commit/0e6b5c72)] - **chore**: Merge pull request #175 from ckotzbauer&#x2F;feature&#x2F;goreleaser-build
+* [[`c18da7e3`](https://github.com/ckotzbauer&#x2F;access-manager/commit/c18da7e3)] - **chore**: Merge pull request #174 from ckotzbauer&#x2F;dependabot&#x2F;github_actions&#x2F;actions&#x2F;setup-node-2.5.1
+* [[`45f71cc8`](https://github.com/ckotzbauer&#x2F;access-manager/commit/45f71cc8)] - **chore**: Merge pull request #170 from ckotzbauer&#x2F;renovate&#x2F;kubernetes-versions
+
+
 ## Version 0.8.1 (2021-12-11)
 
 ### Build and testing
