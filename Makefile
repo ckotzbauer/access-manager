@@ -25,7 +25,7 @@ else
 GOBIN=$(shell go env GOBIN)
 endif
 
-all: manager
+all: build
 
 # Run unit-tests
 test: generate fmt vet manifests
@@ -36,9 +36,8 @@ e2e-test: kind
 	cd e2e && \
 	bash test.sh $(KIND) $(K8S_VERSION)
 
-# Build manager binary
-manager: generate fmt vet
-	CGO_ENABLED=0 GOOS=$(TARGETOS) GOARCH=$(TARGETARCH) go build -a -ldflags '-w -X=main.Version=$(BIN_VERSION)' -o bin/manager_$(TARGETOS)_$(TARGETARCH) main.go
+build: generate fmt vet
+	goreleaser build --rm-dist --single-target --snapshot
 
 # Run against the configured Kubernetes cluster in ~/.kube/config
 run: generate fmt vet manifests

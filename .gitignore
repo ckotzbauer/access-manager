@@ -5,7 +5,6 @@
 *.dll
 *.so
 *.dylib
-bin
 dist
 
 # Test binary, build with `go test -c`
