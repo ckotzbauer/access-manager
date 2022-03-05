@@ -128,3 +128,4 @@ jobs:
         with:
           scan-target: ckotzbauer/access-manager
           fail-on: "medium"
+          config-file: ".github/grype.yaml"
