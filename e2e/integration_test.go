@@ -1,7 +1,7 @@
 package integration_test
 
 import (
-	accessmanagerv1beta1 "access-manager/apis/access-manager.io/v1beta1"
+	v1beta1 "access-manager/apis/access-manager.io/v1beta1"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -129,7 +129,7 @@ func checkSecretToBeEquivalent(secret corev1.Secret, expected corev1.Secret) {
 	Expect(secret.Immutable).To(BeEquivalentTo(expected.Immutable))
 }
 
-func createRbacDefinition(c dynamic.Interface, ctx context.Context, def accessmanagerv1beta1.RbacDefinition) error {
+func createRbacDefinition(c dynamic.Interface, ctx context.Context, def v1beta1.RbacDefinition) error {
 	res := c.Resource(rbacDefGVR)
 	unstructuredObj, err := runtime.DefaultUnstructuredConverter.ToUnstructured(&def)
 	if err != nil {
@@ -147,7 +147,7 @@ func createRbacDefinition(c dynamic.Interface, ctx context.Context, def accessma
 	return err
 }
 
-func deleteRbacDefinition(c dynamic.Interface, ctx context.Context, def accessmanagerv1beta1.RbacDefinition) error {
+func deleteRbacDefinition(c dynamic.Interface, ctx context.Context, def v1beta1.RbacDefinition) error {
 	res := c.Resource(rbacDefGVR)
 
 	log.Printf("Deleting RbacDefinition %s", def.Name)
@@ -159,7 +159,7 @@ func deleteRbacDefinition(c dynamic.Interface, ctx context.Context, def accessma
 	return err
 }
 
-func createSyncSecretDefinition(c dynamic.Interface, ctx context.Context, def accessmanagerv1beta1.SyncSecretDefinition) error {
+func createSyncSecretDefinition(c dynamic.Interface, ctx context.Context, def v1beta1.SyncSecretDefinition) error {
 	res := c.Resource(secretDefGVR)
 	unstructuredObj, err := runtime.DefaultUnstructuredConverter.ToUnstructured(&def)
 	if err != nil {
@@ -177,7 +177,7 @@ func createSyncSecretDefinition(c dynamic.Interface, ctx context.Context, def ac
 	return err
 }
 
-func deleteSyncSecretDefinition(c dynamic.Interface, ctx context.Context, def accessmanagerv1beta1.SyncSecretDefinition) error {
+func deleteSyncSecretDefinition(c dynamic.Interface, ctx context.Context, def v1beta1.SyncSecretDefinition) error {
 	res := c.Resource(secretDefGVR)
 
 	log.Printf("Deleting SyncSecretDefinition %s", def.Name)
@@ -190,22 +190,22 @@ func deleteSyncSecretDefinition(c dynamic.Interface, ctx context.Context, def ac
 }
 
 var _ = Describe("IntegrationTest", func() {
-	var def1 accessmanagerv1beta1.RbacDefinition
-	var def2 accessmanagerv1beta1.RbacDefinition
-	var def3 accessmanagerv1beta1.RbacDefinition
-	var secretDef1 accessmanagerv1beta1.SyncSecretDefinition
-	var secretDef2 accessmanagerv1beta1.SyncSecretDefinition
+	var def1 v1beta1.RbacDefinition
+	var def2 v1beta1.RbacDefinition
+	var def3 v1beta1.RbacDefinition
+	var secretDef1 v1beta1.SyncSecretDefinition
+	var secretDef2 v1beta1.SyncSecretDefinition
 	ctx := context.TODO()
 
-	def1 = accessmanagerv1beta1.RbacDefinition{
+	def1 = v1beta1.RbacDefinition{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "rbac-def1",
 		},
-		Spec: accessmanagerv1beta1.RbacDefinitionSpec{
-			Namespaced: []accessmanagerv1beta1.NamespacedSpec{
+		Spec: v1beta1.RbacDefinitionSpec{
+			Namespaced: []v1beta1.NamespacedSpec{
 				{
 					NamespaceSelector: metav1.LabelSelector{MatchLabels: map[string]string{"ci": "true"}},
-					Bindings: []accessmanagerv1beta1.BindingsSpec{
+					Bindings: []v1beta1.BindingsSpec{
 						{
 							Kind:     "Role",
 							RoleName: "test-role",
@@ -223,12 +223,12 @@ var _ = Describe("IntegrationTest", func() {
 		},
 	}
 
-	def2 = accessmanagerv1beta1.RbacDefinition{
+	def2 = v1beta1.RbacDefinition{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "rbac-def2",
 		},
-		Spec: accessmanagerv1beta1.RbacDefinitionSpec{
-			Cluster: []accessmanagerv1beta1.ClusterSpec{
+		Spec: v1beta1.RbacDefinitionSpec{
+			Cluster: []v1beta1.ClusterSpec{
 				{
 					ClusterRoleName: "test-role",
 					Subjects: []rbacv1.Subject{
@@ -243,17 +243,17 @@ var _ = Describe("IntegrationTest", func() {
 		},
 	}
 
-	def3 = accessmanagerv1beta1.RbacDefinition{
+	def3 = v1beta1.RbacDefinition{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "rbac-def3",
 		},
-		Spec: accessmanagerv1beta1.RbacDefinitionSpec{
-			Namespaced: []accessmanagerv1beta1.NamespacedSpec{
+		Spec: v1beta1.RbacDefinitionSpec{
+			Namespaced: []v1beta1.NamespacedSpec{
 				{
-					Namespace: accessmanagerv1beta1.NamespaceSpec{
+					Namespace: v1beta1.NamespaceSpec{
 						Name: "namespace4",
 					},
-					Bindings: []accessmanagerv1beta1.BindingsSpec{
+					Bindings: []v1beta1.BindingsSpec{
 						{
 							Name:               "test-rolebinding",
 							RoleName:           "test-role",
@@ -267,13 +267,13 @@ var _ = Describe("IntegrationTest", func() {
 		},
 	}
 
-	secretDef1 = accessmanagerv1beta1.SyncSecretDefinition{
+	secretDef1 = v1beta1.SyncSecretDefinition{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "secret-def1",
 		},
-		Spec: accessmanagerv1beta1.SyncSecretDefinitionSpec{
-			Source: accessmanagerv1beta1.SourceSpec{Namespace: "default", Name: "test-secret"},
-			Targets: []accessmanagerv1beta1.TargetSpec{
+		Spec: v1beta1.SyncSecretDefinitionSpec{
+			Source: v1beta1.SourceSpec{Namespace: "default", Name: "test-secret"},
+			Targets: []v1beta1.TargetSpec{
 				{
 					NamespaceSelector: metav1.LabelSelector{MatchLabels: map[string]string{"ci": "true"}},
 				},
@@ -281,15 +281,15 @@ var _ = Describe("IntegrationTest", func() {
 		},
 	}
 
-	secretDef2 = accessmanagerv1beta1.SyncSecretDefinition{
+	secretDef2 = v1beta1.SyncSecretDefinition{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "secret-def2",
 		},
-		Spec: accessmanagerv1beta1.SyncSecretDefinitionSpec{
-			Source: accessmanagerv1beta1.SourceSpec{Namespace: "namespace2", Name: "test-secret2"},
-			Targets: []accessmanagerv1beta1.TargetSpec{
+		Spec: v1beta1.SyncSecretDefinitionSpec{
+			Source: v1beta1.SourceSpec{Namespace: "namespace2", Name: "test-secret2"},
+			Targets: []v1beta1.TargetSpec{
 				{
-					Namespace: accessmanagerv1beta1.NamespaceSpec{Name: "namespace4"},
+					Namespace: v1beta1.NamespaceSpec{Name: "namespace4"},
 				},
 			},
 		},

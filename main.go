@@ -29,7 +29,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	accessmanageriov1beta1 "access-manager/apis/access-manager.io/v1beta1"
+	v1beta1 "access-manager/apis/access-manager.io/v1beta1"
 	controllers "access-manager/controllers/access-manager.io"
 	// +kubebuilder:scaffold:imports
 )
@@ -50,7 +50,7 @@ var (
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 
-	utilruntime.Must(accessmanageriov1beta1.AddToScheme(scheme))
+	utilruntime.Must(v1beta1.AddToScheme(scheme))
 	// +kubebuilder:scaffold:scheme
 }
 

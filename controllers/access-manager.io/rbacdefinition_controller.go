@@ -19,7 +19,7 @@ package controllers
 import (
 	"context"
 
-	accessmanagerv1beta1 "access-manager/apis/access-manager.io/v1beta1"
+	v1beta1 "access-manager/apis/access-manager.io/v1beta1"
 	"access-manager/pkg/reconciler"
 
 	"github.com/go-logr/logr"
@@ -47,7 +47,7 @@ func (r *RbacDefinitionReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	_ = r.Logger.WithValues("rbacdefinition", req.NamespacedName)
 
 	// Fetch the RbacDefinition instance
-	instance := &accessmanagerv1beta1.RbacDefinition{}
+	instance := &v1beta1.RbacDefinition{}
 	err := r.Client.Get(ctx, req.NamespacedName, instance)
 	if err != nil {
 		if errors.IsNotFound(err) {

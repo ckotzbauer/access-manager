@@ -12,7 +12,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
-	accessmanageriov1beta1 "access-manager/apis/access-manager.io/v1beta1"
+	v1beta1 "access-manager/apis/access-manager.io/v1beta1"
 	"access-manager/pkg/reconciler"
 )
 
@@ -29,7 +29,7 @@ func (r *SyncSecretDefinitionReconciler) Reconcile(ctx context.Context, req ctrl
 	_ = r.Logger.WithValues("syncsecretdefinition", req.NamespacedName)
 
 	// Fetch the SecretSyncDefinition instance
-	instance := &accessmanageriov1beta1.SyncSecretDefinition{}
+	instance := &v1beta1.SyncSecretDefinition{}
 	err := r.Client.Get(ctx, req.NamespacedName, instance)
 	if err != nil {
 		if errors.IsNotFound(err) {
@@ -54,6 +54,6 @@ func (r *SyncSecretDefinitionReconciler) Reconcile(ctx context.Context, req ctrl
 
 func (r *SyncSecretDefinitionReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&accessmanageriov1beta1.SyncSecretDefinition{}).
+		For(&v1beta1.SyncSecretDefinition{}).
 		Complete(r)
 }

@@ -1,7 +1,7 @@
 package reconciler
 
 import (
-	accessmanagerv1beta1 "access-manager/apis/access-manager.io/v1beta1"
+	v1beta1 "access-manager/apis/access-manager.io/v1beta1"
 	"access-manager/pkg/util"
 	"context"
 	"fmt"
@@ -18,7 +18,7 @@ import (
 var secretName = "SyncSecretDefinition"
 
 // ReconcileSyncSecretDefinition applies all desired changes of the SyncSecretDefinition
-func (r *Reconciler) ReconcileSyncSecretDefinition(instance *accessmanagerv1beta1.SyncSecretDefinition) (reconcile.Result, error) {
+func (r *Reconciler) ReconcileSyncSecretDefinition(instance *v1beta1.SyncSecretDefinition) (reconcile.Result, error) {
 	secrets := r.BuildAllSecrets(instance)
 	ownedSecrets, err := r.GetOwnedSecrets(instance.Name)
 
@@ -61,7 +61,7 @@ func (r *Reconciler) ReconcileSyncSecretDefinition(instance *accessmanagerv1beta
 
 // ReconcileSecret applies all desired changes of the Secret
 func (r *Reconciler) ReconcileSecret(instance *corev1.Secret) (reconcile.Result, error) {
-	list := &accessmanagerv1beta1.SyncSecretDefinitionList{}
+	list := &v1beta1.SyncSecretDefinitionList{}
 	err := r.ControllerClient.List(context.TODO(), list)
 
 	if err != nil {
@@ -89,7 +89,7 @@ func (r *Reconciler) ReconcileSecret(instance *corev1.Secret) (reconcile.Result,
 }
 
 // BuildAllSecrets returns an array of Secrets for the given SyncSecretDefinition
-func (r *Reconciler) BuildAllSecrets(cr *accessmanagerv1beta1.SyncSecretDefinition) []corev1.Secret {
+func (r *Reconciler) BuildAllSecrets(cr *v1beta1.SyncSecretDefinition) []corev1.Secret {
 	var secrets []corev1.Secret = []corev1.Secret{}
 	sourceSecret, err := r.getSourceSecret(cr.Spec.Source.Name, cr.Spec.Source.Namespace)
 
@@ -185,7 +185,7 @@ func (r *Reconciler) getSourceSecret(name, ns string) (*corev1.Secret, error) {
 	return r.Client.CoreV1().Secrets(ns).Get(context.TODO(), name, metav1.GetOptions{})
 }
 
-func (r *Reconciler) isSecretRelevant(spec accessmanagerv1beta1.SyncSecretDefinition, secret *corev1.Secret) bool {
+func (r *Reconciler) isSecretRelevant(spec v1beta1.SyncSecretDefinition, secret *corev1.Secret) bool {
 	return spec.Spec.Source.Name == secret.Name && spec.Spec.Source.Namespace == secret.Namespace
 }
 
