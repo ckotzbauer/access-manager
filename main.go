@@ -29,8 +29,8 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	v1beta1 "access-manager/apis/access-manager.io/v1beta1"
-	controllers "access-manager/controllers/access-manager.io"
+	v1beta1 "github.com/ckotzbauer/access-manager/apis/access-manager.io/v1beta1"
+	controllers "github.com/ckotzbauer/access-manager/controllers/access-manager.io"
 	// +kubebuilder:scaffold:imports
 )
 

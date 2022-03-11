@@ -2,7 +2,7 @@ domain: access-manager.io
 layout: go.kubebuilder.io/v3
 multigroup: true
 projectName: access-manager
-repo: access-manager
+repo: github.com/ckotzbauer/access-manager
 resources:
 - kind: RbacDefinition
   version: v1beta1

@@ -1,8 +1,9 @@
 package controllers
 
 import (
-	"access-manager/pkg/reconciler"
 	"context"
+
+	"github.com/ckotzbauer/access-manager/pkg/reconciler"
 
 	"github.com/go-logr/logr"
 	corev1 "k8s.io/api/core/v1"

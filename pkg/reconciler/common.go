@@ -1,8 +1,9 @@
 package reconciler
 
 import (
-	v1beta1 "access-manager/apis/access-manager.io/v1beta1"
 	"context"
+
+	v1beta1 "github.com/ckotzbauer/access-manager/apis/access-manager.io/v1beta1"
 
 	"github.com/go-logr/logr"
 	corev1 "k8s.io/api/core/v1"

@@ -1,13 +1,14 @@
 package reconciler_test
 
 import (
-	v1beta1 "access-manager/apis/access-manager.io/v1beta1"
-	"access-manager/pkg/reconciler"
-	"access-manager/pkg/util"
 	"context"
 	"fmt"
 	"sync/atomic"
 	"testing"
+
+	v1beta1 "github.com/ckotzbauer/access-manager/apis/access-manager.io/v1beta1"
+	"github.com/ckotzbauer/access-manager/pkg/reconciler"
+	"github.com/ckotzbauer/access-manager/pkg/util"
 
 	b64 "encoding/base64"
 

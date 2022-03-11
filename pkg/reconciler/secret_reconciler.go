@@ -1,11 +1,12 @@
 package reconciler
 
 import (
-	v1beta1 "access-manager/apis/access-manager.io/v1beta1"
-	"access-manager/pkg/util"
 	"context"
 	"fmt"
 	"reflect"
+
+	v1beta1 "github.com/ckotzbauer/access-manager/apis/access-manager.io/v1beta1"
+	"github.com/ckotzbauer/access-manager/pkg/util"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"

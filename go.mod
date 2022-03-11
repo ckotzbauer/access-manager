@@ -1,4 +1,4 @@
-module access-manager
+module github.com/ckotzbauer/access-manager
 
 go 1.17
 

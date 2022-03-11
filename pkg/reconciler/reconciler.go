@@ -8,8 +8,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
-	v1beta1 "access-manager/apis/access-manager.io/v1beta1"
-	"access-manager/pkg/util"
+	v1beta1 "github.com/ckotzbauer/access-manager/apis/access-manager.io/v1beta1"
+	"github.com/ckotzbauer/access-manager/pkg/util"
 
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"

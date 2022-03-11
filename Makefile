@@ -29,7 +29,7 @@ all: build
 
 # Run unit-tests
 test: generate fmt vet manifests
-	go test access-manager/pkg/reconciler -coverprofile cover.out
+	go test github.com/ckotzbauer/access-manager/pkg/reconciler -coverprofile cover.out
 
 # Run e2e-tests
 e2e-test: kind

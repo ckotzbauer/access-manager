@@ -12,8 +12,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
-	v1beta1 "access-manager/apis/access-manager.io/v1beta1"
-	"access-manager/pkg/reconciler"
+	v1beta1 "github.com/ckotzbauer/access-manager/apis/access-manager.io/v1beta1"
+	"github.com/ckotzbauer/access-manager/pkg/reconciler"
 )
 
 // SyncSecretDefinitionReconciler reconciles a SyncSecretDefinition object

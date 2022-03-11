@@ -19,8 +19,8 @@ package controllers
 import (
 	"context"
 
-	v1beta1 "access-manager/apis/access-manager.io/v1beta1"
-	"access-manager/pkg/reconciler"
+	v1beta1 "github.com/ckotzbauer/access-manager/apis/access-manager.io/v1beta1"
+	"github.com/ckotzbauer/access-manager/pkg/reconciler"
 
 	"github.com/go-logr/logr"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -31,7 +31,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
-	rbacdefinitionsv1beta1 "access-manager/apis/access-manager.io/v1beta1"
+	rbacdefinitionsv1beta1 "github.com/ckotzbauer/access-manager/apis/access-manager.io/v1beta1"
 )
 
 // RbacDefinitionReconciler reconciles a RbacDefinition object

@@ -1,12 +1,13 @@
 package integration_test
 
 import (
-	v1beta1 "access-manager/apis/access-manager.io/v1beta1"
 	"context"
 	"encoding/json"
 	"fmt"
 	"log"
 	"time"
+
+	v1beta1 "github.com/ckotzbauer/access-manager/apis/access-manager.io/v1beta1"
 
 	b64 "encoding/base64"
 
