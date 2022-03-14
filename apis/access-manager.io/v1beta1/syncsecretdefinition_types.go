@@ -32,7 +32,6 @@ type SyncSecretDefinitionStatus struct {
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster
-//+kubebuilder:storageversion
 
 // SyncSecretDefinition is the Schema for the syncsecretdefinitions API
 type SyncSecretDefinition struct {

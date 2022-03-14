@@ -65,7 +65,6 @@ type RbacDefinitionStatus struct {
 // RbacDefinition is the Schema for the rbacdefinitions API
 // +kubebuilder:subresource:status
 // +kubebuilder:resource:path=rbacdefinitions,scope=Cluster
-//+kubebuilder:storageversion
 type RbacDefinition struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
