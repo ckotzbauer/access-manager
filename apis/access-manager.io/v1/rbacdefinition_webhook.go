@@ -5,7 +5,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 )
 
-// +kubebuilder:webhook:path=/mutate-access-manager-io-v1-RbacDefinition,mutating=true,failurePolicy=ignore,groups=access-manager.io,resources=RbacDefinitions,verbs=create;update,versions=v1,name=rbacdefinition.access-manager.io,sideEffects=None
+// +kubebuilder:webhook:path=/mutate-access-manager-io-v1-RbacDefinition,mutating=true,failurePolicy=ignore,groups=access-manager.io,resources=RbacDefinitions,verbs=create;update,versions=v1,name=rbacdefinition.access-manager.io,sideEffects=None,admissionReviewVersions=v1
 
 var rbacDefinitionlog = ctrl.Log.WithName("rbacdefinition-resource")
 var _ webhook.Defaulter = &RbacDefinition{}

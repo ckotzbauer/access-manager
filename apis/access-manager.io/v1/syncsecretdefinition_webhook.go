@@ -5,7 +5,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 )
 
-// +kubebuilder:webhook:path=/mutate-access-manager-io-v1-SyncSecretDefinition,mutating=true,failurePolicy=ignore,groups=access-manager.io,resources=SyncSecretDefinitions,verbs=create;update,versions=v1,name=syncSecretdefinition.access-manager.io,sideEffects=None
+// +kubebuilder:webhook:path=/mutate-access-manager-io-v1-SyncSecretDefinition,mutating=true,failurePolicy=ignore,groups=access-manager.io,resources=SyncSecretDefinitions,verbs=create;update,versions=v1,name=syncSecretdefinition.access-manager.io,sideEffects=None,admissionReviewVersions=v1
 
 var syncSecretDefinitionlog = ctrl.Log.WithName("syncSecretdefinition-resource")
 var _ webhook.Defaulter = &SyncSecretDefinition{}
