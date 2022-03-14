@@ -29,6 +29,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
+	v1 "github.com/ckotzbauer/access-manager/apis/access-manager.io/v1"
 	v1beta1 "github.com/ckotzbauer/access-manager/apis/access-manager.io/v1beta1"
 	controllers "github.com/ckotzbauer/access-manager/controllers/access-manager.io"
 	// +kubebuilder:scaffold:imports
@@ -51,6 +52,7 @@ func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 
 	utilruntime.Must(v1beta1.AddToScheme(scheme))
+	utilruntime.Must(v1.AddToScheme(scheme))
 	// +kubebuilder:scaffold:scheme
 }
 
@@ -132,6 +134,16 @@ func main() {
 		Config: mgr.GetConfig(),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Secret")
+		os.Exit(1)
+	}
+
+	if err = (&v1.RbacDefinition{}).SetupWebhookWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create webhook", "controller", "RbacDefinition")
+		os.Exit(1)
+	}
+
+	if err = (&v1.SyncSecretDefinition{}).SetupWebhookWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create webhook", "controller", "SyncSecretDefinition")
 		os.Exit(1)
 	}
 	// +kubebuilder:scaffold:builder
