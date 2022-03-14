@@ -19,7 +19,6 @@ package controllers
 import (
 	"context"
 
-	v1beta1 "github.com/ckotzbauer/access-manager/apis/access-manager.io/v1beta1"
 	"github.com/ckotzbauer/access-manager/pkg/reconciler"
 
 	"github.com/go-logr/logr"
@@ -31,7 +30,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
-	rbacdefinitionsv1beta1 "github.com/ckotzbauer/access-manager/apis/access-manager.io/v1beta1"
+	v1 "github.com/ckotzbauer/access-manager/apis/access-manager.io/v1"
 )
 
 // RbacDefinitionReconciler reconciles a RbacDefinition object
@@ -47,7 +46,7 @@ func (r *RbacDefinitionReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	_ = r.Logger.WithValues("rbacdefinition", req.NamespacedName)
 
 	// Fetch the RbacDefinition instance
-	instance := &v1beta1.RbacDefinition{}
+	instance := &v1.RbacDefinition{}
 	err := r.Client.Get(ctx, req.NamespacedName, instance)
 	if err != nil {
 		if errors.IsNotFound(err) {
@@ -72,6 +71,6 @@ func (r *RbacDefinitionReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 
 func (r *RbacDefinitionReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&rbacdefinitionsv1beta1.RbacDefinition{}).
+		For(&v1.RbacDefinition{}).
 		Complete(r)
 }

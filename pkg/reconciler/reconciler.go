@@ -8,7 +8,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
-	v1beta1 "github.com/ckotzbauer/access-manager/apis/access-manager.io/v1beta1"
+	v1 "github.com/ckotzbauer/access-manager/apis/access-manager.io/v1"
 	"github.com/ckotzbauer/access-manager/pkg/util"
 
 	corev1 "k8s.io/api/core/v1"
@@ -20,7 +20,7 @@ var rbacName = "RbacDefinition"
 
 // ReconcileServiceAccount applies all desired changes of the ServiceAccount
 func (r *Reconciler) ReconcileServiceAccount(instance *corev1.ServiceAccount) (reconcile.Result, error) {
-	list := &v1beta1.RbacDefinitionList{}
+	list := &v1.RbacDefinitionList{}
 	err := r.ControllerClient.List(context.TODO(), list)
 
 	if err != nil {
@@ -48,7 +48,7 @@ func (r *Reconciler) ReconcileServiceAccount(instance *corev1.ServiceAccount) (r
 }
 
 // ReconcileRbacDefinition applies all desired changes of the RbacDefinition
-func (r *Reconciler) ReconcileRbacDefinition(instance *v1beta1.RbacDefinition) (reconcile.Result, error) {
+func (r *Reconciler) ReconcileRbacDefinition(instance *v1.RbacDefinition) (reconcile.Result, error) {
 	// Define all (Cluster)RoleBindings objects
 	roleBindingsToCreate := r.BuildAllRoleBindings(instance)
 	clusterRoleBindingsToCreate := r.BuildAllClusterRoleBindings(instance)
@@ -172,7 +172,7 @@ func (r *Reconciler) CreateOrRecreateClusterRoleBinding(crb rbacv1.ClusterRoleBi
 }
 
 // BuildAllRoleBindings returns an array of RoleBindings for the given RbacDefinition
-func (r *Reconciler) BuildAllRoleBindings(cr *v1beta1.RbacDefinition) []rbacv1.RoleBinding {
+func (r *Reconciler) BuildAllRoleBindings(cr *v1.RbacDefinition) []rbacv1.RoleBinding {
 	var bindingObjects []rbacv1.RoleBinding = []rbacv1.RoleBinding{}
 
 	for _, nsSpec := range cr.Spec.Namespaced {
@@ -222,7 +222,7 @@ func (r *Reconciler) BuildAllRoleBindings(cr *v1beta1.RbacDefinition) []rbacv1.R
 }
 
 // BuildAllClusterRoleBindings returns an array of ClusterRoleBindings for the given RbacDefinition
-func (r *Reconciler) BuildAllClusterRoleBindings(cr *v1beta1.RbacDefinition) []rbacv1.ClusterRoleBinding {
+func (r *Reconciler) BuildAllClusterRoleBindings(cr *v1.RbacDefinition) []rbacv1.ClusterRoleBinding {
 	var bindingObjects []rbacv1.ClusterRoleBinding = []rbacv1.ClusterRoleBinding{}
 
 	for _, bindingSpec := range cr.Spec.Cluster {
@@ -254,7 +254,7 @@ func (r *Reconciler) BuildAllClusterRoleBindings(cr *v1beta1.RbacDefinition) []r
 }
 
 // DeleteOwnedRoleBindings deletes all RoleBindings in namespace owned by the RbacDefinition
-func (r *Reconciler) DeleteOwnedRoleBindings(namespace string, def v1beta1.RbacDefinition) error {
+func (r *Reconciler) DeleteOwnedRoleBindings(namespace string, def v1.RbacDefinition) error {
 	list, err := r.Client.RbacV1().RoleBindings(namespace).List(context.TODO(), metav1.ListOptions{})
 
 	if err != nil {
@@ -339,7 +339,7 @@ func (r *Reconciler) getClusterRoleBindingsToDelete(defName string, creating []r
 }
 
 // IsServiceAccountRelevant checks if the given definition includes all serviceaccounts
-func (r *Reconciler) IsServiceAccountRelevant(spec v1beta1.RbacDefinition, ns string) bool {
+func (r *Reconciler) IsServiceAccountRelevant(spec v1.RbacDefinition, ns string) bool {
 	for _, nsSpec := range spec.Spec.Namespaced {
 		namespaces := r.GetRelevantNamespaces(nsSpec.NamespaceSelector, nsSpec.Namespace)
 

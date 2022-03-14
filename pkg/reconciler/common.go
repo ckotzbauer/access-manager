@@ -3,8 +3,7 @@ package reconciler
 import (
 	"context"
 
-	v1beta1 "github.com/ckotzbauer/access-manager/apis/access-manager.io/v1beta1"
-
+	v1 "github.com/ckotzbauer/access-manager/apis/access-manager.io/v1"
 	"github.com/go-logr/logr"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -39,7 +38,7 @@ func (r *Reconciler) ReconcileNamespace(instance *corev1.Namespace) (reconcile.R
 }
 
 func (r *Reconciler) processRbacDefinitions() (reconcile.Result, error) {
-	list := &v1beta1.RbacDefinitionList{}
+	list := &v1.RbacDefinitionList{}
 	err := r.ControllerClient.List(context.TODO(), list)
 
 	if err != nil {
@@ -63,7 +62,7 @@ func (r *Reconciler) processRbacDefinitions() (reconcile.Result, error) {
 }
 
 func (r *Reconciler) processSecretDefinitions() (reconcile.Result, error) {
-	list := &v1beta1.SyncSecretDefinitionList{}
+	list := &v1.SyncSecretDefinitionList{}
 	err := r.ControllerClient.List(context.TODO(), list)
 
 	if err != nil {
@@ -98,7 +97,7 @@ func HasNamedOwner(refs []metav1.OwnerReference, kind, name string) bool {
 }
 
 // GetRelevantNamespaces returns a filtered list of namespaces matching the NamespacedSpec
-func (r *Reconciler) GetRelevantNamespaces(selector metav1.LabelSelector, nameSpec v1beta1.NamespaceSpec) []corev1.Namespace {
+func (r *Reconciler) GetRelevantNamespaces(selector metav1.LabelSelector, nameSpec v1.NamespaceSpec) []corev1.Namespace {
 	if selector.MatchLabels != nil || len(selector.MatchExpressions) > 0 {
 		selector, err := metav1.LabelSelectorAsSelector(&selector)
 		if err != nil {

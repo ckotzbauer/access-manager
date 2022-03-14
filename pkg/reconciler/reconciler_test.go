@@ -6,7 +6,7 @@ import (
 	"sync/atomic"
 	"testing"
 
-	v1beta1 "github.com/ckotzbauer/access-manager/apis/access-manager.io/v1beta1"
+	v1 "github.com/ckotzbauer/access-manager/apis/access-manager.io/v1"
 	"github.com/ckotzbauer/access-manager/pkg/reconciler"
 	"github.com/ckotzbauer/access-manager/pkg/util"
 
@@ -154,7 +154,7 @@ var _ = Describe("Reconciler", func() {
 		clusterRoleBinding1 := rbacv1.ClusterRoleBinding{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:            fmt.Sprintf("existing-crb1-%v", count),
-				OwnerReferences: []metav1.OwnerReference{{Kind: "RbacDefinition", APIVersion: "access-manager.io/v1beta1", Controller: &flag, Name: "xx", UID: "123456"}},
+				OwnerReferences: []metav1.OwnerReference{{Kind: "RbacDefinition", APIVersion: "access-manager.io/v1", Controller: &flag, Name: "xx", UID: "123456"}},
 			},
 			RoleRef: rbacv1.RoleRef{
 				Name: "test-role",
@@ -176,7 +176,7 @@ var _ = Describe("Reconciler", func() {
 			ObjectMeta: metav1.ObjectMeta{
 				Name:            fmt.Sprintf("existing-rb1-%v", count),
 				Namespace:       "default",
-				OwnerReferences: []metav1.OwnerReference{{Kind: "RbacDefinition", APIVersion: "access-manager.io/v1beta1", Controller: &flag, Name: "xx", UID: "123456"}},
+				OwnerReferences: []metav1.OwnerReference{{Kind: "RbacDefinition", APIVersion: "access-manager.io/v1", Controller: &flag, Name: "xx", UID: "123456"}},
 			},
 			RoleRef: rbacv1.RoleRef{
 				Name: "test-role",
@@ -241,7 +241,7 @@ var _ = Describe("Reconciler", func() {
 
 	Describe("GetRelevantNamespaces", func() {
 		It("should not match any namespace", func(done Done) {
-			spec := &v1beta1.NamespacedSpec{NamespaceSelector: metav1.LabelSelector{MatchLabels: map[string]string{"no": "match"}}}
+			spec := &v1.NamespacedSpec{NamespaceSelector: metav1.LabelSelector{MatchLabels: map[string]string{"no": "match"}}}
 
 			found := rec.GetRelevantNamespaces(spec.NamespaceSelector, spec.Namespace)
 			Expect(found).NotTo(BeNil())
@@ -250,7 +250,7 @@ var _ = Describe("Reconciler", func() {
 		})
 
 		It("should match namespace1", func(done Done) {
-			spec := &v1beta1.NamespacedSpec{
+			spec := &v1.NamespacedSpec{
 				NamespaceSelector: metav1.LabelSelector{MatchLabels: map[string]string{"team": fmt.Sprintf("one-%v", count)}},
 			}
 
@@ -261,7 +261,7 @@ var _ = Describe("Reconciler", func() {
 		})
 
 		It("should match namespace2 and namespace3", func(done Done) {
-			spec := &v1beta1.NamespacedSpec{
+			spec := &v1.NamespacedSpec{
 				NamespaceSelector: metav1.LabelSelector{MatchLabels: map[string]string{"ci": fmt.Sprintf("true-%v", count)}},
 			}
 
@@ -274,9 +274,9 @@ var _ = Describe("Reconciler", func() {
 
 	Describe("BuildAllClusterRoleBindings", func() {
 		It("should return empty array", func(done Done) {
-			cr := &v1beta1.RbacDefinition{
-				Spec: v1beta1.RbacDefinitionSpec{
-					Cluster: []v1beta1.ClusterSpec{},
+			cr := &v1.RbacDefinition{
+				Spec: v1.RbacDefinitionSpec{
+					Cluster: []v1.ClusterSpec{},
 				},
 			}
 
@@ -286,9 +286,9 @@ var _ = Describe("Reconciler", func() {
 		})
 
 		It("should return nothing if no subjects are provided", func(done Done) {
-			cr := &v1beta1.RbacDefinition{
-				Spec: v1beta1.RbacDefinitionSpec{
-					Cluster: []v1beta1.ClusterSpec{
+			cr := &v1.RbacDefinition{
+				Spec: v1.RbacDefinitionSpec{
+					Cluster: []v1.ClusterSpec{
 						{
 							ClusterRoleName: "test-role",
 							Subjects:        []rbacv1.Subject{},
@@ -303,9 +303,9 @@ var _ = Describe("Reconciler", func() {
 		})
 
 		It("should return correct ClusterRoleBindings", func(done Done) {
-			cr := &v1beta1.RbacDefinition{
-				Spec: v1beta1.RbacDefinitionSpec{
-					Cluster: []v1beta1.ClusterSpec{
+			cr := &v1.RbacDefinition{
+				Spec: v1.RbacDefinitionSpec{
+					Cluster: []v1.ClusterSpec{
 						{
 							ClusterRoleName: "test-role",
 							Subjects:        []rbacv1.Subject{{APIGroup: "rbac.authorization.k8s.io", Kind: "ServiceAccount", Name: "default"}},
@@ -358,9 +358,9 @@ var _ = Describe("Reconciler", func() {
 
 	Describe("BuildAllRoleBindings", func() {
 		It("should return empty array - no specs", func(done Done) {
-			cr := &v1beta1.RbacDefinition{
-				Spec: v1beta1.RbacDefinitionSpec{
-					Namespaced: []v1beta1.NamespacedSpec{},
+			cr := &v1.RbacDefinition{
+				Spec: v1.RbacDefinitionSpec{
+					Namespaced: []v1.NamespacedSpec{},
 				},
 			}
 
@@ -371,9 +371,9 @@ var _ = Describe("Reconciler", func() {
 		})
 
 		It("should return empty array - no namespaces", func(done Done) {
-			cr := &v1beta1.RbacDefinition{
-				Spec: v1beta1.RbacDefinitionSpec{
-					Namespaced: []v1beta1.NamespacedSpec{
+			cr := &v1.RbacDefinition{
+				Spec: v1.RbacDefinitionSpec{
+					Namespaced: []v1.NamespacedSpec{
 						{
 							NamespaceSelector: metav1.LabelSelector{MatchLabels: map[string]string{"not": "existent"}},
 						},
@@ -388,12 +388,12 @@ var _ = Describe("Reconciler", func() {
 		})
 
 		It("should return empty array - no subjects", func(done Done) {
-			cr := &v1beta1.RbacDefinition{
-				Spec: v1beta1.RbacDefinitionSpec{
-					Namespaced: []v1beta1.NamespacedSpec{
+			cr := &v1.RbacDefinition{
+				Spec: v1.RbacDefinitionSpec{
+					Namespaced: []v1.NamespacedSpec{
 						{
 							NamespaceSelector: metav1.LabelSelector{MatchLabels: map[string]string{"team": fmt.Sprintf("one-%v", count)}},
-							Bindings: []v1beta1.BindingsSpec{
+							Bindings: []v1.BindingsSpec{
 								{
 									Kind:     "ClusterRole",
 									RoleName: "admin-role",
@@ -411,12 +411,12 @@ var _ = Describe("Reconciler", func() {
 		})
 
 		It("should return correct RoleBindings - one namespace", func(done Done) {
-			cr := &v1beta1.RbacDefinition{
-				Spec: v1beta1.RbacDefinitionSpec{
-					Namespaced: []v1beta1.NamespacedSpec{
+			cr := &v1.RbacDefinition{
+				Spec: v1.RbacDefinitionSpec{
+					Namespaced: []v1.NamespacedSpec{
 						{
 							NamespaceSelector: metav1.LabelSelector{MatchLabels: map[string]string{"team": fmt.Sprintf("one-%v", count)}},
-							Bindings: []v1beta1.BindingsSpec{
+							Bindings: []v1.BindingsSpec{
 								{
 									Kind:     "ClusterRole",
 									RoleName: "admin-role",
@@ -466,12 +466,12 @@ var _ = Describe("Reconciler", func() {
 		})
 
 		It("should return correct RoleBindings - multiple namespace", func(done Done) {
-			cr := &v1beta1.RbacDefinition{
-				Spec: v1beta1.RbacDefinitionSpec{
-					Namespaced: []v1beta1.NamespacedSpec{
+			cr := &v1.RbacDefinition{
+				Spec: v1.RbacDefinitionSpec{
+					Namespaced: []v1.NamespacedSpec{
 						{
 							NamespaceSelector: metav1.LabelSelector{MatchLabels: map[string]string{"ci": fmt.Sprintf("true-%v", count)}},
-							Bindings: []v1beta1.BindingsSpec{
+							Bindings: []v1.BindingsSpec{
 								{
 									Kind:     "ClusterRole",
 									RoleName: "reader-role",
@@ -539,12 +539,12 @@ var _ = Describe("Reconciler", func() {
 		})
 
 		It("should return correct RoleBindings - allServiceAccounts 1", func(done Done) {
-			cr := &v1beta1.RbacDefinition{
-				Spec: v1beta1.RbacDefinitionSpec{
-					Namespaced: []v1beta1.NamespacedSpec{
+			cr := &v1.RbacDefinition{
+				Spec: v1.RbacDefinitionSpec{
+					Namespaced: []v1.NamespacedSpec{
 						{
 							NamespaceSelector: metav1.LabelSelector{MatchLabels: map[string]string{"team": fmt.Sprintf("four-%v", count)}},
-							Bindings: []v1beta1.BindingsSpec{
+							Bindings: []v1.BindingsSpec{
 								{
 									Kind:               "Role",
 									Name:               "my-awesome-rolebinding",
@@ -578,12 +578,12 @@ var _ = Describe("Reconciler", func() {
 		})
 
 		It("should return correct RoleBindings - allServiceAccounts 2", func(done Done) {
-			cr := &v1beta1.RbacDefinition{
-				Spec: v1beta1.RbacDefinitionSpec{
-					Namespaced: []v1beta1.NamespacedSpec{
+			cr := &v1.RbacDefinition{
+				Spec: v1.RbacDefinitionSpec{
+					Namespaced: []v1.NamespacedSpec{
 						{
 							NamespaceSelector: metav1.LabelSelector{MatchLabels: map[string]string{"team": fmt.Sprintf("four-%v", count)}},
-							Bindings: []v1beta1.BindingsSpec{
+							Bindings: []v1.BindingsSpec{
 								{
 									Kind:               "Role",
 									Name:               "my-awesome-rolebinding",
@@ -763,7 +763,7 @@ var _ = Describe("Reconciler", func() {
 					Name:      fmt.Sprintf("deletable-rb-%v", count),
 					Namespace: namespace1.Name,
 					OwnerReferences: []metav1.OwnerReference{{
-						Controller: &[]bool{true}[0], Kind: "RbacDefinition", Name: "john", APIVersion: "access-manager.io/v1beta1", UID: "12345",
+						Controller: &[]bool{true}[0], Kind: "RbacDefinition", Name: "john", APIVersion: "access-manager.io/v1", UID: "12345",
 					}},
 				},
 				RoleRef: rbacv1.RoleRef{
@@ -788,7 +788,7 @@ var _ = Describe("Reconciler", func() {
 					Name:      fmt.Sprintf("deletable-rb-%v", count),
 					Namespace: namespace1.Name,
 					OwnerReferences: []metav1.OwnerReference{{
-						Controller: &[]bool{true}[0], Kind: "RbacDefinition", Name: "john", APIVersion: "access-manager.io/v1beta1", UID: "12345",
+						Controller: &[]bool{true}[0], Kind: "RbacDefinition", Name: "john", APIVersion: "access-manager.io/v1", UID: "12345",
 					}},
 				},
 				RoleRef: rbacv1.RoleRef{
@@ -813,7 +813,7 @@ var _ = Describe("Reconciler", func() {
 					Name:      fmt.Sprintf("deletable-rb-%v", count),
 					Namespace: namespace1.Name,
 					OwnerReferences: []metav1.OwnerReference{{
-						Controller: &[]bool{true}[0], Kind: "RbacDefinition", Name: "john", APIVersion: "access-manager.io/v1beta1", UID: "12345",
+						Controller: &[]bool{true}[0], Kind: "RbacDefinition", Name: "john", APIVersion: "access-manager.io/v1", UID: "12345",
 					}},
 				},
 				RoleRef: rbacv1.RoleRef{
@@ -839,7 +839,7 @@ var _ = Describe("Reconciler", func() {
 				ObjectMeta: metav1.ObjectMeta{
 					Name: fmt.Sprintf("deletable-crb-%v", count),
 					OwnerReferences: []metav1.OwnerReference{{
-						Controller: &[]bool{true}[0], Kind: "RbacDefinition", Name: "john", APIVersion: "access-manager.io/v1beta1", UID: "12345",
+						Controller: &[]bool{true}[0], Kind: "RbacDefinition", Name: "john", APIVersion: "access-manager.io/v1", UID: "12345",
 					}},
 				},
 				RoleRef: rbacv1.RoleRef{
@@ -863,7 +863,7 @@ var _ = Describe("Reconciler", func() {
 				ObjectMeta: metav1.ObjectMeta{
 					Name: fmt.Sprintf("deletable-rb-%v", count),
 					OwnerReferences: []metav1.OwnerReference{{
-						Controller: &[]bool{true}[0], Kind: "RbacDefinition", Name: "john", APIVersion: "access-manager.io/v1beta1", UID: "12345",
+						Controller: &[]bool{true}[0], Kind: "RbacDefinition", Name: "john", APIVersion: "access-manager.io/v1", UID: "12345",
 					}},
 				},
 				RoleRef: rbacv1.RoleRef{
@@ -887,7 +887,7 @@ var _ = Describe("Reconciler", func() {
 				ObjectMeta: metav1.ObjectMeta{
 					Name: fmt.Sprintf("deletable-rb-%v", count),
 					OwnerReferences: []metav1.OwnerReference{{
-						Controller: &[]bool{true}[0], Kind: "RbacDefinition", Name: "john", APIVersion: "access-manager.io/v1beta1", UID: "12345",
+						Controller: &[]bool{true}[0], Kind: "RbacDefinition", Name: "john", APIVersion: "access-manager.io/v1", UID: "12345",
 					}},
 				},
 				RoleRef: rbacv1.RoleRef{
@@ -917,7 +917,7 @@ var _ = Describe("Reconciler", func() {
 					Namespace: "default",
 					OwnerReferences: []metav1.OwnerReference{
 						{
-							APIVersion: "access-manager.io/v1beta1",
+							APIVersion: "access-manager.io/v1",
 							Controller: &flag,
 							Kind:       "RbacDefinition",
 							Name:       "test-def",
@@ -932,12 +932,12 @@ var _ = Describe("Reconciler", func() {
 				Subjects: []rbacv1.Subject{{APIGroup: "", Kind: "ServiceAccount", Name: "default", Namespace: "default"}},
 			}
 
-			def := &v1beta1.RbacDefinition{
+			def := &v1.RbacDefinition{
 				ObjectMeta: metav1.ObjectMeta{Name: "test-def"},
-				Spec: v1beta1.RbacDefinitionSpec{
-					Namespaced: []v1beta1.NamespacedSpec{
+				Spec: v1.RbacDefinitionSpec{
+					Namespaced: []v1.NamespacedSpec{
 						{
-							Namespace: v1beta1.NamespaceSpec{Name: "default"},
+							Namespace: v1.NamespaceSpec{Name: "default"},
 						},
 					},
 				},
@@ -961,13 +961,13 @@ var _ = Describe("Reconciler", func() {
 
 	Describe("IsServiceAccountRelevant", func() {
 		It("should return true", func(done Done) {
-			def := &v1beta1.RbacDefinition{
+			def := &v1.RbacDefinition{
 				ObjectMeta: metav1.ObjectMeta{Name: "test-def"},
-				Spec: v1beta1.RbacDefinitionSpec{
-					Namespaced: []v1beta1.NamespacedSpec{
+				Spec: v1.RbacDefinitionSpec{
+					Namespaced: []v1.NamespacedSpec{
 						{
-							Namespace: v1beta1.NamespaceSpec{Name: "default"},
-							Bindings:  []v1beta1.BindingsSpec{{AllServiceAccounts: true}},
+							Namespace: v1.NamespaceSpec{Name: "default"},
+							Bindings:  []v1.BindingsSpec{{AllServiceAccounts: true}},
 						},
 					},
 				},
@@ -980,13 +980,13 @@ var _ = Describe("Reconciler", func() {
 		})
 
 		It("should return false - other namespace", func(done Done) {
-			def := &v1beta1.RbacDefinition{
+			def := &v1.RbacDefinition{
 				ObjectMeta: metav1.ObjectMeta{Name: "test-def"},
-				Spec: v1beta1.RbacDefinitionSpec{
-					Namespaced: []v1beta1.NamespacedSpec{
+				Spec: v1.RbacDefinitionSpec{
+					Namespaced: []v1.NamespacedSpec{
 						{
-							Namespace: v1beta1.NamespaceSpec{Name: "default"},
-							Bindings:  []v1beta1.BindingsSpec{{AllServiceAccounts: true}},
+							Namespace: v1.NamespaceSpec{Name: "default"},
+							Bindings:  []v1.BindingsSpec{{AllServiceAccounts: true}},
 						},
 					},
 				},
@@ -999,13 +999,13 @@ var _ = Describe("Reconciler", func() {
 		})
 
 		It("should return false - not all sa's", func(done Done) {
-			def := &v1beta1.RbacDefinition{
+			def := &v1.RbacDefinition{
 				ObjectMeta: metav1.ObjectMeta{Name: "test-def"},
-				Spec: v1beta1.RbacDefinitionSpec{
-					Namespaced: []v1beta1.NamespacedSpec{
+				Spec: v1.RbacDefinitionSpec{
+					Namespaced: []v1.NamespacedSpec{
 						{
-							Namespace: v1beta1.NamespaceSpec{Name: "default"},
-							Bindings:  []v1beta1.BindingsSpec{{AllServiceAccounts: false}},
+							Namespace: v1.NamespaceSpec{Name: "default"},
+							Bindings:  []v1.BindingsSpec{{AllServiceAccounts: false}},
 						},
 					},
 				},
@@ -1020,9 +1020,9 @@ var _ = Describe("Reconciler", func() {
 
 	Describe("BuildAllSecrets", func() {
 		It("should return empty array - no source", func(done Done) {
-			cr := &v1beta1.SyncSecretDefinition{
-				Spec: v1beta1.SyncSecretDefinitionSpec{
-					Source: v1beta1.SourceSpec{},
+			cr := &v1.SyncSecretDefinition{
+				Spec: v1.SyncSecretDefinitionSpec{
+					Source: v1.SourceSpec{},
 				},
 			}
 
@@ -1033,9 +1033,9 @@ var _ = Describe("Reconciler", func() {
 		})
 
 		It("should return empty array - no target namespaces", func(done Done) {
-			cr := &v1beta1.SyncSecretDefinition{
-				Spec: v1beta1.SyncSecretDefinitionSpec{
-					Targets: []v1beta1.TargetSpec{
+			cr := &v1.SyncSecretDefinition{
+				Spec: v1.SyncSecretDefinitionSpec{
+					Targets: []v1.TargetSpec{
 						{
 							NamespaceSelector: metav1.LabelSelector{MatchLabels: map[string]string{"not": "existent"}},
 						},
@@ -1050,9 +1050,9 @@ var _ = Describe("Reconciler", func() {
 		})
 
 		It("should return empty array - source secret does not exist", func(done Done) {
-			cr := &v1beta1.SyncSecretDefinition{
-				Spec: v1beta1.SyncSecretDefinitionSpec{
-					Source: v1beta1.SourceSpec{
+			cr := &v1.SyncSecretDefinition{
+				Spec: v1.SyncSecretDefinitionSpec{
+					Source: v1.SourceSpec{
 						Name:      "not-existing",
 						Namespace: "hello",
 					},
@@ -1065,13 +1065,13 @@ var _ = Describe("Reconciler", func() {
 		})
 
 		It("should return correct Secrets - one namespace", func(done Done) {
-			cr := &v1beta1.SyncSecretDefinition{
-				Spec: v1beta1.SyncSecretDefinitionSpec{
-					Source: v1beta1.SourceSpec{
+			cr := &v1.SyncSecretDefinition{
+				Spec: v1.SyncSecretDefinitionSpec{
+					Source: v1.SourceSpec{
 						Name:      secret1.Name,
 						Namespace: secret1.Namespace,
 					},
-					Targets: []v1beta1.TargetSpec{
+					Targets: []v1.TargetSpec{
 						{
 							NamespaceSelector: metav1.LabelSelector{MatchLabels: map[string]string{"team": fmt.Sprintf("one-%v", count)}},
 						},
@@ -1094,13 +1094,13 @@ var _ = Describe("Reconciler", func() {
 		})
 
 		It("should return correct Secrets - multiple namespace", func(done Done) {
-			cr := &v1beta1.SyncSecretDefinition{
-				Spec: v1beta1.SyncSecretDefinitionSpec{
-					Source: v1beta1.SourceSpec{
+			cr := &v1.SyncSecretDefinition{
+				Spec: v1.SyncSecretDefinitionSpec{
+					Source: v1.SourceSpec{
 						Name:      secret1.Name,
 						Namespace: secret1.Namespace,
 					},
-					Targets: []v1beta1.TargetSpec{
+					Targets: []v1.TargetSpec{
 						{
 							NamespaceSelector: metav1.LabelSelector{MatchLabels: map[string]string{"ci": fmt.Sprintf("true-%v", count)}},
 						},
@@ -1177,7 +1177,7 @@ var _ = Describe("Reconciler", func() {
 					Namespace: "default",
 					OwnerReferences: []metav1.OwnerReference{
 						{
-							APIVersion: "access-manager.io/v1beta1",
+							APIVersion: "access-manager.io/v1",
 							Controller: &flag,
 							Kind:       "SyncSecretDefinition",
 							Name:       "test-def",
@@ -1189,12 +1189,12 @@ var _ = Describe("Reconciler", func() {
 				StringData: map[string]string{"key5": "value5"},
 			}
 
-			def := &v1beta1.SyncSecretDefinition{
+			def := &v1.SyncSecretDefinition{
 				ObjectMeta: metav1.ObjectMeta{Name: "test-def"},
-				Spec: v1beta1.SyncSecretDefinitionSpec{
-					Targets: []v1beta1.TargetSpec{
+				Spec: v1.SyncSecretDefinitionSpec{
+					Targets: []v1.TargetSpec{
 						{
-							Namespace: v1beta1.NamespaceSpec{Name: "default"},
+							Namespace: v1.NamespaceSpec{Name: "default"},
 						},
 					},
 				},
