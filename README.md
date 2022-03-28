@@ -148,11 +148,20 @@ For more details, please read the [api-docs](https://github.com/ckotzbauer/acces
 
 This projects was inspired by the [RBACManager](https://github.com/FairwindsOps/rbac-manager).
 
-
-[Contributing](https://github.com/ckotzbauer/access-manager/blob/master/CONTRIBUTING.md)
---------
 [License](https://github.com/ckotzbauer/access-manager/blob/master/LICENSE)
 --------
 [Changelog](https://github.com/ckotzbauer/access-manager/blob/master/CHANGELOG.md)
 --------
+
+## Contributing
+
+Please refer to the [Contribution guildelines](https://github.com/ckotzbauer/.github/blob/main/CONTRIBUTING.md).
+
+## Code of conduct
+
+Please refer to the [Conduct guildelines](https://github.com/ckotzbauer/.github/blob/main/CODE_OF_CONDUCT.md).
+
+## Security
+
+Please refer to the [Security process](https://github.com/ckotzbauer/.github/blob/main/SECURITY.md).
 
