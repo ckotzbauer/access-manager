@@ -1,10 +1,9 @@
-
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.7.0
+    controller-gen.kubebuilder.io/version: v0.9.2
   creationTimestamp: null
   name: rbacdefinitions.access-manager.io
 spec:
@@ -75,6 +74,7 @@ spec:
                         - kind
                         - name
                         type: object
+                        x-kubernetes-map-type: atomic
                       type: array
                   required:
                   - clusterRoleName
@@ -131,6 +131,7 @@ spec:
                               - kind
                               - name
                               type: object
+                              x-kubernetes-map-type: atomic
                             type: array
                         required:
                         - kind
@@ -191,6 +192,7 @@ spec:
                             only "value". The requirements are ANDed.
                           type: object
                       type: object
+                      x-kubernetes-map-type: atomic
                   required:
                   - bindings
                   type: object
@@ -206,9 +208,3 @@ spec:
     storage: true
     subresources:
       status: {}
-status:
-  acceptedNames:
-    kind: ""
-    plural: ""
-  conditions: []
-  storedVersions: []
