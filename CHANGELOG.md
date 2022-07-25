@@ -1,3 +1,116 @@
+## Version 0.10.0 (2022-07-25)
+
+### Features and improvements
+
+* [[`90c74edb`](https://github.com/ckotzbauer&#x2F;access-manager/commit/90c74edb)] - **feat**: update to golang@1.18.0
+* [[`3adacdc3`](https://github.com/ckotzbauer&#x2F;access-manager/commit/3adacdc3)] - **feat**: use scratch dockerfile
+
+### Bug fixes
+
+* [[`1e789375`](https://github.com/ckotzbauer&#x2F;access-manager/commit/1e789375)] - **fix**: use ISO8601 timeformat for logging
+
+### Cleanup and refactoring
+
+* [[`a3bb48ed`](https://github.com/ckotzbauer&#x2F;access-manager/commit/a3bb48ed)] - **cleanup**: use background context
+* [[`5448b1ef`](https://github.com/ckotzbauer&#x2F;access-manager/commit/5448b1ef)] - **cleanup**: change project-module name
+* [[`ed76e7cb`](https://github.com/ckotzbauer&#x2F;access-manager/commit/ed76e7cb)] - **cleanup**: rename import alias
+
+### Build and testing
+
+* [[`e14bd197`](https://github.com/ckotzbauer&#x2F;access-manager/commit/e14bd197)] - **build**: use with newer goreleaser version [skip ci]
+* [[`745db953`](https://github.com/ckotzbauer&#x2F;access-manager/commit/745db953)] - **build**: use golang 1.18.4
+* [[`dd98c328`](https://github.com/ckotzbauer&#x2F;access-manager/commit/dd98c328)] - **build**: use reusable-workflows [6]
+* [[`f4beac61`](https://github.com/ckotzbauer&#x2F;access-manager/commit/f4beac61)] - **build**: use reusable-workflows [5]
+* [[`0b077919`](https://github.com/ckotzbauer&#x2F;access-manager/commit/0b077919)] - **build**: use reusable-workflows [4]
+* [[`e0945fb7`](https://github.com/ckotzbauer&#x2F;access-manager/commit/e0945fb7)] - **build**: use reusable-workflows [2]
+* [[`c29c8449`](https://github.com/ckotzbauer&#x2F;access-manager/commit/c29c8449)] - **build**: use reusable-workflows [1]
+* [[`129f2559`](https://github.com/ckotzbauer&#x2F;access-manager/commit/129f2559)] - **build**: update actions-toolkit
+* [[`9fbdf51a`](https://github.com/ckotzbauer&#x2F;access-manager/commit/9fbdf51a)] - **build**: ignore several cves
+* [[`d6963eda`](https://github.com/ckotzbauer&#x2F;access-manager/commit/d6963eda)] - **build**: use grype for cve-scan
+* [[`141676f1`](https://github.com/ckotzbauer&#x2F;access-manager/commit/141676f1)] - **test**: use new k8s-matrix
+
+### Documentation
+
+* [[`67784161`](https://github.com/ckotzbauer&#x2F;access-manager/commit/67784161)] - **doc**: update version [skip ci]
+
+### Security
+
+* [[`8df886b5`](https://github.com/ckotzbauer&#x2F;access-manager/commit/8df886b5)] - **security**: update prometheus&#x2F;client_golang
+
+### Dependency updates
+
+* [[`328a8b19`](https://github.com/ckotzbauer&#x2F;access-manager/commit/328a8b19)] - **deps**: several small updates
+* [[`f64b086f`](https://github.com/ckotzbauer&#x2F;access-manager/commit/f64b086f)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.18.0
+* [[`67f075c7`](https://github.com/ckotzbauer&#x2F;access-manager/commit/67f075c7)] - **deps**: update module github.com&#x2F;onsi&#x2F;gomega to v1.20.0
+* [[`8211d4e9`](https://github.com/ckotzbauer&#x2F;access-manager/commit/8211d4e9)] - **deps**: update alpine digest to 7580ece
+* [[`9e340afc`](https://github.com/ckotzbauer&#x2F;access-manager/commit/9e340afc)] - **deps**: update kubernetes versions to v0.24.3
+* [[`225ffb08`](https://github.com/ckotzbauer&#x2F;access-manager/commit/225ffb08)] - **deps**: update module sigs.k8s.io&#x2F;controller-runtime to v0.12.3
+* [[`e6bfe252`](https://github.com/ckotzbauer&#x2F;access-manager/commit/e6bfe252)] - **deps**: update azure&#x2F;setup-kubectl action to v3
+* [[`b244bb91`](https://github.com/ckotzbauer&#x2F;access-manager/commit/b244bb91)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.17.0
+* [[`a3b3e479`](https://github.com/ckotzbauer&#x2F;access-manager/commit/a3b3e479)] - **deps**: update module sigs.k8s.io&#x2F;controller-runtime to v0.12.2
+* [[`1f68a73f`](https://github.com/ckotzbauer&#x2F;access-manager/commit/1f68a73f)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.16.0
+* [[`62974cc3`](https://github.com/ckotzbauer&#x2F;access-manager/commit/62974cc3)] - **deps**: update kubernetes versions to v0.24.2
+* [[`b7eb638b`](https://github.com/ckotzbauer&#x2F;access-manager/commit/b7eb638b)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.15.0
+* [[`42ff89b8`](https://github.com/ckotzbauer&#x2F;access-manager/commit/42ff89b8)] - **deps**: update dependency alpine to v3.16
+* [[`dbfb9869`](https://github.com/ckotzbauer&#x2F;access-manager/commit/dbfb9869)] - **deps**: update kubernetes versions to v0.24.1
+* [[`386759f3`](https://github.com/ckotzbauer&#x2F;access-manager/commit/386759f3)] - **deps**: update goreleaser&#x2F;goreleaser-action action to v3
+* [[`b29e31cd`](https://github.com/ckotzbauer&#x2F;access-manager/commit/b29e31cd)] - **deps**: update module sigs.k8s.io&#x2F;controller-runtime to v0.12.1
+* [[`5ece4912`](https://github.com/ckotzbauer&#x2F;access-manager/commit/5ece4912)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.14.2
+* [[`3de7bb44`](https://github.com/ckotzbauer&#x2F;access-manager/commit/3de7bb44)] - **deps**: update module sigs.k8s.io&#x2F;controller-runtime to v0.12.0
+* [[`c6605030`](https://github.com/ckotzbauer&#x2F;access-manager/commit/c6605030)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.14.1
+* [[`c11d2784`](https://github.com/ckotzbauer&#x2F;access-manager/commit/c11d2784)] - **deps**: update docker&#x2F;build-push-action action to v3
+* [[`78ec4f13`](https://github.com/ckotzbauer&#x2F;access-manager/commit/78ec4f13)] - **deps**: update docker&#x2F;setup-buildx-action action to v2
+* [[`e7ea03ca`](https://github.com/ckotzbauer&#x2F;access-manager/commit/e7ea03ca)] - **deps**: update docker&#x2F;setup-qemu-action action to v2
+* [[`b7eb742c`](https://github.com/ckotzbauer&#x2F;access-manager/commit/b7eb742c)] - **deps**: update kubernetes versions to v0.24.0
+* [[`b6bd80a3`](https://github.com/ckotzbauer&#x2F;access-manager/commit/b6bd80a3)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.14.0
+* [[`a9f240e5`](https://github.com/ckotzbauer&#x2F;access-manager/commit/a9f240e5)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.13.0
+* [[`24ff35e8`](https://github.com/ckotzbauer&#x2F;access-manager/commit/24ff35e8)] - **deps**: update kubernetes versions to v0.23.6
+* [[`9b5483ed`](https://github.com/ckotzbauer&#x2F;access-manager/commit/9b5483ed)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.12.1
+* [[`3018589a`](https://github.com/ckotzbauer&#x2F;access-manager/commit/3018589a)] - **deps**: update alpine digest to 4edbd2b
+* [[`18186824`](https://github.com/ckotzbauer&#x2F;access-manager/commit/18186824)] - **deps**: update actions&#x2F;setup-node action to v3.1.0
+* [[`500febeb`](https://github.com/ckotzbauer&#x2F;access-manager/commit/500febeb)] - **deps**: update module sigs.k8s.io&#x2F;controller-runtime to v0.11.2
+* [[`9c94e28b`](https://github.com/ckotzbauer&#x2F;access-manager/commit/9c94e28b)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.10.1
+* [[`683f309f`](https://github.com/ckotzbauer&#x2F;access-manager/commit/683f309f)] - **deps**: update alpine digest to ceeae28 (#205)
+* [[`278f48b4`](https://github.com/ckotzbauer&#x2F;access-manager/commit/278f48b4)] - **deps**: update pascalgn&#x2F;automerge-action digest to 8b306ad (#206)
+* [[`b657c4f0`](https://github.com/ckotzbauer&#x2F;access-manager/commit/b657c4f0)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.10.0 (#207)
+* [[`02d0d428`](https://github.com/ckotzbauer&#x2F;access-manager/commit/02d0d428)] - **deps**: update module github.com&#x2F;onsi&#x2F;gomega to v1.19.0 (#208)
+* [[`5b84334d`](https://github.com/ckotzbauer&#x2F;access-manager/commit/5b84334d)] - **deps**: update ckotzbauer&#x2F;label-command-action action to v2
+* [[`b592857d`](https://github.com/ckotzbauer&#x2F;access-manager/commit/b592857d)] - **deps**: update alpine digest to d6d0a0e (#199)
+* [[`7c5c87ff`](https://github.com/ckotzbauer&#x2F;access-manager/commit/7c5c87ff)] - **deps**: update kubernetes versions to v0.23.5 (#200)
+* [[`45104a3b`](https://github.com/ckotzbauer&#x2F;access-manager/commit/45104a3b)] - **deps**: update module github.com&#x2F;go-logr&#x2F;logr to v1.2.3 (#201)
+* [[`4e06ebde`](https://github.com/ckotzbauer&#x2F;access-manager/commit/4e06ebde)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.9.0 (#198)
+* [[`79da920f`](https://github.com/ckotzbauer&#x2F;access-manager/commit/79da920f)] - **deps**: bump ckotzbauer&#x2F;actions-toolkit from 0.8.0 to 0.9.0
+* [[`da403d5a`](https://github.com/ckotzbauer&#x2F;access-manager/commit/da403d5a)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.8.0
+* [[`8a369755`](https://github.com/ckotzbauer&#x2F;access-manager/commit/8a369755)] - **deps**: update lannonbr&#x2F;issue-label-manager-action action to v3.0.1
+* [[`2e03915f`](https://github.com/ckotzbauer&#x2F;access-manager/commit/2e03915f)] - **deps**: update actions&#x2F;setup-go action to v3
+* [[`7cb2f75e`](https://github.com/ckotzbauer&#x2F;access-manager/commit/7cb2f75e)] - **deps**: update azure&#x2F;setup-kubectl action to v2.1
+* [[`ba11beef`](https://github.com/ckotzbauer&#x2F;access-manager/commit/ba11beef)] - **deps**: update actions&#x2F;stale action to v5
+* [[`69d27d27`](https://github.com/ckotzbauer&#x2F;access-manager/commit/69d27d27)] - **deps**: bump actions&#x2F;checkout from 2 to 3
+* [[`4f3bc175`](https://github.com/ckotzbauer&#x2F;access-manager/commit/4f3bc175)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.7.0 (#189)
+* [[`a2cf4a4b`](https://github.com/ckotzbauer&#x2F;access-manager/commit/a2cf4a4b)] - **deps**: bump actions&#x2F;setup-node from 2.5.1 to 3.0.0
+* [[`7b6cd966`](https://github.com/ckotzbauer&#x2F;access-manager/commit/7b6cd966)] - **deps**: update kubernetes versions to v0.23.4 (#186)
+* [[`52e2a21f`](https://github.com/ckotzbauer&#x2F;access-manager/commit/52e2a21f)] - **deps**: update module sigs.k8s.io&#x2F;controller-runtime to v0.11.1 (#187)
+* [[`09617b7a`](https://github.com/ckotzbauer&#x2F;access-manager/commit/09617b7a)] - **deps**: update pascalgn&#x2F;size-label-action commit hash to a4655c4
+* [[`b4711fb9`](https://github.com/ckotzbauer&#x2F;access-manager/commit/b4711fb9)] - **deps**: update pascalgn&#x2F;automerge-action commit hash to 0ba0473
+* [[`d95e83a3`](https://github.com/ckotzbauer&#x2F;access-manager/commit/d95e83a3)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.6.0 (#183)
+* [[`eea25030`](https://github.com/ckotzbauer&#x2F;access-manager/commit/eea25030)] - **deps**: fix go.sum
+* [[`395953aa`](https://github.com/ckotzbauer&#x2F;access-manager/commit/395953aa)] - **deps**: update module github.com&#x2F;onsi&#x2F;gomega to v1.18.1
+* [[`05b60e3b`](https://github.com/ckotzbauer&#x2F;access-manager/commit/05b60e3b)] - **deps**: update kubernetes versions to v0.23.3
+* [[`61101bc9`](https://github.com/ckotzbauer&#x2F;access-manager/commit/61101bc9)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.5.0
+* [[`71b20e49`](https://github.com/ckotzbauer&#x2F;access-manager/commit/71b20e49)] - **deps**: update kubernetes versions to v0.23.2
+* [[`ae63fbd2`](https://github.com/ckotzbauer&#x2F;access-manager/commit/ae63fbd2)] - **deps**: bump azure&#x2F;setup-kubectl from 1 to 2.0
+* [[`07c7ae45`](https://github.com/ckotzbauer&#x2F;access-manager/commit/07c7ae45)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.4.0
+* [[`3d0941a8`](https://github.com/ckotzbauer&#x2F;access-manager/commit/3d0941a8)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.3.4
+
+### Common changes
+
+* [[`44d1ba9f`](https://github.com/ckotzbauer&#x2F;access-manager/commit/44d1ba9f)] - **chore**: release 0.9.0
+* [[`c1405a27`](https://github.com/ckotzbauer&#x2F;access-manager/commit/c1405a27)] - **chore**: remove dependabot [skip ci]
+* [[`2ad3f4ff`](https://github.com/ckotzbauer&#x2F;access-manager/commit/2ad3f4ff)] - **chore**: update to alpine@3.15.3
+* [[`dbe0fbb3`](https://github.com/ckotzbauer&#x2F;access-manager/commit/dbe0fbb3)] - **chore**: update community-files
+* [[`92f3c28d`](https://github.com/ckotzbauer&#x2F;access-manager/commit/92f3c28d)] - **chore**: update kind, controller-gen; pin alpine and golang
+
+
 ## Version 0.9.0 (2022-03-29)
 
 ### Features and improvements
