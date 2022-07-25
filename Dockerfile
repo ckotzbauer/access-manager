@@ -12,6 +12,6 @@ ARG TARGETOS
 ARG TARGETARCH
 
 COPY --from=alpine /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY dist/access-manager_${TARGETOS}_${TARGETARCH}/access-manager /usr/local/bin/access-manager
+COPY dist/access-manager_${TARGETOS}_${TARGETARCH}*/access-manager /usr/local/bin/access-manager
 
 ENTRYPOINT ["/usr/local/bin/access-manager"]
