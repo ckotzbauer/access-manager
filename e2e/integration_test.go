@@ -196,7 +196,7 @@ var _ = Describe("IntegrationTest", func() {
 	var def3 v1beta1.RbacDefinition
 	var secretDef1 v1beta1.SyncSecretDefinition
 	var secretDef2 v1beta1.SyncSecretDefinition
-	ctx := context.TODO()
+	ctx := context.Background()
 
 	def1 = v1beta1.RbacDefinition{
 		ObjectMeta: metav1.ObjectMeta{

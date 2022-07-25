@@ -118,7 +118,7 @@ var _ = Describe("Reconciler", func() {
 	var scheme *runtime.Scheme
 	var logger logr.Logger
 	var rec *reconciler.Reconciler
-	ctx := context.TODO()
+	ctx := context.Background()
 	flag := true
 
 	BeforeEach(func(done Done) {

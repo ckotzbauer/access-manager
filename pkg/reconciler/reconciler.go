@@ -21,7 +21,7 @@ var rbacName = "RbacDefinition"
 // ReconcileServiceAccount applies all desired changes of the ServiceAccount
 func (r *Reconciler) ReconcileServiceAccount(instance *corev1.ServiceAccount) (reconcile.Result, error) {
 	list := &v1beta1.RbacDefinitionList{}
-	err := r.ControllerClient.List(context.TODO(), list)
+	err := r.ControllerClient.List(context.Background(), list)
 
 	if err != nil {
 		r.Logger.Error(err, "Unexpected error occurred!")
@@ -93,7 +93,7 @@ func (r *Reconciler) RemoveAllDeletableRoleBindings(defName string, roleBindings
 
 	for _, rb := range roleBindingsToDelete {
 		r.Logger.Info("Deleting RoleBinding", "Name", fmt.Sprintf("%s/%s", rb.Namespace, rb.Name))
-		err = r.Client.RbacV1().RoleBindings(rb.Namespace).Delete(context.TODO(), rb.Name, metav1.DeleteOptions{})
+		err = r.Client.RbacV1().RoleBindings(rb.Namespace).Delete(context.Background(), rb.Name, metav1.DeleteOptions{})
 
 		if err != nil {
 			r.Logger.WithValues("Name", fmt.Sprintf("%s/%s", rb.Namespace, rb.Name)).Error(err, "Failed to delete RoleBinding.")
@@ -111,7 +111,7 @@ func (r *Reconciler) RemoveAllDeletableClusterRoleBindings(defName string, clust
 
 	for _, crb := range clusterRoleBindingsToDelete {
 		r.Logger.Info("Deleting ClusterRoleBinding", "Name", crb.Name)
-		err = r.Client.RbacV1().ClusterRoleBindings().Delete(context.TODO(), crb.Name, metav1.DeleteOptions{})
+		err = r.Client.RbacV1().ClusterRoleBindings().Delete(context.Background(), crb.Name, metav1.DeleteOptions{})
 
 		if err != nil {
 			r.Logger.WithValues("ClusterRoleBinding", crb.Name).Error(err, "Failed to delete ClusterRoleBinding.")
@@ -121,7 +121,7 @@ func (r *Reconciler) RemoveAllDeletableClusterRoleBindings(defName string, clust
 
 // CreateOrRecreateRoleBinding creates a new or recreates a existing RoleBinding
 func (r *Reconciler) CreateOrRecreateRoleBinding(rb rbacv1.RoleBinding) (*rbacv1.RoleBinding, error) {
-	existing, err := r.Client.RbacV1().RoleBindings(rb.Namespace).Get(context.TODO(), rb.Name, metav1.GetOptions{})
+	existing, err := r.Client.RbacV1().RoleBindings(rb.Namespace).Get(context.Background(), rb.Name, metav1.GetOptions{})
 	if err == nil {
 		if !HasNamedOwner(existing.OwnerReferences, rbacName, "") {
 			r.Logger.Info("Existing RoleBinding is not owned by a RbacDefinition. Ignoring", "Name", fmt.Sprintf("%s/%s", existing.Namespace, existing.Name))
@@ -133,7 +133,7 @@ func (r *Reconciler) CreateOrRecreateRoleBinding(rb rbacv1.RoleBinding) (*rbacv1
 		}
 
 		r.Logger.Info("Deleting RoleBinding", "Name", fmt.Sprintf("%s/%s", rb.Namespace, rb.Name))
-		err = r.Client.RbacV1().RoleBindings(rb.Namespace).Delete(context.TODO(), rb.Name, metav1.DeleteOptions{})
+		err = r.Client.RbacV1().RoleBindings(rb.Namespace).Delete(context.Background(), rb.Name, metav1.DeleteOptions{})
 		if err != nil {
 			return nil, err
 		}
@@ -142,12 +142,12 @@ func (r *Reconciler) CreateOrRecreateRoleBinding(rb rbacv1.RoleBinding) (*rbacv1
 	}
 
 	r.Logger.Info("Creating new RoleBinding", "Name", fmt.Sprintf("%s/%s", rb.Namespace, rb.Name))
-	return r.Client.RbacV1().RoleBindings(rb.Namespace).Create(context.TODO(), &rb, metav1.CreateOptions{})
+	return r.Client.RbacV1().RoleBindings(rb.Namespace).Create(context.Background(), &rb, metav1.CreateOptions{})
 }
 
 // CreateOrRecreateClusterRoleBinding creates a new or recreates a existing ClusterRoleBinding
 func (r *Reconciler) CreateOrRecreateClusterRoleBinding(crb rbacv1.ClusterRoleBinding) (*rbacv1.ClusterRoleBinding, error) {
-	existing, err := r.Client.RbacV1().ClusterRoleBindings().Get(context.TODO(), crb.Name, metav1.GetOptions{})
+	existing, err := r.Client.RbacV1().ClusterRoleBindings().Get(context.Background(), crb.Name, metav1.GetOptions{})
 	if err == nil {
 		if !HasNamedOwner(existing.OwnerReferences, rbacName, "") {
 			r.Logger.Info("Existing ClusterRoleBinding is not owned by a RbacDefinition. Ignoring", "Name", existing.Name)
@@ -159,7 +159,7 @@ func (r *Reconciler) CreateOrRecreateClusterRoleBinding(crb rbacv1.ClusterRoleBi
 		}
 
 		r.Logger.Info("Deleting ClusterRoleBinding", "Name", crb.Name)
-		err = r.Client.RbacV1().ClusterRoleBindings().Delete(context.TODO(), crb.Name, metav1.DeleteOptions{})
+		err = r.Client.RbacV1().ClusterRoleBindings().Delete(context.Background(), crb.Name, metav1.DeleteOptions{})
 		if err != nil {
 			return nil, err
 		}
@@ -168,7 +168,7 @@ func (r *Reconciler) CreateOrRecreateClusterRoleBinding(crb rbacv1.ClusterRoleBi
 	}
 
 	r.Logger.Info("Creating new ClusterRoleBinding", "Name", crb.Name)
-	return r.Client.RbacV1().ClusterRoleBindings().Create(context.TODO(), &crb, metav1.CreateOptions{})
+	return r.Client.RbacV1().ClusterRoleBindings().Create(context.Background(), &crb, metav1.CreateOptions{})
 }
 
 // BuildAllRoleBindings returns an array of RoleBindings for the given RbacDefinition
@@ -255,7 +255,7 @@ func (r *Reconciler) BuildAllClusterRoleBindings(cr *v1beta1.RbacDefinition) []r
 
 // DeleteOwnedRoleBindings deletes all RoleBindings in namespace owned by the RbacDefinition
 func (r *Reconciler) DeleteOwnedRoleBindings(namespace string, def v1beta1.RbacDefinition) error {
-	list, err := r.Client.RbacV1().RoleBindings(namespace).List(context.TODO(), metav1.ListOptions{})
+	list, err := r.Client.RbacV1().RoleBindings(namespace).List(context.Background(), metav1.ListOptions{})
 
 	if err != nil {
 		return err
@@ -265,7 +265,7 @@ func (r *Reconciler) DeleteOwnedRoleBindings(namespace string, def v1beta1.RbacD
 		for _, ref := range rb.OwnerReferences {
 			if HasNamedOwner([]metav1.OwnerReference{ref}, rbacName, def.Name) {
 				r.Logger.Info("Deleting owned RoleBinding", "Name", fmt.Sprintf("%s/%s", rb.Namespace, rb.Name))
-				err = r.Client.RbacV1().RoleBindings(namespace).Delete(context.TODO(), rb.Name, metav1.DeleteOptions{})
+				err = r.Client.RbacV1().RoleBindings(namespace).Delete(context.Background(), rb.Name, metav1.DeleteOptions{})
 
 				if err != nil {
 					return err
@@ -278,7 +278,7 @@ func (r *Reconciler) DeleteOwnedRoleBindings(namespace string, def v1beta1.RbacD
 }
 
 func (r *Reconciler) getServiceAccounts(ns string) []corev1.ServiceAccount {
-	accountList, err := r.Client.CoreV1().ServiceAccounts(ns).List(context.TODO(), metav1.ListOptions{})
+	accountList, err := r.Client.CoreV1().ServiceAccounts(ns).List(context.Background(), metav1.ListOptions{})
 	if err != nil {
 		r.Logger.WithValues("NsName", ns).Error(err, "Could not list ServiceAccounts in namespace.")
 		return nil
@@ -303,7 +303,7 @@ func (r *Reconciler) appendServiceAccountSubjects(accounts []corev1.ServiceAccou
 }
 
 func (r *Reconciler) getRoleBindingsToDelete(defName string, creating []rbacv1.RoleBinding) ([]rbacv1.RoleBinding, error) {
-	list, err := r.Client.RbacV1().RoleBindings("").List(context.TODO(), metav1.ListOptions{})
+	list, err := r.Client.RbacV1().RoleBindings("").List(context.Background(), metav1.ListOptions{})
 
 	if err != nil {
 		return nil, err
@@ -321,7 +321,7 @@ func (r *Reconciler) getRoleBindingsToDelete(defName string, creating []rbacv1.R
 }
 
 func (r *Reconciler) getClusterRoleBindingsToDelete(defName string, creating []rbacv1.ClusterRoleBinding) ([]rbacv1.ClusterRoleBinding, error) {
-	list, err := r.Client.RbacV1().ClusterRoleBindings().List(context.TODO(), metav1.ListOptions{})
+	list, err := r.Client.RbacV1().ClusterRoleBindings().List(context.Background(), metav1.ListOptions{})
 
 	if err != nil {
 		return nil, err

@@ -40,7 +40,7 @@ func (r *Reconciler) ReconcileNamespace(instance *corev1.Namespace) (reconcile.R
 
 func (r *Reconciler) processRbacDefinitions() (reconcile.Result, error) {
 	list := &v1beta1.RbacDefinitionList{}
-	err := r.ControllerClient.List(context.TODO(), list)
+	err := r.ControllerClient.List(context.Background(), list)
 
 	if err != nil {
 		r.Logger.Error(err, "Unexpected error occurred!")
@@ -64,7 +64,7 @@ func (r *Reconciler) processRbacDefinitions() (reconcile.Result, error) {
 
 func (r *Reconciler) processSecretDefinitions() (reconcile.Result, error) {
 	list := &v1beta1.SyncSecretDefinitionList{}
-	err := r.ControllerClient.List(context.TODO(), list)
+	err := r.ControllerClient.List(context.Background(), list)
 
 	if err != nil {
 		r.Logger.Error(err, "Unexpected error occurred!")
@@ -107,7 +107,7 @@ func (r *Reconciler) GetRelevantNamespaces(selector metav1.LabelSelector, nameSp
 		}
 
 		listOptions := metav1.ListOptions{LabelSelector: selector.String()}
-		namespaces, err := r.Client.CoreV1().Namespaces().List(context.TODO(), listOptions)
+		namespaces, err := r.Client.CoreV1().Namespaces().List(context.Background(), listOptions)
 		if err != nil {
 			r.Logger.Error(err, "Could not list namespaces.")
 			return nil
@@ -116,7 +116,7 @@ func (r *Reconciler) GetRelevantNamespaces(selector metav1.LabelSelector, nameSp
 		return namespaces.Items
 
 	} else if nameSpec.Name != "" {
-		namespace, err := r.Client.CoreV1().Namespaces().Get(context.TODO(), nameSpec.Name, metav1.GetOptions{})
+		namespace, err := r.Client.CoreV1().Namespaces().Get(context.Background(), nameSpec.Name, metav1.GetOptions{})
 		if err != nil {
 			r.Logger.WithValues("NsName", nameSpec.Name).Error(err, "Could not find Namespace with name.")
 			return nil
