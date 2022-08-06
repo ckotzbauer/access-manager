@@ -74,4 +74,4 @@ require (
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
 
-replace github.com/emicklei/go-restful/v3 => github.com/emicklei/go-restful/v3 v3.8.0
+replace github.com/emicklei/go-restful/v3 => github.com/emicklei/go-restful/v3 v3.9.0
