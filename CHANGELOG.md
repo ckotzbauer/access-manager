@@ -1,3 +1,33 @@
+## Version 0.11.0-alpha.0 (2022-10-03)
+
+### Build and testing
+
+* [[`426afb6c`](https://github.com/ckotzbauer&#x2F;access-manager/commit/426afb6c)] - **build**: update to golang@1.19.0
+
+### Security
+
+* [[`7b228deb`](https://github.com/ckotzbauer&#x2F;access-manager/commit/7b228deb)] - **security**: update to go-restful@3.8.0
+
+### Dependency updates
+
+* [[`ca1b0ee2`](https://github.com/ckotzbauer&#x2F;access-manager/commit/ca1b0ee2)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.21.3
+* [[`0f4ae5e5`](https://github.com/ckotzbauer&#x2F;access-manager/commit/0f4ae5e5)] - **deps**: update kubernetes versions to v0.25.2
+* [[`7466973a`](https://github.com/ckotzbauer&#x2F;access-manager/commit/7466973a)] - **deps**: update kubernetes versions to v0.25.1
+* [[`0185f1ac`](https://github.com/ckotzbauer&#x2F;access-manager/commit/0185f1ac)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.20.0
+* [[`811da56c`](https://github.com/ckotzbauer&#x2F;access-manager/commit/811da56c)] - **deps**: update module github.com&#x2F;onsi&#x2F;gomega to v1.20.2
+* [[`276b8d16`](https://github.com/ckotzbauer&#x2F;access-manager/commit/276b8d16)] - **deps**: update module sigs.k8s.io&#x2F;controller-runtime to v0.13.0
+* [[`27cde12c`](https://github.com/ckotzbauer&#x2F;access-manager/commit/27cde12c)] - **deps**: update module go.uber.org&#x2F;zap to v1.23.0
+* [[`a1edf4ac`](https://github.com/ckotzbauer&#x2F;access-manager/commit/a1edf4ac)] - **deps**: update kubernetes versions to v0.25.0
+* [[`ee4abb22`](https://github.com/ckotzbauer&#x2F;access-manager/commit/ee4abb22)] - **deps**: update module github.com&#x2F;onsi&#x2F;gomega to v1.20.1
+* [[`402d5338`](https://github.com/ckotzbauer&#x2F;access-manager/commit/402d5338)] - **deps**: update kubernetes versions to v0.24.4
+* [[`3e58231e`](https://github.com/ckotzbauer&#x2F;access-manager/commit/3e58231e)] - **deps**: update module go.uber.org&#x2F;zap to v1.22.0
+* [[`f13298c0`](https://github.com/ckotzbauer&#x2F;access-manager/commit/f13298c0)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.19.0
+* [[`c03a0288`](https://github.com/ckotzbauer&#x2F;access-manager/commit/c03a0288)] - **deps**: update alpine:3.16 docker digest to bc41182
+* [[`238bd61d`](https://github.com/ckotzbauer&#x2F;access-manager/commit/238bd61d)] - **deps**: update module github.com&#x2F;emicklei&#x2F;go-restful&#x2F;v3 to v3.9.0
+* [[`e3687665`](https://github.com/ckotzbauer&#x2F;access-manager/commit/e3687665)] - **deps**: update module go to 1.19
+* [[`7b4107fb`](https://github.com/ckotzbauer&#x2F;access-manager/commit/7b4107fb)] - **deps**: update module go.uber.org&#x2F;zap to v1.21.0
+
+
 ## Version 0.10.0 (2022-07-25)
 
 ### Features and improvements
