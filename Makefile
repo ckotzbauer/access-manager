@@ -100,7 +100,7 @@ ifeq (, $(shell which kind))
 	KIND_TMP_DIR=$$(mktemp -d) ;\
 	cd $$KIND_TMP_DIR ;\
 	go mod init tmp ;\
-	go download sigs.k8s.io/kind@v0.14.0 ;\
+	go download sigs.k8s.io/kind@v0.16.0 ;\
 	rm -rf $$KIND_TMP_DIR ;\
 	}
 KIND=$(GOBIN)/kind
