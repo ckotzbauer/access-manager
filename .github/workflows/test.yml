@@ -124,7 +124,7 @@ jobs:
             ckotzbauer/access-manager:latest
 
       - name: Container scan
-        uses: ckotzbauer/actions-toolkit/grype@0.22.0
+        uses: ckotzbauer/actions-toolkit/grype@0.23.0
         with:
           scan-target: ckotzbauer/access-manager
           fail-on: "medium"
