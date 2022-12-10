@@ -11,7 +11,7 @@ IMG ?= ckotzbauer/access-manager
 CRD_OPTIONS ?= "crd"
 
 # default k8s version for e2e tests
-K8S_VERSION ?= 1.24.3
+K8S_VERSION ?= 1.25.3
 
 TARGETOS=linux
 ifeq (,${TARGETARCH})
