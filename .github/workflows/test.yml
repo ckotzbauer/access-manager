@@ -62,7 +62,7 @@ jobs:
       - name: Install GoReleaser
         uses: goreleaser/goreleaser-action@v3
         with:
-          version: "v1.6.1"
+          version: "v1.13.1"
           install-only: true
 
       - name: Build binary
@@ -107,7 +107,7 @@ jobs:
       - name: Install GoReleaser
         uses: goreleaser/goreleaser-action@v3
         with:
-          version: "v1.6.1"
+          version: "v1.13.1"
           install-only: true
 
       - name: Build binary
