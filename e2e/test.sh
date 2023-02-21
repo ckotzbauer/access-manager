@@ -15,8 +15,8 @@ ${KIND} load docker-image ckotzbauer/access-manager:latest
 make install deploy
 
 sleep 10
+kubectl wait --for=condition=Ready pod -l name=access-manager
 OPERATOR_POD=$(kubectl get pod -l name=access-manager -o jsonpath='{.items[*].metadata.name}')
-kubectl wait --for=condition=Ready pod/$OPERATOR_POD
 
 kubectl create ns namespace1
 kubectl create ns namespace2
