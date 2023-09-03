@@ -29,6 +29,7 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
+	"sigs.k8s.io/controller-runtime/pkg/metrics/server"
 
 	v1beta1 "github.com/ckotzbauer/access-manager/apis/access-manager.io/v1beta1"
 	controllers "github.com/ckotzbauer/access-manager/controllers/access-manager.io"
@@ -75,11 +76,12 @@ func main() {
 	printVersion()
 
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
-		Scheme:             scheme,
-		MetricsBindAddress: "0",
-		Port:               9443,
-		LeaderElection:     enableLeaderElection,
-		LeaderElectionID:   "85a69c09.access-manager.io",
+		Scheme: scheme,
+		Metrics: server.Options{
+			BindAddress: "0",
+		},
+		LeaderElection:   enableLeaderElection,
+		LeaderElectionID: "85a69c09.access-manager.io",
 	})
 	if err != nil {
 		setupLog.Error(err, "unable to start access-manager")
