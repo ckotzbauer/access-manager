@@ -1,3 +1,133 @@
+## Version 0.12.0 (2023-09-03)
+
+### Features and improvements
+
+* [[`f97504a3`](https://github.com/ckotzbauer&#x2F;access-manager/commit/f97504a3)] - **feat**: update tools, golang and tests
+* [[`cc4424a0`](https://github.com/ckotzbauer&#x2F;access-manager/commit/cc4424a0)] - **feat**: update to go@1.20.3
+
+### Cleanup and refactoring
+
+* [[`723c4b78`](https://github.com/ckotzbauer&#x2F;access-manager/commit/723c4b78)] - **cleanup**: update fixes
+
+### Build and testing
+
+* [[`1bdb18ce`](https://github.com/ckotzbauer&#x2F;access-manager/commit/1bdb18ce)] - **build**: add cosign-flag
+* [[`61b6ce7f`](https://github.com/ckotzbauer&#x2F;access-manager/commit/61b6ce7f)] - **build**: update actions-toolkit
+* [[`7ecef9bd`](https://github.com/ckotzbauer&#x2F;access-manager/commit/7ecef9bd)] - **build**: use new workflow
+* [[`d9003e4f`](https://github.com/ckotzbauer&#x2F;access-manager/commit/d9003e4f)] - **build**: replace default-labels-workflow
+* [[`0237a39f`](https://github.com/ckotzbauer&#x2F;access-manager/commit/0237a39f)] - **build**: updated kind
+* [[`6df7bd89`](https://github.com/ckotzbauer&#x2F;access-manager/commit/6df7bd89)] - **test**: add timeout
+* [[`cb0f7ea4`](https://github.com/ckotzbauer&#x2F;access-manager/commit/cb0f7ea4)] - **test**: wait first
+
+### Documentation
+
+* [[`59d0e8eb`](https://github.com/ckotzbauer&#x2F;access-manager/commit/59d0e8eb)] - **doc**: updated version-table
+
+### Security
+
+* [[`273ef1e5`](https://github.com/ckotzbauer&#x2F;access-manager/commit/273ef1e5)] - **security**: update to golang.org&#x2F;x&#x2F;net@v0.4.0
+
+### Dependency updates
+
+* [[`d1c1b009`](https://github.com/ckotzbauer&#x2F;access-manager/commit/d1c1b009)] - **deps**: update module sigs.k8s.io&#x2F;controller-runtime to v0.16.1
+* [[`0ae93e4a`](https://github.com/ckotzbauer&#x2F;access-manager/commit/0ae93e4a)] - **deps**: update kubernetes versions to v0.28.1
+* [[`9b5132da`](https://github.com/ckotzbauer&#x2F;access-manager/commit/9b5132da)] - **deps**: update module github.com&#x2F;emicklei&#x2F;go-restful&#x2F;v3 to v3.11.0
+* [[`efbae3b8`](https://github.com/ckotzbauer&#x2F;access-manager/commit/efbae3b8)] - **deps**: update kubernetes versions to v0.28.0
+* [[`4716fcf1`](https://github.com/ckotzbauer&#x2F;access-manager/commit/4716fcf1)] - **deps**: update alpine:3.18 docker digest to 7144f7b
+* [[`576b1063`](https://github.com/ckotzbauer&#x2F;access-manager/commit/576b1063)] - **deps**: update module golang.org&#x2F;x&#x2F;net to v0.14.0
+* [[`aa1309a8`](https://github.com/ckotzbauer&#x2F;access-manager/commit/aa1309a8)] - **deps**: update module go.uber.org&#x2F;zap to v1.25.0
+* [[`ca07f9a8`](https://github.com/ckotzbauer&#x2F;access-manager/commit/ca07f9a8)] - **deps**: update module sigs.k8s.io&#x2F;controller-runtime to v0.15.1
+* [[`3a6d6f63`](https://github.com/ckotzbauer&#x2F;access-manager/commit/3a6d6f63)] - **deps**: update module github.com&#x2F;onsi&#x2F;gomega to v1.27.10
+* [[`0dc9f0f7`](https://github.com/ckotzbauer&#x2F;access-manager/commit/0dc9f0f7)] - **deps**: update module github.com&#x2F;onsi&#x2F;gomega to v1.27.9
+* [[`8eb1a157`](https://github.com/ckotzbauer&#x2F;access-manager/commit/8eb1a157)] - **deps**: update kubernetes versions to v0.27.4
+* [[`313161c5`](https://github.com/ckotzbauer&#x2F;access-manager/commit/313161c5)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.36.0
+* [[`033fe0f4`](https://github.com/ckotzbauer&#x2F;access-manager/commit/033fe0f4)] - **deps**: update module golang.org&#x2F;x&#x2F;net to v0.12.0
+* [[`50007e03`](https://github.com/ckotzbauer&#x2F;access-manager/commit/50007e03)] - **deps**: update module golang.org&#x2F;x&#x2F;net to v0.11.0
+* [[`e880118b`](https://github.com/ckotzbauer&#x2F;access-manager/commit/e880118b)] - **deps**: update kubernetes versions to v0.27.3
+* [[`8aac1052`](https://github.com/ckotzbauer&#x2F;access-manager/commit/8aac1052)] - **deps**: update alpine:3.18 docker digest to 82d1e9d
+* [[`3cdb77d7`](https://github.com/ckotzbauer&#x2F;access-manager/commit/3cdb77d7)] - **deps**: update module github.com&#x2F;onsi&#x2F;gomega to v1.27.8
+* [[`ccac63b8`](https://github.com/ckotzbauer&#x2F;access-manager/commit/ccac63b8)] - **deps**: update module sigs.k8s.io&#x2F;controller-runtime to v0.15.0
+* [[`a89ec411`](https://github.com/ckotzbauer&#x2F;access-manager/commit/a89ec411)] - **deps**: update module github.com&#x2F;onsi&#x2F;gomega to v1.27.7
+* [[`ee95e617`](https://github.com/ckotzbauer&#x2F;access-manager/commit/ee95e617)] - **deps**: update module golang.org&#x2F;x&#x2F;net to v0.10.0
+* [[`bb15518f`](https://github.com/ckotzbauer&#x2F;access-manager/commit/bb15518f)] - **deps**: update alpine docker tag to v3.18
+* [[`1df20793`](https://github.com/ckotzbauer&#x2F;access-manager/commit/1df20793)] - **deps**: update module golang.org&#x2F;x&#x2F;net to v0.9.0
+* [[`71b56fda`](https://github.com/ckotzbauer&#x2F;access-manager/commit/71b56fda)] - **deps**: update module sigs.k8s.io&#x2F;controller-runtime to v0.14.6
+* [[`aa8057c4`](https://github.com/ckotzbauer&#x2F;access-manager/commit/aa8057c4)] - **deps**: update module github.com&#x2F;onsi&#x2F;gomega to v1.27.6
+* [[`53a9f7e5`](https://github.com/ckotzbauer&#x2F;access-manager/commit/53a9f7e5)] - **deps**: update module github.com&#x2F;go-logr&#x2F;logr to v1.2.4
+* [[`c8f3d6cc`](https://github.com/ckotzbauer&#x2F;access-manager/commit/c8f3d6cc)] - **deps**: update alpine:3.17 docker digest to 124c7d2
+* [[`8e577b26`](https://github.com/ckotzbauer&#x2F;access-manager/commit/8e577b26)] - **deps**: update module github.com&#x2F;onsi&#x2F;gomega to v1.27.5
+* [[`b6258fe6`](https://github.com/ckotzbauer&#x2F;access-manager/commit/b6258fe6)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.34.0
+* [[`217d41a4`](https://github.com/ckotzbauer&#x2F;access-manager/commit/217d41a4)] - **deps**: update actions&#x2F;setup-go action to v4
+* [[`99a54a80`](https://github.com/ckotzbauer&#x2F;access-manager/commit/99a54a80)] - **deps**: update module github.com&#x2F;onsi&#x2F;gomega to v1.27.4
+* [[`3bd9cf4e`](https://github.com/ckotzbauer&#x2F;access-manager/commit/3bd9cf4e)] - **deps**: update kubernetes versions to v0.26.3
+* [[`08ae2d43`](https://github.com/ckotzbauer&#x2F;access-manager/commit/08ae2d43)] - **deps**: update alpine:3.17 docker digest to ff6bdca
+* [[`6c85b8a1`](https://github.com/ckotzbauer&#x2F;access-manager/commit/6c85b8a1)] - **deps**: update module github.com&#x2F;emicklei&#x2F;go-restful&#x2F;v3 to v3.10.2
+* [[`f82c0bf4`](https://github.com/ckotzbauer&#x2F;access-manager/commit/f82c0bf4)] - **deps**: update module github.com&#x2F;onsi&#x2F;gomega to v1.27.3
+* [[`91008975`](https://github.com/ckotzbauer&#x2F;access-manager/commit/91008975)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.33.3
+* [[`d6f74eb8`](https://github.com/ckotzbauer&#x2F;access-manager/commit/d6f74eb8)] - **deps**: update module golang.org&#x2F;x&#x2F;net to v0.8.0
+* [[`3d986b76`](https://github.com/ckotzbauer&#x2F;access-manager/commit/3d986b76)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.33.1
+* [[`170ea643`](https://github.com/ckotzbauer&#x2F;access-manager/commit/170ea643)] - **deps**: update kubernetes versions to v0.26.2
+* [[`9cb19ec2`](https://github.com/ckotzbauer&#x2F;access-manager/commit/9cb19ec2)] - **deps**: update module github.com&#x2F;onsi&#x2F;gomega to v1.27.2
+* [[`2e998b90`](https://github.com/ckotzbauer&#x2F;access-manager/commit/2e998b90)] - **deps**: update module sigs.k8s.io&#x2F;controller-runtime to v0.14.5
+* [[`2809aaf2`](https://github.com/ckotzbauer&#x2F;access-manager/commit/2809aaf2)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.32.0
+* [[`c9364d3f`](https://github.com/ckotzbauer&#x2F;access-manager/commit/c9364d3f)] - **deps**: update module golang.org&#x2F;x&#x2F;net to v0.7.0
+* [[`c63d69e1`](https://github.com/ckotzbauer&#x2F;access-manager/commit/c63d69e1)] - **deps**: update module github.com&#x2F;onsi&#x2F;gomega to v1.27.1
+* [[`ea3b343f`](https://github.com/ckotzbauer&#x2F;access-manager/commit/ea3b343f)] - **deps**: update alpine:3.17 docker digest to 69665d0
+* [[`4df5f593`](https://github.com/ckotzbauer&#x2F;access-manager/commit/4df5f593)] - **deps**: update module sigs.k8s.io&#x2F;controller-runtime to v0.14.4
+* [[`4853d8f0`](https://github.com/ckotzbauer&#x2F;access-manager/commit/4853d8f0)] - **deps**: update module golang.org&#x2F;x&#x2F;net to v0.6.0
+* [[`2e47e065`](https://github.com/ckotzbauer&#x2F;access-manager/commit/2e47e065)] - **deps**: update module sigs.k8s.io&#x2F;controller-runtime to v0.14.3
+* [[`42b1273d`](https://github.com/ckotzbauer&#x2F;access-manager/commit/42b1273d)] - **deps**: update docker&#x2F;build-push-action action to v4
+* [[`dbb1aac3`](https://github.com/ckotzbauer&#x2F;access-manager/commit/dbb1aac3)] - **deps**: update module github.com&#x2F;onsi&#x2F;gomega to v1.26.0
+* [[`07ace6fa`](https://github.com/ckotzbauer&#x2F;access-manager/commit/07ace6fa)] - **deps**: update module sigs.k8s.io&#x2F;controller-runtime to v0.14.2
+* [[`dc661179`](https://github.com/ckotzbauer&#x2F;access-manager/commit/dc661179)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.31.0
+* [[`d79cc2cc`](https://github.com/ckotzbauer&#x2F;access-manager/commit/d79cc2cc)] - **deps**: update module github.com&#x2F;onsi&#x2F;gomega to v1.25.0
+* [[`3fa7a1bc`](https://github.com/ckotzbauer&#x2F;access-manager/commit/3fa7a1bc)] - **deps**: update kubernetes versions to v0.26.1
+* [[`94706bc8`](https://github.com/ckotzbauer&#x2F;access-manager/commit/94706bc8)] - **deps**: update azure&#x2F;setup-kubectl action to v3.2
+* [[`784214b8`](https://github.com/ckotzbauer&#x2F;access-manager/commit/784214b8)] - **deps**: update alpine:3.17 docker digest to f271e74
+* [[`febae1d9`](https://github.com/ckotzbauer&#x2F;access-manager/commit/febae1d9)] - **deps**: update module golang.org&#x2F;x&#x2F;net to v0.5.0
+* [[`c906f2d6`](https://github.com/ckotzbauer&#x2F;access-manager/commit/c906f2d6)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.30.3
+* [[`5df41ee2`](https://github.com/ckotzbauer&#x2F;access-manager/commit/5df41ee2)] - **deps**: update module github.com&#x2F;onsi&#x2F;ginkgo to v2
+* [[`1787de54`](https://github.com/ckotzbauer&#x2F;access-manager/commit/1787de54)] - **deps**: update module sigs.k8s.io&#x2F;controller-runtime to v0.14.1
+* [[`7a72e7e7`](https://github.com/ckotzbauer&#x2F;access-manager/commit/7a72e7e7)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.30.2
+* [[`66bad1b2`](https://github.com/ckotzbauer&#x2F;access-manager/commit/66bad1b2)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.29.0
+* [[`71a54b8b`](https://github.com/ckotzbauer&#x2F;access-manager/commit/71a54b8b)] - **deps**: update module sigs.k8s.io&#x2F;controller-runtime to v0.14.0
+* [[`eb7ba1f4`](https://github.com/ckotzbauer&#x2F;access-manager/commit/eb7ba1f4)] - **deps**: update goreleaser&#x2F;goreleaser-action action to v4
+* [[`b7120b26`](https://github.com/ckotzbauer&#x2F;access-manager/commit/b7120b26)] - **deps**: update module github.com&#x2F;onsi&#x2F;gomega to v1.24.2
+* [[`30cf658a`](https://github.com/ckotzbauer&#x2F;access-manager/commit/30cf658a)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.27.0
+* [[`0575286d`](https://github.com/ckotzbauer&#x2F;access-manager/commit/0575286d)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.26.0
+* [[`6b91d384`](https://github.com/ckotzbauer&#x2F;access-manager/commit/6b91d384)] - **deps**: updated goreleaser
+* [[`854481fa`](https://github.com/ckotzbauer&#x2F;access-manager/commit/854481fa)] - **deps**: updated controller-gen
+* [[`bfaf88c4`](https://github.com/ckotzbauer&#x2F;access-manager/commit/bfaf88c4)] - **deps**: update kind
+* [[`d05aa5b8`](https://github.com/ckotzbauer&#x2F;access-manager/commit/d05aa5b8)] - **deps**: updated to alpha controller-runtime version
+* [[`75f2358e`](https://github.com/ckotzbauer&#x2F;access-manager/commit/75f2358e)] - **deps**: update to go@1.19.4
+* [[`5d36c529`](https://github.com/ckotzbauer&#x2F;access-manager/commit/5d36c529)] - **deps**: update k8s-test-matrix
+* [[`20db1790`](https://github.com/ckotzbauer&#x2F;access-manager/commit/20db1790)] - **deps**: update kubernetes versions to v0.26.0
+* [[`f9c71bfb`](https://github.com/ckotzbauer&#x2F;access-manager/commit/f9c71bfb)] - **deps**: update azure&#x2F;setup-kubectl action to v3.1
+* [[`165dbe5d`](https://github.com/ckotzbauer&#x2F;access-manager/commit/165dbe5d)] - **deps**: update module go.uber.org&#x2F;zap to v1.24.0
+* [[`fed6e211`](https://github.com/ckotzbauer&#x2F;access-manager/commit/fed6e211)] - **deps**: update alpine:3.17 docker digest to 8914eb5
+* [[`87629610`](https://github.com/ckotzbauer&#x2F;access-manager/commit/87629610)] - **deps**: update module github.com&#x2F;emicklei&#x2F;go-restful&#x2F;v3 to v3.10.1
+* [[`4406e5e8`](https://github.com/ckotzbauer&#x2F;access-manager/commit/4406e5e8)] - **deps**: update alpine docker tag to v3.17
+* [[`f889e073`](https://github.com/ckotzbauer&#x2F;access-manager/commit/f889e073)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.25.0
+* [[`5188d469`](https://github.com/ckotzbauer&#x2F;access-manager/commit/5188d469)] - **deps**: update module github.com&#x2F;emicklei&#x2F;go-restful&#x2F;v3 to v3.10.0
+* [[`05de9317`](https://github.com/ckotzbauer&#x2F;access-manager/commit/05de9317)] - **deps**: update alpine:3.16 docker digest to b95359c
+* [[`7ebf5948`](https://github.com/ckotzbauer&#x2F;access-manager/commit/7ebf5948)] - **deps**: update kubernetes versions to v0.25.4
+* [[`a55076ea`](https://github.com/ckotzbauer&#x2F;access-manager/commit/a55076ea)] - **deps**: update module github.com&#x2F;onsi&#x2F;gomega to v1.24.1
+* [[`59e73e89`](https://github.com/ckotzbauer&#x2F;access-manager/commit/59e73e89)] - **deps**: update alpine:3.16 docker digest to 65a2763
+* [[`cc435eaf`](https://github.com/ckotzbauer&#x2F;access-manager/commit/cc435eaf)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.24.0
+* [[`be6f145e`](https://github.com/ckotzbauer&#x2F;access-manager/commit/be6f145e)] - **deps**: update module github.com&#x2F;onsi&#x2F;gomega to v1.24.0
+* [[`36f462c5`](https://github.com/ckotzbauer&#x2F;access-manager/commit/36f462c5)] - **deps**: update module sigs.k8s.io&#x2F;controller-runtime to v0.13.1
+* [[`1e18657f`](https://github.com/ckotzbauer&#x2F;access-manager/commit/1e18657f)] - **deps**: update module github.com&#x2F;onsi&#x2F;gomega to v1.23.0
+* [[`48d9ce4b`](https://github.com/ckotzbauer&#x2F;access-manager/commit/48d9ce4b)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.23.0
+* [[`1cc51903`](https://github.com/ckotzbauer&#x2F;access-manager/commit/1cc51903)] - **deps**: update ckotzbauer&#x2F;actions-toolkit action to v0.22.0
+* [[`81de959d`](https://github.com/ckotzbauer&#x2F;access-manager/commit/81de959d)] - **deps**: update module github.com&#x2F;onsi&#x2F;gomega to v1.22.1
+* [[`0a4b601b`](https://github.com/ckotzbauer&#x2F;access-manager/commit/0a4b601b)] - **deps**: update kubernetes versions to v0.25.3
+* [[`5c4770a7`](https://github.com/ckotzbauer&#x2F;access-manager/commit/5c4770a7)] - **deps**: update module github.com&#x2F;onsi&#x2F;gomega to v1.21.1
+
+### Common changes
+
+* [[`4c1376ee`](https://github.com/ckotzbauer&#x2F;access-manager/commit/4c1376ee)] - **chore**: release 0.11.0
+
+
 ## Version 0.11.0 (2022-12-10)
 
 ### Build and testing
