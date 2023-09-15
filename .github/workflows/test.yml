@@ -40,7 +40,7 @@ jobs:
           version: 'v${{ matrix.kubernetes-version }}'
 
       - name: Install GoReleaser
-        uses: goreleaser/goreleaser-action@v4
+        uses: goreleaser/goreleaser-action@v5
         with:
           version: "v1.19.2"
           install-only: true
