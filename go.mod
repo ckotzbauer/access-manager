@@ -5,7 +5,7 @@ go 1.21
 require (
 	github.com/go-logr/logr v1.3.0
 	github.com/onsi/ginkgo v1.16.5
-	github.com/onsi/gomega v1.29.0
+	github.com/onsi/gomega v1.30.0
 	go.uber.org/zap v1.26.0
 	k8s.io/api v0.28.3
 	k8s.io/apimachinery v0.28.3
