@@ -1,10 +1,10 @@
 name: stale
 on:
   schedule:
-  - cron: "0 0 * * *"
+    - cron: "0 0 * * *"
 
 jobs:
   stale:
-    uses: ckotzbauer/actions-toolkit/.github/workflows/toolkit-stale.yml@0.36.0
+    uses: ckotzbauer/actions-toolkit/.github/workflows/toolkit-stale.yml@0.37.2
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
