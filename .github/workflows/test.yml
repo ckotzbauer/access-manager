@@ -63,7 +63,7 @@ jobs:
 
 
   build:
-    uses: ckotzbauer/actions-toolkit/.github/workflows/toolkit-build-test.yml@0.36.0
+    uses: ckotzbauer/actions-toolkit/.github/workflows/toolkit-build-test.yml@0.37.2
     with:
       install-go: true
       go-version: "1.21.0"
