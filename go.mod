@@ -72,6 +72,6 @@ require (
 )
 
 replace (
-	github.com/emicklei/go-restful/v3 => github.com/emicklei/go-restful/v3 v3.11.0
+	github.com/emicklei/go-restful/v3 => github.com/emicklei/go-restful/v3 v3.11.1
 	golang.org/x/net => golang.org/x/net v0.19.0
 )
