@@ -62,7 +62,7 @@ jobs:
         run: make e2e-test -e K8S_VERSION=${{ matrix.kubernetes-version }}
 
   build:
-    uses: ckotzbauer/actions-toolkit/.github/workflows/toolkit-build-test.yml@0.38.0
+    uses: ckotzbauer/actions-toolkit/.github/workflows/toolkit-build-test.yml@0.39.0
     with:
       install-go: true
       go-version: "1.21.4"
