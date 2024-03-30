@@ -11,7 +11,7 @@ IMG ?= ckotzbauer/access-manager
 CRD_OPTIONS ?= "crd"
 
 # default k8s version for e2e tests
-K8S_VERSION ?= 1.28.1
+K8S_VERSION ?= 1.29.2
 
 TARGETOS=linux
 ifeq (,${TARGETARCH})
@@ -83,7 +83,7 @@ ifeq (, $(shell which controller-gen))
 	CONTROLLER_GEN_TMP_DIR=$$(mktemp -d) ;\
 	cd $$CONTROLLER_GEN_TMP_DIR ;\
 	go mod init tmp ;\
-	go install sigs.k8s.io/controller-tools/cmd/controller-gen@v0.13.0 ;\
+	go install sigs.k8s.io/controller-tools/cmd/controller-gen@v0.14.0 ;\
 	rm -rf $$CONTROLLER_GEN_TMP_DIR ;\
 	}
 CONTROLLER_GEN=$(GOBIN)/controller-gen
@@ -100,7 +100,7 @@ ifeq (, $(shell which kind))
 	KIND_TMP_DIR=$$(mktemp -d) ;\
 	cd $$KIND_TMP_DIR ;\
 	go mod init tmp ;\
-	go download sigs.k8s.io/kind@v0.20.0 ;\
+	go download sigs.k8s.io/kind@v0.22.0 ;\
 	rm -rf $$KIND_TMP_DIR ;\
 	}
 KIND=$(GOBIN)/kind
