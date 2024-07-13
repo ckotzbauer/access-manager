@@ -17,7 +17,7 @@ jobs:
           - "1.29.2"
     steps:
       - name: Setup Go
-        uses: ckotzbauer/actions-toolkit/setup-go@0.44.0
+        uses: ckotzbauer/actions-toolkit/setup-go@0.45.0
 
       - name: Set up QEMU
         id: qemu
@@ -60,7 +60,7 @@ jobs:
         run: make e2e-test -e K8S_VERSION=${{ matrix.kubernetes-version }}
 
   build:
-    uses: ckotzbauer/actions-toolkit/.github/workflows/toolkit-build-test.yml@0.44.0
+    uses: ckotzbauer/actions-toolkit/.github/workflows/toolkit-build-test.yml@0.45.0
     with:
       install-go: true
       install-goreleaser: true
