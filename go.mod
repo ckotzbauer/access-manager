@@ -3,7 +3,7 @@ module github.com/ckotzbauer/access-manager
 go 1.23.4
 
 require (
-	github.com/go-logr/logr v1.4.2
+	github.com/go-logr/logr v1.4.3
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.34.2
 	go.uber.org/zap v1.27.0
